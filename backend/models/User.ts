@@ -1,13 +1,28 @@
-const mongoose = require('mongoose')
+import { ObjectType, InputType, Field } from "type-graphql";
+import { prop } from "@typegoose/typegoose";
 
-const schema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-    minlength: 4
-  },
-  password: String 
-})
+@ObjectType()
+export class User {
+  @Field(() => String)
+  @prop({ type: String, required: true, minlength: 3 })
+  public username: string;
 
-module.exports = mongoose.model('User', schema)
+  //@Field(() => String)
+  @prop({ type: String, required: true })
+  public password: string;
+}
+
+@ObjectType()
+export class LoginToken {
+  @Field(() => String)
+  token: string;
+}
+
+@InputType()
+export class UserInput {
+  @Field()
+  username: string;
+
+  @Field()
+  password: string;
+}
