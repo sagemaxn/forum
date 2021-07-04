@@ -3,15 +3,16 @@ const mongoose = require("mongoose");
 import * as Express from "express";
 import "reflect-metadata";
 import {verify} from 'jsonwebtoken'
+import cookieParser from 'cookie-parser'
 
 import { ApolloServer } from "apollo-server-express";
-import { buildSchema } from "type-graphql";
+import { buildSchema , UseMiddleware} from "type-graphql";
 import { UserResolver } from "./UserResolver";
 import {UserModel} from './models/User'
 
 require("dotenv").config();
 
-console.log(process.env.MONGODB_URI);
+//console.log(process.env.MONGODB_URI);
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -30,12 +31,24 @@ mongoose
   });
 
 const main = async () => {
+  const app = Express();
+  app.use(cookieParser())
+
+  app.post("/refresh_token", req =>{
+    const token = req.cookies._id
+    if(!token) {
+      return res.send({ ok: false, accessToken: ''})
+    }
+  })
+
+
   const schema = await buildSchema({
     resolvers: [UserResolver],
   });
   const apolloServer = new ApolloServer({
     schema,
     context: async ({ req, res }) => {
+      //console.log(res)
       const auth = req ? req.headers.authorization : null
       if (auth && auth.toLowerCase().startsWith('bearer ')) {
         const decodedToken = verify(
@@ -43,12 +56,12 @@ const main = async () => {
         )
         console.log(decodedToken)
         const currentUser = await UserModel.find(decodedToken)
-        return { currentUser, req, res }
+        const payload = decodedToken
+        return { res, payload }
       }
+      return { res }
     }
   });
-
-  const app = Express();
 
   apolloServer.applyMiddleware({ app });
 

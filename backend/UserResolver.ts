@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Arg, Ctx } from "type-graphql";
+import { Resolver, Query, Mutation, Arg, Ctx, UseMiddleware } from "type-graphql";
 import {hash, compare} from "bcryptjs";
 import { sign } from "jsonwebtoken";
 
@@ -10,6 +10,31 @@ export class UserResolver {
   query() {
     return "yo";
   }
+
+  @Query(() => String)
+  @UseMiddleware(({context}, next) => {
+    //context.req.headers['auth']
+    if (context.payload){
+      console.log('decodedToken')
+    }
+    else{
+      console.log('no')
+    }
+    return next()
+  })
+  bye() {
+    return "bye"
+  }
+
+  @Mutation(() => String)
+  ctx(
+    @Ctx() { res }
+    ): string {
+     //console.log(res)
+     //console.log(res.cookie)
+     return "test"
+  }
+
   @Mutation(() => User)
   async createUser(
     @Arg("input") { username, password }: UserInput
@@ -24,14 +49,17 @@ export class UserResolver {
   @Mutation(() => LoginToken)
   async login(
     @Arg("input") { username, password }: UserInput,
-    @Ctx() { req, res }
+    @Ctx() { res }
   ): Promise<LoginToken> {
+    //console.log(con)
     const user = await UserModel.find({ username: username });
     //console.log(username, user[0].password, password, user.password)
     const passwordCorrect = await compare(password, user[0].password);
+    //return{token: "dsaddsds"}
+    //console.log(res)
     if (user && passwordCorrect) {
         res.cookie('jid',
-                    sign({ userID: user._id }, 'string', {
+                    sign({ userID: user._id }, process.env.JWT_REFRESH, {
                         expiresIn: "5d"
                     }),
                     {
@@ -42,7 +70,7 @@ export class UserResolver {
         token: sign({ userID: user._id }, process.env.JWT_SECRET, { expiresIn: "60m" }),
       };
     } else {
-      console.log("invalid");
+      //console.log("invalid");
       return { token: "ddd" };
     }
   }
