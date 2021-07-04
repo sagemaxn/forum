@@ -2,10 +2,12 @@ const mongoose = require("mongoose");
 
 import * as Express from "express";
 import "reflect-metadata";
+import {verify} from 'jsonwebtoken'
 
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { UserResolver } from "./UserResolver";
+import {UserModel} from './models/User'
 
 require("dotenv").config();
 
@@ -33,7 +35,17 @@ const main = async () => {
   });
   const apolloServer = new ApolloServer({
     schema,
-    context: ({ req, res }) => ({ req, res }),
+    context: async ({ req, res }) => {
+      const auth = req ? req.headers.authorization : null
+      if (auth && auth.toLowerCase().startsWith('bearer ')) {
+        const decodedToken = verify(
+          auth.substring(7), process.env.JWT_SECRET
+        )
+        console.log(decodedToken)
+        const currentUser = await UserModel.find(decodedToken)
+        return { currentUser, req, res }
+      }
+    }
   });
 
   const app = Express();
@@ -41,7 +53,7 @@ const main = async () => {
   apolloServer.applyMiddleware({ app });
 
   app.listen(4000, () => {
-    console.log("Server started on 6000");
+    console.log("Server started on 4000");
   });
 };
 main();

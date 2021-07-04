@@ -1,5 +1,5 @@
 import { ObjectType, InputType, Field } from "type-graphql";
-import { prop } from "@typegoose/typegoose";
+import { prop, getModelForClass } from "@typegoose/typegoose";
 
 @ObjectType()
 export class User {
@@ -26,3 +26,5 @@ export class UserInput {
   @Field()
   password: string;
 }
+
+export const UserModel = getModelForClass(User);
