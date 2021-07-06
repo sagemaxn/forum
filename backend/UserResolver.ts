@@ -3,22 +3,23 @@ import {hash, compare} from "bcryptjs";
 import { sign } from "jsonwebtoken";
 
 import { User, UserModel, UserInput, LoginToken } from "./models/User";
+import { resolve } from "path";
 
 @Resolver()
 export class UserResolver {
   @Query(() => String)
   query() {
-    return "yo";
+    return {bean: "dasda"}
   }
 
   @Query(() => String)
   @UseMiddleware(({context}, next) => {
     //context.req.headers['auth']
     if (context.payload){
-      console.log('decodedToken')
+     return context.payload.userID
     }
     else{
-      console.log('no')
+      console.log('user not authorized')
     }
     return next()
   })
@@ -53,13 +54,14 @@ export class UserResolver {
   ): Promise<LoginToken> {
     //console.log(con)
     const user = await UserModel.find({ username: username });
+    console.log(user)
     //console.log(username, user[0].password, password, user.password)
     const passwordCorrect = await compare(password, user[0].password);
     //return{token: "dsaddsds"}
     //console.log(res)
     if (user && passwordCorrect) {
         res.cookie('jid',
-                    sign({ userID: user._id }, process.env.JWT_REFRESH, {
+                    sign({ userID: user[0]._id, test: "test", }, process.env.JWT_REFRESH, {
                         expiresIn: "5d"
                     }),
                     {
@@ -67,7 +69,7 @@ export class UserResolver {
                     })
 
       return {
-        token: sign({ userID: user._id }, process.env.JWT_SECRET, { expiresIn: "60m" }),
+        token: sign({ userID: user[0]._id, test: "test" }, process.env.JWT_SECRET, { expiresIn: "60m" }),
       };
     } else {
       //console.log("invalid");

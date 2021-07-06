@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 import * as Express from "express";
 import "reflect-metadata";
 import {verify} from 'jsonwebtoken'
-import cookieParser from 'cookie-parser'
+const cookieParser = require('cookie-parser')
+import * as cors from 'cors'
 
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema , UseMiddleware} from "type-graphql";
@@ -33,13 +34,14 @@ mongoose
 const main = async () => {
   const app = Express();
   app.use(cookieParser())
+  app.use(cors())
 
-  app.post("/refresh_token", req =>{
-    const token = req.cookies._id
-    if(!token) {
-      return res.send({ ok: false, accessToken: ''})
-    }
-  })
+  // app.post("/refresh_token", req =>{
+  //   const token = req.cookies._id
+  //   if(!token) {
+  //     return res.send({ ok: false, accessToken: ''})
+  //   }
+  // })
 
 
   const schema = await buildSchema({
@@ -55,7 +57,8 @@ const main = async () => {
           auth.substring(7), process.env.JWT_SECRET
         )
         console.log(decodedToken)
-        const currentUser = await UserModel.find(decodedToken)
+        //const currentUser = await UserModel.findById(decodedToken)
+        //console.log(currentUser)
         const payload = decodedToken
         return { res, payload }
       }
