@@ -16,27 +16,40 @@ import { DarkModeSwitch } from '../components/DarkModeSwitch'
 import { CTA } from '../components/CTA'
 import { Footer } from '../components/Footer'
 
-import {useQuery, useMutation, gql} from '@apollo/client'
+import {useQuery, gql,} from '@apollo/client'
+import { GetServerSideProps } from 'next'
+import {client} from './_app'
 
-const Index: React.FC = () => {
+
+export const getServerSideProps: GetServerSideProps = async() => {
+  const TEST = {query: gql`
+  query{
+    bye
+  }`}
+  const { data, loading } = await client.query(TEST)
+  const test = "test!"
+  console.log(data)
+  return {props: {data, loading, test}}
+  
+}
+
+const Index = ({data, loading}) => {
   const QUERY = gql`
-  mutation{
-    login(input: {username: "mrsmith" password: "password"}){
-      token
-    }
+  query{
+    bye
   }
   `
-  const result = useMutation(QUERY)
-  if (result[1].loading) {
-    return <div>loading...</div>
+  if(data.loading){
+    console.log('loading')
+    return <div>...loading</div>
   }
-  
   return(
-  <Container height="100vh">
-    {JSON.stringify(result[1].data)}
-    <Button onClick={(()=> console.log(result[1].data))}></Button>
+  <Container height="100vh">   
+    <Button onClick={(()=> console.log(loading))}></Button>
+    <Button onClick={(() => console.log(data))}></Button>
   </Container>
 )
 }
+
 
 export default Index

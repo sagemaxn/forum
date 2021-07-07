@@ -5,10 +5,10 @@ import theme from '../theme'
 import { AppProps } from 'next/app'
 import { IncomingMessage } from 'http'
 
-const client = new ApolloClient({
+export const client = new ApolloClient({
   cache: new InMemoryCache(),
   link: new HttpLink({
-  uri: 'http://lcoalhost:4000/graphql'
+  uri: 'http://localhost:4000/graphql'
   })
 })
 

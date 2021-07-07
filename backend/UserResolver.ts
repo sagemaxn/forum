@@ -7,9 +7,9 @@ import { resolve } from "path";
 
 @Resolver()
 export class UserResolver {
-  @Query(() => String)
+  @Query(() => User)
   query() {
-    return {bean: "dasda"}
+    return {username: "d", password: "password"}
   }
 
   @Query(() => String)
