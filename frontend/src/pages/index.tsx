@@ -16,24 +16,34 @@ import { DarkModeSwitch } from '../components/DarkModeSwitch'
 import { CTA } from '../components/CTA'
 import { Footer } from '../components/Footer'
 
-import {useQuery, gql,} from '@apollo/client'
+import {useQuery, gql, parseAndCheckHttpResponse,} from '@apollo/client'
 import { GetServerSideProps } from 'next'
 import {client} from './_app'
 
+import cookie from 'cookie'
+import LoginForm from '../components/LoginForm'
 
-export const getServerSideProps: GetServerSideProps = async() => {
+
+export const getServerSideProps: GetServerSideProps = async(context) => {
+  const cook = context.req.headers.cookie 
+  let thing = ''
+  let parsed: any = ''
+  if(cook){
+    parsed = cookie.parse(cook)
+    thing = parsed.jid
+  }
   const TEST = {query: gql`
   query{
     bye
   }`}
   const { data, loading } = await client.query(TEST)
   const test = "test!"
-  console.log(data)
-  return {props: {data, loading, test}}
+  console.log('serverprops')
   
+  return {props: {data, loading, test, jwt: thing}}
 }
 
-const Index = ({data, loading}) => {
+const Index = ({data, loading, jwt}) => {
   const QUERY = gql`
   query{
     bye
@@ -43,10 +53,14 @@ const Index = ({data, loading}) => {
     console.log('loading')
     return <div>...loading</div>
   }
+  if(jwt){
+    return <div>welcome user</div>
+  }
   return(
-  <Container height="100vh">   
+  <Container height="100vh">  
+  <LoginForm/> 
     <Button onClick={(()=> console.log(loading))}></Button>
-    <Button onClick={(() => console.log(data))}></Button>
+    <Button onClick={(() => console.log(jwt))}></Button>
   </Container>
 )
 }
