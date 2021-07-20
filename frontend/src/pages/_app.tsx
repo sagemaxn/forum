@@ -5,7 +5,9 @@ import theme from '../theme'
 import { AppProps } from 'next/app'
 import { IncomingMessage } from 'http'
 
-export const client = new ApolloClient({
+export const withApollo = nextWithApollo(
+  ({ inititalState, headers })=> {
+  ssrMode: typeof window === 'undefined',
   cache: new InMemoryCache(),
   link: new HttpLink({
   uri: 'http://localhost:4000/graphql'
@@ -13,9 +15,11 @@ export const client = new ApolloClient({
 })
 
 
+
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ApolloProvider client={client}>
+    <ApolloProvider client={createApolloClient()}>
     <ChakraProvider resetCSS theme={theme}>
       <Component {...pageProps} />
     </ChakraProvider>

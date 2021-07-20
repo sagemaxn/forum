@@ -1,9 +1,14 @@
 import { Resolver, Query, Mutation, Arg, Ctx, UseMiddleware } from "type-graphql";
 import {hash, compare} from "bcryptjs";
 import { sign } from "jsonwebtoken";
+import {verify} from 'jsonwebtoken'
+import {JwtPayload} from 'jsonwebtoken'
 
-import { User, UserModel, UserInput, LoginToken } from "./models/User";
+import { User, UserModel, UserInput, LoginToken, RefreshToken } from "./models/User";
 import { resolve } from "path";
+//import { Token } from "graphql";
+import e = require("express");
+import { parseType } from "graphql";
 
 @Resolver()
 export class UserResolver {
@@ -12,17 +17,38 @@ export class UserResolver {
     return {username: "d", password: "password"}
   }
 
+  @Query(() => RefreshToken)
+  checkAuth(
+    @Ctx() { req }
+  ): RefreshToken{
+    console.log('dasdsa')
+    if(req.signedCookies.jid){
+     const token = req.signedCookies
+      
+ 
+    //   //done next
+    //   //multiple cookies?
+    //   //console.log(req.headers.authorization)
+    return {refreshToken: JSON.stringify(token)}
+   
+      
+     }
+     else return {refreshToken: 'dsas'}
+   
+  }
+
   @Query(() => String)
-  @UseMiddleware(({context}, next) => {
-    //context.req.headers['auth']
-    if (context.payload){
-     return context.payload.userID
-    }
-    else{
-      console.log('user not authorized')
-    }
-    return next()
-  })
+  // @UseMiddleware(async ({context}, next) => {
+  //   //context.req.headers['auth']
+  //   if (context.req.headers.cookie){
+  //     console.log('headers')
+  //    return {token: context.req.headers.cookie}
+  //   }
+  //   else{
+  //     console.log('user not authorized')
+  //   }
+  //   return next()
+  // })
   bye() {
     return "bye"
   }
@@ -60,6 +86,7 @@ export class UserResolver {
     //return{token: "dsaddsds"}
     //console.log(res)
     if (user && passwordCorrect) {
+      console.log('should wokr')
         res.cookie('jid',
                     sign({ userID: user[0]._id, test: "test", }, process.env.JWT_REFRESH, {
                         expiresIn: "5d"

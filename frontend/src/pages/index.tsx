@@ -18,52 +18,73 @@ import { Footer } from '../components/Footer'
 
 import {useQuery, gql, parseAndCheckHttpResponse,} from '@apollo/client'
 import { GetServerSideProps } from 'next'
+import { getDataFromTree } from '@apollo/client/react/ssr'
+import { withApollo } from './_app'
 import {client} from './_app'
 
 import cookie from 'cookie'
 import LoginForm from '../components/LoginForm'
 
+import { parseBody } from 'next/dist/next-server/server/api-utils'
+
 
 export const getServerSideProps: GetServerSideProps = async(context) => {
-  const cook = context.req.headers.cookie 
-  let thing = ''
-  let parsed: any = ''
-  if(cook){
-    parsed = cookie.parse(cook)
-    thing = parsed.jid
-  }
-  const TEST = {query: gql`
+  const isServer = () => typeof window === "undefined"
+  //console.log(context.req.headers.cookie)
+  const checkAuth = {query: gql`
   query{
-    bye
-  }`}
-  const { data, loading } = await client.query(TEST)
-  const test = "test!"
-  console.log('serverprops')
+    checkAuth{
+      refreshToken
+    }
+    
+    
+  }
+  `}
   
-  return {props: {data, loading, test, jwt: thing}}
+  //if(isServer){
+    
+    const y = await client.query(checkAuth)
+    console.log(y.data)
+  //}
+  // console.log(data)
+ 
+  const data = "dasdas"
+  //console.log(cook + " yoooie
+  // let thing = ''
+  // let parsed: any = ''
+  // if(cook){
+  //   parsed = cookie.parse(cook)
+  //   console.log(parsed)
+  //   thing = parsed.jid
+  //   console.log(thing)
+    
+  // }
+  // const TEST = {query: gql`
+  // query{
+  //   bye
+  // }`}
+  // const { data, loading } = await client.query(TEST)
+  // const test = "test!"
+  // console.log('serverprops')
+  // thing = "dsa"
+  // return {props: {data, loading, test, jwt: thing}}
+  return {props: {data, loading: "dasd"}}
 }
 
-const Index = ({data, loading, jwt}) => {
+const Index = ({data}) => {
   const QUERY = gql`
   query{
     bye
   }
   `
-  if(data.loading){
-    console.log('loading')
-    return <div>...loading</div>
-  }
-  if(jwt){
-    return <div>welcome user</div>
-  }
   return(
   <Container height="100vh">  
   <LoginForm/> 
-    <Button onClick={(()=> console.log(loading))}></Button>
-    <Button onClick={(() => console.log(jwt))}></Button>
+    <Button onClick={(()=> console.log())}></Button>
+    <Button onClick={(() => console.log(data))}></Button>
   </Container>
 )
 }
 
 
-export default Index
+export default withApollo(Index, { getDataFromTree })

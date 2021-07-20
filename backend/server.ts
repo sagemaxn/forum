@@ -36,12 +36,6 @@ const main = async () => {
   app.use(cookieParser())
   app.use(cors())
 
-  // app.post("/refresh_token", req =>{
-  //   const token = req.cookies._id
-  //   if(!token) {
-  //     return res.send({ ok: false, accessToken: ''})
-  //   }
-  // })
 
 
   const schema = await buildSchema({
@@ -50,19 +44,21 @@ const main = async () => {
   const apolloServer = new ApolloServer({
     schema,
     context: async ({ req, res }) => {
-      //console.log(res)
-      const auth = req ? req.headers.authorization : null
-      if (auth && auth.toLowerCase().startsWith('bearer ')) {
-        const decodedToken = verify(
-          auth.substring(7), process.env.JWT_SECRET
-        )
-        console.log(decodedToken)
-        //const currentUser = await UserModel.findById(decodedToken)
-        //console.log(currentUser)
-        const payload = decodedToken
-        return { res, payload }
-      }
-      return { res }
+      console.log(req.headers.authorization)
+    //  console.log(req.cookies)
+    //  req.headers.cookie = req.cookies
+    //   const auth = req ? req.headers.authorization : null
+    //   if (auth && auth.toLowerCase().startsWith('bearer ')) {
+    //     const decodedToken = verify(
+    //       auth.substring(7), process.env.JWT_SECRET
+    //     )
+    //     console.log(decodedToken)
+    //     //const currentUser = await UserModel.findById(decodedToken)
+    //     //console.log(currentUser)
+    //     const payload = decodedToken
+      //   return { res, payload }
+      // }
+      return { res, req, payload: "asd" }
     }
   });
 

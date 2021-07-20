@@ -27,4 +27,10 @@ export class UserInput {
   password: string;
 }
 
+@ObjectType()
+export class RefreshToken {
+  @Field()
+  refreshToken: string
+}
+
 export const UserModel = getModelForClass(User);
