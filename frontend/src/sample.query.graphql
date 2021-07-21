@@ -1,0 +1,6 @@
+
+mutation Reg{
+  createUser(input: {username: "dsad" password: "dsad"}){
+    username
+  }
+}

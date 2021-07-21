@@ -16,23 +16,27 @@ import { DarkModeSwitch } from '../components/DarkModeSwitch'
 import { CTA } from '../components/CTA'
 import { Footer } from '../components/Footer'
 
-import {useQuery, gql, parseAndCheckHttpResponse,} from '@apollo/client'
+import { gql, parseAndCheckHttpResponse,} from '@apollo/client'
 import { GetServerSideProps } from 'next'
-import { getDataFromTree } from '@apollo/client/react/ssr'
-import { withApollo } from './_app'
-import { initializeApollo } from 'src/apollo'
+
+import { initializeApollo } from '../../src/apollo'
 
 import cookie from 'cookie'
 import LoginForm from '../components/LoginForm'
 
-import { parseBody } from 'next/dist/next-server/server/api-utils'
 
 
-export const getServerSideProps: GetServerSideProps = async(context) => {
+const Query = gql`
+  query Query {
+    name
+  }
+`;
+
+export default async function getServerSideProps (context){
   const apolloClient = initializeApollo()
 
   await apolloClient.query({
-    query: query
+    query: Query
   })
 
   return {
@@ -42,20 +46,13 @@ export const getServerSideProps: GetServerSideProps = async(context) => {
   }
 }
 
-const Index = ({data}) => {
-  const QUERY = gql`
-  query{
-    bye
-  }
-  `
+const Index = ({}) => {
+
   return(
   <Container height="100vh">  
   <LoginForm/> 
     <Button onClick={(()=> console.log())}></Button>
-    <Button onClick={(() => console.log(data))}></Button>
+    <Button onClick={(() => console.log('dsad'))}></Button>
   </Container>
 )
 }
-
-
-export default withApollo(Index, { getDataFromTree })
