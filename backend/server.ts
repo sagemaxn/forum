@@ -7,7 +7,7 @@ const cookieParser = require('cookie-parser')
 import * as cors from 'cors'
 
 import { ApolloServer } from "apollo-server-express";
-import { buildSchema , UseMiddleware} from "type-graphql";
+import { buildSchema , UseMiddleware } from "type-graphql";
 import { UserResolver } from "./UserResolver";
 import {UserModel} from './models/User'
 
@@ -40,6 +40,7 @@ const main = async () => {
 
   const schema = await buildSchema({
     resolvers: [UserResolver],
+    emitSchemaFile: true
   });
   const apolloServer = new ApolloServer({
     schema,

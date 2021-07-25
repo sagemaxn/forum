@@ -19,7 +19,7 @@ import { Footer } from '../components/Footer'
 import { gql, parseAndCheckHttpResponse,} from '@apollo/client'
 import { GetServerSideProps } from 'next'
 
-import { initializeApollo } from '../../src/apollo'
+//import { initializeApollo } from '../../src/apollo'
 
 import cookie from 'cookie'
 import LoginForm from '../components/LoginForm'
@@ -32,19 +32,19 @@ const Query = gql`
   }
 `;
 
-export default async function getServerSideProps (context){
-  const apolloClient = initializeApollo()
+// export default async function getServerSideProps (context){
+//   const apolloClient = initializeApollo()
 
-  await apolloClient.query({
-    query: Query
-  })
+//   await apolloClient.query({
+//     query: Query
+//   })
 
-  return {
-    props: {
-      initialApolloState: apolloClient.cache.extract(),
-    }
-  }
-}
+//   return {
+//     props: {
+//       initialApolloState: apolloClient.cache.extract(),
+//     }
+//   }
+// }
 
 const Index = ({}) => {
 
@@ -56,3 +56,5 @@ const Index = ({}) => {
   </Container>
 )
 }
+
+export default Index

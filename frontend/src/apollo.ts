@@ -1,65 +1,50 @@
-import {
-	ApolloClient, InMemoryCache, NormalizedCacheObject,
-} from '@apollo/client'
-import { useMemo } from 'react'
+import { ApolloClient, InMemoryCache } from '@apollo/client/react';
 
-import { buildSchema } from "type-graphql";
-const schema3 = require('./generated/graphql')
-import * as genSchema from './generated/graphql'
-const types = {...genSchema}
-console.log(types)
 
-async function bootstrap() {
-   const schema = await buildSchema({
-    resolvers: [schema3],
+let globalApolloClient = null;
+
+const createApolloClient = (ctx = {}, initialState = {}) => {
+  const ssrMode = typeof window === 'undefined';
+  const cache = new InMemoryCache().restore(initialState);
+
+  return new ApolloClient({
+    ssrMode,
+    link: createIsomorphLink(ctx),
+    cache,
+    credentials: 'include',
+    defaultOptions: {
+      watchQuery: {
+        fetchPolicy: 'cache-and-network',
+      },
+      query: { fetchPolicy: 'cache-and-network' },
+    },
   });
-  console.log(schema)
-}
-bootstrap()
+};
 
+const createIsomorphLink = (ctx) => {
+  const ssrMode = typeof window === 'undefined';
+  const { HttpLink } = require('@apollo/client/link/http');
 
-let apolloClient: ApolloClient<NormalizedCacheObject>;
+  return new HttpLink({
+    uri: ssrMode
+      ? 'http://localhost:4000/graphql'
+      : 'http://localhost:3000/api/schema.gql',
+    credentials: 'same-origin',
+    fetch: require('node-fetch'),
+    headers: {
+      cookie: ctx.req ? ctx.req.headers.cookie : undefined,
+    },
+  });
+};
 
-async function createIsomorphicLink() {
-	if (typeof window === 'undefined') {
-		// server
-		const { SchemaLink } = require("@apollo/client/link/schema")
-		//async function bootstrap() {
-			const schema = await buildSchema({
-			 resolvers: [schema3],
-		   });
-		   console.log(schema)
-		
-		return new SchemaLink({ schema })
-	} else {
-		// client
-		const { HttpLink } = require ('@apollo/client/link/http')
-		return new HttpLink({ uri: 'http://localhost:4000' })
-	}
-}
+export const initApolloClient = (ctx, initialState) => {
+  if (typeof window === 'undefined') {
+    return createApolloClient(ctx, initialState);
+  }
 
-function createApolloClient() {
-	return new ApolloClient({
-		ssrMode: typeof window === "undefined",
-		link: createIsomorphicLink(),
-		cache: new InMemoryCache()
-	})
-}
+  if (!globalApolloClient) {
+    globalApolloClient = createApolloClient(ctx, initialState);
+  }
 
-export function initializeApollo(initialState = null) {
-	const _apolloClient = apolloClient ?? createApolloClient()
-
-	if (initialState) {
-		_apolloClient.cache.restore(initialState)
-	}
-
-	if (typeof window === "undefined") return _apolloClient
-		apolloClient = apolloClient ?? _apolloClient
-
-	return _apolloClient
-}
-
-export function useApollo(initialState) {
-	const store = useMemo(() => initializeApollo(initialState), [initialState])
-	return store
-}
+  return globalApolloClient;
+};

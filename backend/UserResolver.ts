@@ -7,7 +7,7 @@ import {JwtPayload} from 'jsonwebtoken'
 import { User, UserModel, UserInput, LoginToken, RefreshToken } from "./models/User";
 import { resolve } from "path";
 //import { Token } from "graphql";
-import e = require("express");
+//import e = require("express");
 import { parseType } from "graphql";
 
 @Resolver()
