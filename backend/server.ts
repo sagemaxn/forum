@@ -14,6 +14,9 @@ import {UserModel} from './models/User'
 require("dotenv").config();
 
 //console.log(process.env.MONGODB_URI);
+const app = Express();
+  app.use(cookieParser())
+  app.use(cors())
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -32,9 +35,7 @@ mongoose
   });
 
 const main = async () => {
-  const app = Express();
-  app.use(cookieParser())
-  app.use(cors())
+  
 
 
 

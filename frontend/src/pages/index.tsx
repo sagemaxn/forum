@@ -1,60 +1,45 @@
 import {
   Link as ChakraLink,
-  Text,
-  Code,
-  List,
-  ListIcon,
-  ListItem,
+
   Button
 } from '@chakra-ui/react'
-import { CheckCircleIcon, LinkIcon } from '@chakra-ui/icons'
 
-import { Hero } from '../components/Hero'
+
 import { Container } from '../components/Container'
-import { Main } from '../components/Main'
-import { DarkModeSwitch } from '../components/DarkModeSwitch'
-import { CTA } from '../components/CTA'
-import { Footer } from '../components/Footer'
 
 import { gql, parseAndCheckHttpResponse,} from '@apollo/client'
 import { GetServerSideProps } from 'next'
 
-//import { initializeApollo } from '../../src/apollo'
+//import { initApolloClient } from '
 
 import cookie from 'cookie'
 import LoginForm from '../components/LoginForm'
+import {withApollo} from '../lib/apollo'
+import { Ctx } from 'type-graphql'
 
+import {useQuery} from '@apollo/client/react'
 
 
 const Query = gql`
   query Query {
-    name
+    username
   }
 `;
 
-// export default async function getServerSideProps (context){
-//   const apolloClient = initializeApollo()
 
-//   await apolloClient.query({
-//     query: Query
-//   })
 
-//   return {
-//     props: {
-//       initialApolloState: apolloClient.cache.extract(),
-//     }
-//   }
-// }
-
-const Index = ({}) => {
-
+const Index = () => {
+  const {data} = useQuery(Query)
   return(
   <Container height="100vh">  
+  {JSON.stringify(data)}
   <LoginForm/> 
-    <Button onClick={(()=> console.log())}></Button>
+    <Button onClick={(()=> console.log(data))}></Button>
     <Button onClick={(() => console.log('dsad'))}></Button>
   </Container>
 )
 }
 
-export default Index
+export default withApollo({ ssr: true })(Index)
+
+  
