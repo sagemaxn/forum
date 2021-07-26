@@ -1,43 +1,30 @@
-import { createWithApollo } from "./createWithApollo";
-import { ApolloClient, InMemoryCache } from "@apollo/client";
-//import { PaginatedPosts } from "../generated/graphql";
-import { NextPageContext } from "next";
 
-const createClient = (ctx: NextPageContext) =>
-  new ApolloClient({
-    uri: 'http://localhost:4000/graphql', 
-    credentials: "include",
-    headers: {
-      cookie:
-        (typeof window === "undefined"
-          ? ctx?.req?.headers.cookie
-          : undefined) || "",
-    },
-    cache: new InMemoryCache(),
-  });
+import { ApolloClient,ApolloProvider, DefaultOptions, HttpLink, InMemoryCache } from "@apollo/client";
+import { useRouter } from 'next/router'
+import nextwithApollo from 'next-with-apollo'
 
-export const withApollo = createWithApollo(createClient);
+const withApollo = nextwithApollo(
+  ({initialState, headers}) => {
+    return new ApolloClient({
+      ssrMode: typeof window === 'undefined',
+      link: new HttpLink({
+        uri: "http://localhost:4000/graphql",
+      }),
+      headers: {
+        ...(headers as Record<string, string>),
+      },
+      cache: new InMemoryCache().restore(initialState || {}),
+    })
+  },
+  {
+    render: ({ Page, props }) => {
+      const router = useRouter();
+      return <ApolloProvider client={props.apollo}>
+      <Page{...props} {...router} />
 
+      </ApolloProvider>
+    }
+  }
+  )
 
-// // lib/withApollo.js
-// import withApollo from 'next-with-apollo';
-// import {ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-
-
-// export default withApollo(
-//   ({ initialState }) => {
-//     return new ApolloClient({
-//       uri: 'http://localhost:4000/graphql',
-//       cache: new InMemoryCache().restore(initialState || {})
-//     });
-//   },
-//   {
-//     render: ({ Page, props }) => {
-//       return (
-//         <ApolloProvider client={props.apollo}>
-//           <Page {...props} />
-//         </ApolloProvider>
-//       );
-//     }
-//   }
-// );
+export default withApollo
