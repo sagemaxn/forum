@@ -4,7 +4,7 @@ import * as Express from "express";
 import "reflect-metadata";
 import {verify} from 'jsonwebtoken'
 const cookieParser = require('cookie-parser')
-import * as cors from 'cors'
+const cors = require('cors')
 
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema , UseMiddleware } from "type-graphql";
@@ -16,7 +16,23 @@ require("dotenv").config();
 //console.log(process.env.MONGODB_URI);
 const app = Express();
   app.use(cookieParser())
-  app.use(cors())
+  app.use(
+    cors({
+      origin: 'http://localhost:3001',
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      credentials: true,
+    }),
+  );
+
+  function context(ctx) {
+    return {
+      // expose the cookie helper in the GraphQL context object
+      cookie: ctx.res.cookie,
+      // allow queries and mutations to look for an `isMe` boolean in the context object
+      
+    }
+  }
+  
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -46,9 +62,9 @@ const main = async () => {
   const apolloServer = new ApolloServer({
     schema,
     context: async ({ req, res }) => {
-      console.log(req.headers.authorization)
+      console.log(req.cookies)
     //  console.log(req.cookies)
-    //  req.headers.cookie = req.cookies
+    //  req.headers.cookie = req.cookie
     //   const auth = req ? req.headers.authorization : null
     //   if (auth && auth.toLowerCase().startsWith('bearer ')) {
     //     const decodedToken = verify(

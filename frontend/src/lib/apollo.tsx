@@ -1,14 +1,15 @@
 
 import { ApolloClient,ApolloProvider, DefaultOptions, HttpLink, InMemoryCache } from "@apollo/client";
 import { useRouter } from 'next/router'
-import nextwithApollo from 'next-with-apollo'
+import nextWithApollo from 'next-with-apollo'
 
-const withApollo = nextwithApollo(
-  ({initialState, headers}) => {
+const withApollo = nextWithApollo(
+  ({initialState, headers, ctx}) => {
     return new ApolloClient({
       ssrMode: typeof window === 'undefined',
       link: new HttpLink({
         uri: "http://localhost:4000/graphql",
+        credentials: 'include'
       }),
       headers: {
         ...(headers as Record<string, string>),

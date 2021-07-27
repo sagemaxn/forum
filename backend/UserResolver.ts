@@ -19,11 +19,13 @@ export class UserResolver {
 
   @Query(() => RefreshToken)
   checkAuth(
-    @Ctx() { req }
+    @Ctx() { req, cookie }
   ): RefreshToken{
-    console.log('dasdsa')
-    if(req.signedCookies.jid){
-     const token = req.signedCookies
+    console.log(cookie)
+    console.log(req.signedCookies.jid)
+
+    if(req.ookies.jid){
+     const token = req.cookies.jid
       
  
     //   //done next
@@ -33,7 +35,7 @@ export class UserResolver {
    
       
      }
-     else return {refreshToken: 'dsas'}
+     else return {refreshToken: 'no token'}
    
   }
 

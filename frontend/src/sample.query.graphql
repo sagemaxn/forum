@@ -4,3 +4,12 @@ mutation Reg{
     username
   }
 }
+query Bye{
+  bye
+}
+
+query auth{
+  checkAuth{
+    refreshToken
+  }
+}
