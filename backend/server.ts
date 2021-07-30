@@ -15,25 +15,18 @@ require("dotenv").config();
 
 //console.log(process.env.MONGODB_URI);
 const app = Express();
-  app.use(cookieParser())
+
+
+  
   app.use(
     cors({
-      origin: 'http://localhost:3001',
+      //origin: 'http://localhost:3000',
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true,
     }),
   );
-
-  function context(ctx) {
-    return {
-      // expose the cookie helper in the GraphQL context object
-      cookie: ctx.res.cookie,
-      // allow queries and mutations to look for an `isMe` boolean in the context object
-      
-    }
-  }
   
-
+app.use(cookieParser())  
 const MONGODB_URI = process.env.MONGODB_URI;
 
 mongoose
@@ -57,25 +50,12 @@ const main = async () => {
 
   const schema = await buildSchema({
     resolvers: [UserResolver],
-    emitSchemaFile: true
+    //emitSchemaFile: true
   });
   const apolloServer = new ApolloServer({
     schema,
     context: async ({ req, res }) => {
-      console.log(req.cookies)
-    //  console.log(req.cookies)
-    //  req.headers.cookie = req.cookie
-    //   const auth = req ? req.headers.authorization : null
-    //   if (auth && auth.toLowerCase().startsWith('bearer ')) {
-    //     const decodedToken = verify(
-    //       auth.substring(7), process.env.JWT_SECRET
-    //     )
-    //     console.log(decodedToken)
-    //     //const currentUser = await UserModel.findById(decodedToken)
-    //     //console.log(currentUser)
-    //     const payload = decodedToken
-      //   return { res, payload }
-      // }
+
       return { res, req, payload: "asd" }
     }
   });

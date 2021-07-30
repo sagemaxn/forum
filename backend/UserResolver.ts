@@ -10,6 +10,8 @@ import { resolve } from "path";
 //import e = require("express");
 import { parseType } from "graphql";
 
+import { get } from 'lodash'
+
 @Resolver()
 export class UserResolver {
   @Query(() => User)
@@ -19,19 +21,19 @@ export class UserResolver {
 
   @Query(() => RefreshToken)
   checkAuth(
-    @Ctx() { req, cookie }
+    @Ctx() { req }
   ): RefreshToken{
-    console.log(cookie)
-    console.log(req.signedCookies.jid)
-
-    if(req.ookies.jid){
-     const token = req.cookies.jid
+    
+   console.log(get(req, 'cookies.jid'))
+    const jid = get(req, 'cookies.jid')
+    if(jid){
+     
       
  
     //   //done next
     //   //multiple cookies?
     //   //console.log(req.headers.authorization)
-    return {refreshToken: JSON.stringify(token)}
+    return {refreshToken: jid}
    
       
      }

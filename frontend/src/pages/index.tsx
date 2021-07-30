@@ -2,13 +2,13 @@ import {
   Link as ChakraLink,
   Button
 } from '@chakra-ui/react'
-import { getDataFromTree } from '@apollo/client/react/ssr'
+
 import cookie from 'cookie'
-import withApollo from '../lib/apollo'
 
 import {useByeQuery, useAuthQuery} from '../generated/graphql'
 import { Container } from '../components/Container'
 import LoginForm from '../components/LoginForm'
+import { initializeApollo, addApolloState } from '../lib/apollo'
 
 
 const Index = ({ctx}) => {
@@ -25,7 +25,19 @@ const Index = ({ctx}) => {
 )
 }
 
+export async function getServerSideProps() {
+  const apolloClient = initializeApollo()
 
-export default withApollo(Index, {getDataFromTree})
+  await apolloClient.query({
+    query: ALL_POSTS_QUERY,
+    variables: allPostsQueryVars,
+  })
+
+  return addApolloState(apolloClient, {
+    props: {},
+  })
+}
+
+export default Index
 
   
