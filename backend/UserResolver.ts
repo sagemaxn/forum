@@ -77,6 +77,19 @@ export class UserResolver {
     // user.password = null
     return user;
   }
+  @Query(()=> LoginToken)
+  async cookie(
+    @Ctx() {res}
+  ): Promise<LoginToken> {
+    res.cookie('jid', sign({ payload: 'this is a coookie' }, process.env.JWT_REFRESH, {
+      expiresIn: "5d"
+  }),
+  {
+      httpOnly: true,
+  })
+  return {token: "ndsjadan"}
+  }
+
   @Mutation(() => LoginToken)
   async login(
     @Arg("input") { username, password }: UserInput,

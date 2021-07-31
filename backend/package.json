@@ -19,6 +19,7 @@
     "@types/node": "^15.12.5",
     "apollo-server": "^2.25.2",
     "apollo-server-express": "^2.25.2",
+    "apollo-server-plugin-http-headers": "^0.1.4",
     "bcrypt": "^5.0.1",
     "bcryptjs": "^2.4.3",
     "class-validator": "^0.13.1",

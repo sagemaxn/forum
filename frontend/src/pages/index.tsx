@@ -11,30 +11,40 @@ import LoginForm from '../components/LoginForm'
 import { initializeApollo, addApolloState } from '../lib/apollo'
 
 
-const Index = ({ctx}) => {
-  console.log(ctx)
-  const {data} = useByeQuery()
-  const auth = useAuthQuery()
+const Index = ({data}) => {
+  console.log(data)
+  // const {data} = useByeQuery()
+  // const auth = useAuthQuery()
   return(
   <Container height="100vh">  
-  <div>{JSON.stringify(auth.data)}</div>
+  <div>{JSON.stringify(data)}</div>
   <LoginForm/> 
     <Button onClick={(()=> console.log(data))}></Button>
     <Button onClick={(() => console.log('dsad'))}></Button>
   </Container>
 )
 }
+import {AuthDocument, LoginDocument} from '../generated/graphql'
+import {gql} from '@apollo/client'
 
 export async function getServerSideProps() {
   const apolloClient = initializeApollo()
+  const login = await apolloClient.query({
+    query: gql`
+    {
+      cookie{
+        token
+      }
+    }
+      `,
+  })
 
-  await apolloClient.query({
-    query: ALL_POSTS_QUERY,
-    variables: allPostsQueryVars,
+  const auth = await apolloClient.query({
+    query: AuthDocument
   })
 
   return addApolloState(apolloClient, {
-    props: {},
+    props: {data: auth, login: login},
   })
 }
 

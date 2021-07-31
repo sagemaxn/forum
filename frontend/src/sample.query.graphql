@@ -13,3 +13,9 @@ query auth{
     refreshToken
   }
 }
+
+mutation Login{
+  login(input: {username: "mrsmith" password: "password"}){
+    token
+  }
+}
