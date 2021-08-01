@@ -18,25 +18,33 @@ export class UserResolver {
   query() {
     return {username: "d", password: "password"}
   }
-
   @Query(() => RefreshToken)
   checkAuth(
-    @Ctx() { req }
+    @Ctx() { req },
+    @Arg('cookie') cookie: string
   ): RefreshToken{
-    
-   console.log(get(req, 'cookies.jid'))
-    const jid = get(req, 'cookies.jid')
-    if(jid){
+    console.log(cookie)
+   // console.log(get(cookie)
+   //  //const jid = get(req, 'cookies.jid')
+   //  if(jid){
      
-      
+      //add arg, 
  
     //   //done next
     //   //multiple cookies?
     //   //console.log(req.headers.authorization)
-    return {refreshToken: jid}
+    // return {refreshToken: jid}
    
       
-     }
+    //  }
+    if(cookie!== ''){
+      console.log('it is not empty')
+      console.log(cookie)
+      //console.log(verify(cookie, process.env.JWT_REFRESH))
+
+      return {refreshToken: 'token!'}
+    }
+
      else return {refreshToken: 'no token'}
    
   }
@@ -79,15 +87,15 @@ export class UserResolver {
   }
   @Query(()=> LoginToken)
   async cookie(
-    @Ctx() {res}
+    @Ctx() {res, req}
   ): Promise<LoginToken> {
-    res.cookie('jid', sign({ payload: 'this is a coookie' }, process.env.JWT_REFRESH, {
+    res.cookie('yum', sign({ payload: 'this is a coookie' }, process.env.JWT_REFRESH, {
       expiresIn: "5d"
   }),
   {
       httpOnly: true,
   })
-  return {token: "ndsjadan"}
+  return {token: JSON.stringify(get(req, 'cookies.jid') || 'no')}
   }
 
   @Mutation(() => LoginToken)

@@ -20,9 +20,8 @@ const app = Express();
   
   app.use(
     cors({
-      //origin: 'http://localhost:3000',
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-      credentials: true,
+      origin: 'http://localhost:3000',
+      credentials: true
     }),
   );
   

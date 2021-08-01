@@ -8,11 +8,6 @@ query Bye{
   bye
 }
 
-query auth{
-  checkAuth{
-    refreshToken
-  }
-}
 
 mutation Login{
   login(input: {username: "mrsmith" password: "password"}){

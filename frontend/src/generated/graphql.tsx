@@ -41,6 +41,12 @@ export type Query = {
   query: User;
   checkAuth: RefreshToken;
   bye: Scalars['String'];
+  cookie: LoginToken;
+};
+
+
+export type QueryCheckAuthArgs = {
+  cookie: Scalars['String'];
 };
 
 export type RefreshToken = {
@@ -166,7 +172,7 @@ export type ByeLazyQueryHookResult = ReturnType<typeof useByeLazyQuery>;
 export type ByeQueryResult = Apollo.QueryResult<ByeQuery, ByeQueryVariables>;
 export const AuthDocument = gql`
     query auth {
-  checkAuth {
+  checkAuth(cookie: "cook") {
     refreshToken
   }
 }
