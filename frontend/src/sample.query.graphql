@@ -1,4 +1,6 @@
 
+
+
 mutation Reg{
   createUser(input: {username: "dsad" password: "dsad"}){
     username
@@ -12,5 +14,11 @@ query Bye{
 mutation Login{
   login(input: {username: "mrsmith" password: "password"}){
     token
+  }
+}
+
+query Auth($cookie: String!) {
+  checkAuth(cookie: $cookie) {
+  refreshToken
   }
 }
