@@ -39,7 +39,7 @@ export type MutationLoginArgs = {
 export type Query = {
   __typename?: 'Query';
   query: User;
-  checkAuth: RefreshToken;
+  checkAuth: LoginToken;
   bye: Scalars['String'];
   cookie: LoginToken;
 };
@@ -47,11 +47,6 @@ export type Query = {
 
 export type QueryCheckAuthArgs = {
   cookie: Scalars['String'];
-};
-
-export type RefreshToken = {
-  __typename?: 'RefreshToken';
-  refreshToken: Scalars['String'];
 };
 
 export type User = {
@@ -83,7 +78,10 @@ export type ByeQuery = (
   & Pick<Query, 'bye'>
 );
 
-export type LoginMutationVariables = Exact<{ [key: string]: never; }>;
+export type LoginMutationVariables = Exact<{
+  username: Scalars['String'];
+  password: Scalars['String'];
+}>;
 
 
 export type LoginMutation = (
@@ -102,8 +100,8 @@ export type AuthQueryVariables = Exact<{
 export type AuthQuery = (
   { __typename?: 'Query' }
   & { checkAuth: (
-    { __typename?: 'RefreshToken' }
-    & Pick<RefreshToken, 'refreshToken'>
+    { __typename?: 'LoginToken' }
+    & Pick<LoginToken, 'token'>
   ) }
 );
 
@@ -173,8 +171,8 @@ export type ByeQueryHookResult = ReturnType<typeof useByeQuery>;
 export type ByeLazyQueryHookResult = ReturnType<typeof useByeLazyQuery>;
 export type ByeQueryResult = Apollo.QueryResult<ByeQuery, ByeQueryVariables>;
 export const LoginDocument = gql`
-    mutation Login {
-  login(input: {username: "mrsmith", password: "password"}) {
+    mutation Login($username: String!, $password: String!) {
+  login(input: {username: $username, password: $password}) {
     token
   }
 }
@@ -194,6 +192,8 @@ export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutati
  * @example
  * const [loginMutation, { data, loading, error }] = useLoginMutation({
  *   variables: {
+ *      username: // value for 'username'
+ *      password: // value for 'password'
  *   },
  * });
  */
@@ -207,7 +207,7 @@ export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, Log
 export const AuthDocument = gql`
     query Auth($cookie: String!) {
   checkAuth(cookie: $cookie) {
-    refreshToken
+    token
   }
 }
     `;

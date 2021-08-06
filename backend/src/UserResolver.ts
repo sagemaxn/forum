@@ -18,34 +18,36 @@ export class UserResolver {
   query() {
     return {username: "d", password: "password"}
   }
-  @Query(() => RefreshToken)
+  @Query(() => LoginToken)
   checkAuth(
-    @Ctx() { req },
+    @Ctx() { req, res },
     @Arg('cookie') cookie: string
-  ): RefreshToken{
-    console.log(cookie)
-   // console.log(get(cookie)
-   //  //const jid = get(req, 'cookies.jid')
-   //  if(jid){
-     
-      //add arg, 
+  ): LoginToken{
  
-    //   //done next
-    //   //multiple cookies?
-    //   //console.log(req.headers.authorization)
-    // return {refreshToken: jid}
-   
-      
-    //  }
-    if(cookie!== ''){
-      console.log('it is not empty')
-      console.log(cookie)
-      //console.log(verify(cookie, process.env.JWT_REFRESH))
+    if(cookie && cookie !== 'no refresh'){
+    
+      try{
+      const payload = verify(cookie, process.env.JWT_REFRESH)
+      console.log(payload)
+      res.cookie('jid',
+      sign({ userID: 'meme' }, process.env.JWT_REFRESH, {
+          expiresIn: "5d"
+      }),
+      {
+          httpOnly: true,
+      })
 
-      return {refreshToken: 'token!'}
+return {
+token: sign({ userID: 'user[0]._id', test: "test" }, process.env.JWT_SECRET, { expiresIn: "60m" }),
+};
+      }
+      catch(err){
+    
+      return {token: 'yes but invalid'}
     }
+  }
 
-     else return {refreshToken: 'no token'}
+     else return {token: 'no'}
    
   }
 
@@ -113,7 +115,7 @@ export class UserResolver {
     if (user && passwordCorrect) {
       console.log('should wokr')
         res.cookie('jid',
-                    sign({ userID: user[0]._id, test: "test", }, process.env.JWT_REFRESH, {
+                    sign({ userID: user[0]._id }, process.env.JWT_REFRESH, {
                         expiresIn: "5d"
                     }),
                     {

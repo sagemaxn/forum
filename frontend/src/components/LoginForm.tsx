@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 
 import { gql } from "@apollo/client";
-import { useRegMutation } from '../generated/graphql'
+import { useLoginMutation } from '../generated/graphql'
 
 const query = {
   query: gql`
@@ -28,7 +28,7 @@ const MUTATION = gql`
 `;
 
 function LoginForm() {
-  const [login, { data }] = useRegMutation(MUTATION);
+  const [login, { data }] = useLoginMutation();
   const [toggle, setToggle] = useState(true);
 
   function validateName(value: string) {

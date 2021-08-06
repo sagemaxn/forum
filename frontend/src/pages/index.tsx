@@ -21,16 +21,16 @@ import { initializeApollo, addApolloState } from '../lib/apollo'
   `
 
 
-const Index = ({login, data, token}) => {
+const Index = ({auth, data, token}) => {
   console.log(data)
   // const {data} = useByeQuery()
-  const auth = useQuery(AUTH, {variables:{cookie: token}})
+ // const auth = useQuery(AUTH, {variables:{cook: token || 'your mom'}})
 
 
   return(
   <Container height="100vh">  
-  <div>{JSON.stringify(token)}</div>
-  <div>{JSON.stringify(auth)}</div>
+ 
+  <div>{JSON.stringify(data)}</div>
   <LoginForm/> 
     <Button onClick={(()=> console.log(data))}></Button>
     <Button onClick={(() => console.log('dsad'))}></Button>
@@ -42,7 +42,7 @@ import {gql} from '@apollo/client'
 
 export async function getServerSideProps({req, res}) {
   const apolloClient = initializeApollo()
-  const cook = req.cookies.jid.substring(4)
+  const cook = req.cookies.jid || 'no refresh'
   console.log(cook)
   const auth = await apolloClient.query({
     query: AuthDocument,
@@ -55,7 +55,7 @@ export async function getServerSideProps({req, res}) {
   // })
 
   return addApolloState(apolloClient, {
-    props: {data: auth, token: req.cookies.jid || ''},
+    props: {data: auth},
   })
 }
 

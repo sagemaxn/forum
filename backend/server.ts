@@ -8,7 +8,7 @@ const cors = require('cors')
 
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema , UseMiddleware } from "type-graphql";
-import { UserResolver } from "./UserResolver";
+import { UserResolver } from "./src/UserResolver";
 import {UserModel} from './models/User'
 
 require("dotenv").config();
