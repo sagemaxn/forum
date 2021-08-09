@@ -1,41 +1,60 @@
 import {
-  FormControl,
+  Button,
+  Input,
   FormLabel,
+  FormControl,
   FormErrorMessage,
-  FormHelperText,
-} from "@chakra-ui/react"
+  Link,
+} from "@chakra-ui/react";
+import { Formik, Form, Field } from "formik";
+import { useState } from "react";
+import { useRegMutation } from "../generated/graphql";
 
-import Formik from 'formik'
-
-function RegisterForm(){
-  function validateName(value) {
-    let error
+function RegisterForm() {
+  const [toggle, setToggle] = useState(true);
+  const [register, { data }] = useRegMutation();
+  function validateName(value: string) {
+    let error: string;
     if (!value) {
-      error = "Name is required"
-    } else if (value.toLowerCase() !== "naruto") {
-      error = "Jeez! You're not a fan 😱"
+      error = "Name is required";
     }
-    return error
+    return error;
   }
 
   return (
     <Formik
-      initialValues={{ name: "Sasuke" }}
-      onSubmit={(values, actions) => {
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2))
-          actions.setSubmitting(false)
-        }, 1000)
+      initialValues={{ username: "", password: "" }}
+      onSubmit={async (values, actions) => {
+        await register({ variables: values });
+
+        actions.setSubmitting(false);
       }}
     >
       {(props) => (
         <Form>
-          <Field name="name" validate={validateName}>
+          <Field name="username" validate={validateName}>
             {({ field, form }) => (
-              <FormControl isInvalid={form.errors.name && form.touched.name}>
-                <FormLabel htmlFor="name">First name</FormLabel>
-                <Input {...field} id="name" placeholder="name" />
+              <FormControl>
+                <FormLabel htmlFor="username">First name</FormLabel>
+                <Input {...field} id="username" placeholder="username" />
                 <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+              </FormControl>
+            )}
+          </Field>
+          <Field name="password" validate={validateName}>
+            {({ field, form }) => (
+              <FormControl>
+                <FormLabel htmlFor="password">First name</FormLabel>
+                <Input
+                  {...field}
+                  id="password"
+                  placeholder="password"
+                  type={toggle ? "password" : "input"}
+                />
+                <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                <Button onClick={() => setToggle(!toggle)}>
+                  {toggle ? "unmask password" : "mask password"}
+                </Button>
               </FormControl>
             )}
           </Field>
@@ -45,12 +64,13 @@ function RegisterForm(){
             isLoading={props.isSubmitting}
             type="submit"
           >
-            Submit
+            Login
           </Button>
+          <Link href="/register">Register</Link>
         </Form>
       )}
     </Formik>
-  )
+  );
 }
 
-export default RegisterForm
+export default RegisterForm;

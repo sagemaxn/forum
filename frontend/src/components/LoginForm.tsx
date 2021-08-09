@@ -9,23 +9,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 
-import { gql } from "@apollo/client";
 import { useLoginMutation } from '../generated/graphql'
-
-const query = {
-  query: gql`
-    query {
-      hello
-    }
-  `,
-};
-const MUTATION = gql`
-  mutation Login($username: String!, $password: String!) {
-    login(input: { username: $username, password: $password }) {
-      token
-    }
-  }
-`;
 
 function LoginForm() {
   const [login, { data }] = useLoginMutation();
@@ -38,15 +22,18 @@ function LoginForm() {
     }
     return error;
   }
-
+interface valuesInt {
+  password: string
+  username: string
+}
   return (
     <Formik
-      initialValues={{}}
-      onSubmit={async (values, actions) => {
-        console.log(values);
-        const data = await login({ variables: values });
-        console.log(data);
-        
+    
+      initialValues={{username: "", password: ""}}
+      
+      onSubmit={async (values, actions) => {  
+        await login({ variables: values});
+       
         actions.setSubmitting(false);
       }}
     >
@@ -86,7 +73,7 @@ function LoginForm() {
           >
             Login
           </Button>
-          <Link>Register</Link>
+          <Link href = '/register'>Register</Link>
         </Form>
       )}
     </Formik>

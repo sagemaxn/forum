@@ -1,8 +1,8 @@
 
 
 
-mutation Reg{
-  createUser(input: {username: "dsad" password: "dsad"}){
+mutation Reg($username: String!, $password: String!){
+  createUser(input: {username: $username, password: $password}){
     username
   }
 }
@@ -16,6 +16,9 @@ query Bye{
     }
   }
 
+mutation Logout{
+  logout
+}
 query Auth($cookie: String!) {
   checkAuth(cookie: $cookie) {
   token

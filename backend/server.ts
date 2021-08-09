@@ -2,30 +2,29 @@ const mongoose = require("mongoose");
 
 import * as Express from "express";
 import "reflect-metadata";
-import {verify} from 'jsonwebtoken'
-const cookieParser = require('cookie-parser')
-const cors = require('cors')
+import { verify } from "jsonwebtoken";
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 import { ApolloServer } from "apollo-server-express";
-import { buildSchema , UseMiddleware } from "type-graphql";
+import { buildSchema, UseMiddleware } from "type-graphql";
 import { UserResolver } from "./src/UserResolver";
-import {UserModel} from './models/User'
+import { UserModel } from "./models/User";
 
 require("dotenv").config();
 
 //console.log(process.env.MONGODB_URI);
 const app = Express();
 
+app.use(
+  cors({
+    credentials: true,
+    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
+    origin: "*",
+  })
+);
 
-  
-  app.use(
-    cors({
-      origin: 'http://localhost:3000',
-      credentials: true
-    }),
-  );
-  
-app.use(cookieParser())  
+app.use(cookieParser());
 const MONGODB_URI = process.env.MONGODB_URI;
 
 mongoose
@@ -43,10 +42,6 @@ mongoose
   });
 
 const main = async () => {
-  
-
-
-
   const schema = await buildSchema({
     resolvers: [UserResolver],
     //emitSchemaFile: true
@@ -54,9 +49,8 @@ const main = async () => {
   const apolloServer = new ApolloServer({
     schema,
     context: async ({ req, res }) => {
-
-      return { res, req, payload: "asd" }
-    }
+      return { res, req, payload: "asd" };
+    },
   });
 
   apolloServer.applyMiddleware({ app });

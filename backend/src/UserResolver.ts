@@ -1,79 +1,67 @@
-import { Resolver, Query, Mutation, Arg, Ctx, UseMiddleware } from "type-graphql";
-import {hash, compare} from "bcryptjs";
+import { Resolver, Query, Mutation, Arg, Ctx } from "type-graphql";
+import { hash, compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
-import {verify} from 'jsonwebtoken'
-import {JwtPayload} from 'jsonwebtoken'
+import { verify } from "jsonwebtoken";
 
-import { User, UserModel, UserInput, LoginToken, RefreshToken } from "./models/User";
-import { resolve } from "path";
-//import { Token } from "graphql";
-//import e = require("express");
-import { parseType } from "graphql";
+import {
+  User,
+  UserModel,
+  UserInput,
+  LoginToken,
+  RefreshToken,
+} from "./models/User";
 
-import { get } from 'lodash'
+import { get } from "lodash";
 
 @Resolver()
 export class UserResolver {
   @Query(() => User)
   query() {
-    return {username: "d", password: "password"}
+    return { username: "d", password: "password" };
   }
   @Query(() => LoginToken)
-  checkAuth(
+  async checkAuth(
     @Ctx() { req, res },
-    @Arg('cookie') cookie: string
-  ): LoginToken{
- 
-    if(cookie && cookie !== 'no refresh'){
-    
-      try{
-      const payload = verify(cookie, process.env.JWT_REFRESH)
-      console.log(payload)
-      res.cookie('jid',
-      sign({ userID: 'meme' }, process.env.JWT_REFRESH, {
-          expiresIn: "5d"
-      }),
-      {
-          httpOnly: true,
-      })
+    @Arg("cookie") cookie: string
+  ): Promise<LoginToken> {
+    if (cookie && cookie !== "no refresh") {
+      try {
+        const payload = verify(cookie, process.env.JWT_REFRESH);
 
-return {
-token: sign({ userID: 'user[0]._id', test: "test" }, process.env.JWT_SECRET, { expiresIn: "60m" }),
-};
+        let userID = JSON.stringify(payload).split(",")[0].slice(11, -1);
+        res.cookie(
+          "jid",
+          sign({ userID }, process.env.JWT_REFRESH, {
+            expiresIn: "5d",
+          }),
+          {
+            httpOnly: true,
+          }
+        );
+        const user = JSON.stringify(payload).split(",")[1].slice(8, -1);
+        console.log(user);
+        return {
+          token: sign({ userID, user }, process.env.JWT_SECRET, {
+            expiresIn: "60m",
+          }),
+        };
+      } catch (err) {
+        console.log(err);
+        return { token: "yes but invalid" };
       }
-      catch(err){
-    
-      return {token: 'yes but invalid'}
-    }
-  }
-
-     else return {token: 'no'}
-   
+    } else return { token: "no" };
   }
 
   @Query(() => String)
-  // @UseMiddleware(async ({context}, next) => {
-  //   //context.req.headers['auth']
-  //   if (context.req.headers.cookie){
-  //     console.log('headers')
-  //    return {token: context.req.headers.cookie}
-  //   }
-  //   else{
-  //     console.log('user not authorized')
-  //   }
-  //   return next()
-  // })
   bye() {
-    return "bye"
+    return "bye";
   }
 
   @Mutation(() => String)
-  ctx(
-    @Ctx() { res }
-    ): string {
-     //console.log(res)
-     //console.log(res.cookie)
-     return "test"
+  ctx(@Ctx() { res }): string {
+    //console.log(res)
+    //console.log(res.cookie)
+    return "test";
   }
 
   @Mutation(() => User)
@@ -87,17 +75,18 @@ token: sign({ userID: 'user[0]._id', test: "test" }, process.env.JWT_SECRET, { e
     // user.password = null
     return user;
   }
-  @Query(()=> LoginToken)
-  async cookie(
-    @Ctx() {res, req}
-  ): Promise<LoginToken> {
-    res.cookie('yum', sign({ payload: 'this is a coookie' }, process.env.JWT_REFRESH, {
-      expiresIn: "5d"
-  }),
-  {
-      httpOnly: true,
-  })
-  return {token: JSON.stringify(get(req, 'cookies.jid') || 'no')}
+  @Query(() => LoginToken)
+  async cookie(@Ctx() { res, req }): Promise<LoginToken> {
+    res.cookie(
+      "yum",
+      sign({ payload: "this is a coookie" }, process.env.JWT_REFRESH, {
+        expiresIn: "5d",
+      }),
+      {
+        httpOnly: true,
+      }
+    );
+    return { token: JSON.stringify(get(req, "cookies.jid") || "no") };
   }
 
   @Mutation(() => LoginToken)
@@ -107,27 +96,47 @@ token: sign({ userID: 'user[0]._id', test: "test" }, process.env.JWT_SECRET, { e
   ): Promise<LoginToken> {
     //console.log(con)
     const user = await UserModel.find({ username: username });
-    console.log(user)
+    console.log(user);
     //console.log(username, user[0].password, password, user.password)
     const passwordCorrect = await compare(password, user[0].password);
     //return{token: "dsaddsds"}
     //console.log(res)
     if (user && passwordCorrect) {
-      console.log('should wokr')
-        res.cookie('jid',
-                    sign({ userID: user[0]._id }, process.env.JWT_REFRESH, {
-                        expiresIn: "5d"
-                    }),
-                    {
-                        httpOnly: true,
-                    })
-
+      console.log("should wokr");
+      const payload = res.cookie(
+        "jid",
+        sign(
+          { userID: user[0]._id, user: user[0].username },
+          process.env.JWT_REFRESH,
+          {
+            expiresIn: "5d",
+          }
+        ),
+        {
+          httpOnly: true,
+        }
+      );
+      console.log(user[0].username);
       return {
-        token: sign({ userID: user[0]._id, test: "test" }, process.env.JWT_SECRET, { expiresIn: "60m" }),
+        token: sign(
+          { userID: user[0]._id, user: user[0].username },
+          process.env.JWT_SECRET,
+          { expiresIn: "60m" }
+        ),
       };
     } else {
       //console.log("invalid");
       return { token: "ddd" };
     }
+  }
+  @Mutation(() => Boolean)
+  logout(@Ctx() { res }): boolean {
+    res.cookie(
+      "jid",
+      sign({ user: "" }, process.env.JWT_REFRESH, {
+        expiresIn: "0s",
+      })
+    );
+    return true;
   }
 }
