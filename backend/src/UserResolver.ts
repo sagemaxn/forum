@@ -34,9 +34,9 @@ export class UserResolver {
           sign({ userID }, process.env.JWT_REFRESH, {
             expiresIn: "5d",
           }),
-          {
-            httpOnly: true,
-          }
+          // {
+          //   httpOnly: true,
+          // }
         );
         const user = JSON.stringify(payload).split(",")[1].slice(8, -1);
         console.log(user);
@@ -82,9 +82,9 @@ export class UserResolver {
       sign({ payload: "this is a coookie" }, process.env.JWT_REFRESH, {
         expiresIn: "5d",
       }),
-      {
-        httpOnly: true,
-      }
+      // {
+      //   httpOnly: true,
+      // }
     );
     return { token: JSON.stringify(get(req, "cookies.jid") || "no") };
   }
@@ -112,9 +112,9 @@ export class UserResolver {
             expiresIn: "5d",
           }
         ),
-        {
-          httpOnly: true,
-        }
+        // {
+        //   httpOnly: true,
+        // }
       );
       console.log(user[0].username);
       return {
