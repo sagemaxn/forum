@@ -131,12 +131,7 @@ export class UserResolver {
   }
   @Mutation(() => Boolean)
   logout(@Ctx() { res }): boolean {
-    res.cookie(
-      "jid",
-      sign({ user: "" }, process.env.JWT_REFRESH, {
-        expiresIn: "0s",
-      })
-    );
+    res.cookie.jid.expiresIn = "Thu, 01 Jan 1970 00:00:00 GMT"
     return true;
   }
 }
