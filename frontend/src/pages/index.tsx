@@ -13,7 +13,7 @@ import {
 import { Container } from "../components/Container";
 import LoginForm from "../components/LoginForm";
 import { initializeApollo, addApolloState } from "../lib/apollo";
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 
 const Index = ({ auth, data, token }) => {
   const [loggedIn, setLoggedIn] = useState(false)
@@ -22,7 +22,7 @@ const Index = ({ auth, data, token }) => {
   function logoutF() {
     logout;
   }
-
+useEffect(()=>{
   if (data) {
     const tok = data.data.checkAuth.token;
     const decoded = decode(tok);
@@ -33,19 +33,19 @@ const Index = ({ auth, data, token }) => {
     else{
       setLoggedIn(false)
     }
-  }
-
+  }},[]
+)
   return (
     <>
-    {<Container height="100vh">
+    {!loggedIn && <Container height="100vh">
       <div>{JSON.stringify(data)}</div>
       <LoginForm />
       <Button onClick={() => console.log(data)}></Button>
       <Button onClick={() => "olknkl"}></Button>
-  </Container> && !loggedIn}
+  </Container>}
 
   
-      { <> 
+      {loggedIn && <> 
         <Flex
     as="nav"
     align="center"
@@ -62,7 +62,7 @@ const Index = ({ auth, data, token }) => {
         <Container>
           posts
         </Container>
-</> && loggedIn}
+</>}
 
         </>
  
