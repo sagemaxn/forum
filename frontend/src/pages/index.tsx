@@ -33,7 +33,7 @@ useEffect(()=>{
     else{
       setLoggedIn(false)
     }
-  }},[]
+  }},[loggedIn]
 )
   return (
     <>

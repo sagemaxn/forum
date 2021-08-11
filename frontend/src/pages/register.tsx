@@ -7,7 +7,11 @@ const register = ({loggedIn}) => {
     if(loggedIn){
         router.push('/')
     }
-  return <RegisterForm></RegisterForm>;
+  return <>
+  {loggedIn}
+  <RegisterForm></RegisterForm>
+  
+  </>;
 };
 
 export default register;

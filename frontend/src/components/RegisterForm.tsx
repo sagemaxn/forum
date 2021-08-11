@@ -9,6 +9,7 @@ import {
 import { Formik, Form, Field } from "formik";
 import { useState } from "react";
 import { useRegMutation } from "../generated/graphql";
+import {FormField} from '../components/FormField'
 
 function RegisterForm() {
   const [toggle, setToggle] = useState(true);
@@ -16,7 +17,7 @@ function RegisterForm() {
   function validateName(value: string) {
     let error: string;
     if (!value) {
-      error = "Name is required";
+      error = "username is required";
     }
     return error;
   }
@@ -32,41 +33,23 @@ function RegisterForm() {
     >
       {(props) => (
         <Form>
-          <Field name="username" validate={validateName}>
-            {({ field, form }) => (
-              <FormControl>
-                <FormLabel htmlFor="username">First name</FormLabel>
-                <Input {...field} id="username" placeholder="username" />
-                <FormErrorMessage>{form.errors.name}</FormErrorMessage>
-              </FormControl>
-            )}
-          </Field>
-          <Field name="password" validate={validateName}>
-            {({ field, form }) => (
-              <FormControl>
-                <FormLabel htmlFor="password">First name</FormLabel>
-                <Input
-                  {...field}
-                  id="password"
-                  placeholder="password"
-                  type={toggle ? "password" : "input"}
-                />
-                <FormErrorMessage>{form.errors.name}</FormErrorMessage>
-                <Button onClick={() => setToggle(!toggle)}>
+          <FormField>
+
+          </FormField>
+         <FormField>
+         <Button onClick={() => setToggle(!toggle)}>
                   {toggle ? "unmask password" : "mask password"}
                 </Button>
-              </FormControl>
-            )}
-          </Field>
+         </FormField>
           <Button
             mt={4}
             colorScheme="teal"
             isLoading={props.isSubmitting}
             type="submit"
           >
-            Login
+            Register
           </Button>
-          <Link href="/register">Register</Link>
+          <Link href="/">Back</Link>
         </Form>
       )}
     </Formik>
