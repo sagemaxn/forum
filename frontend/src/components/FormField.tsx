@@ -10,12 +10,19 @@ import {
   import { Formik, Form, Field } from "formik";
 
 
-function FormField({ name, label, validate, toggle, ...rest }) {
+interface propTypes {
+    name: string,
+    toggle?: boolean,
+    //validate: (value: string) => string,
+    children?: any
+  }
+function FormField({ name, toggle, children, ...rest }: propTypes) {
+    //console.log(props)
   return (
-        <Field name={name} validate={validate}>
+        <Field name={name}>
             {({ field, form }) => (
               <FormControl>
-                <FormLabel htmlFor={name}>username</FormLabel>
+                <FormLabel htmlFor={name}>{name}</FormLabel>
                 <Input {...field} id={name} placeholder={name} type={toggle ? "password" : "input"}/>
                 <FormErrorMessage>{form.errors.name}</FormErrorMessage>
               </FormControl>
