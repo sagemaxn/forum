@@ -11,10 +11,13 @@ import {
 
 import FormField from "../components/FormField";
 import { useLoginMutation } from "../generated/graphql";
+import { bool } from "yup";
+import {useRouter} from 'next/router'
 
-function LoginForm() {
+function LoginForm({setForm, form}) {
   const [login, { data }] = useLoginMutation();
   const [toggle, setToggle] = useState(true);
+  const [boolean, setBoolean] = useState(true)
 
   interface valuesInt {
     password: string;
@@ -25,7 +28,7 @@ function LoginForm() {
       initialValues={{ username: "", password: "" }}
       onSubmit={async (values, actions) => {
         await login({ variables: values });
-
+        //useRouter().push('/')
         actions.setSubmitting(false);
       }}
     >
@@ -42,7 +45,7 @@ function LoginForm() {
           >
             Login
           </Button>
-          <Link href="/register">Register</Link>
+          <Link onClick={(()=> setForm(!form))}>SignUp</Link>
         </Form>
       )}
     </Formik>

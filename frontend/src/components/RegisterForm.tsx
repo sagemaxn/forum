@@ -5,6 +5,7 @@ import {
   FormControl,
   FormErrorMessage,
   Link,
+  Text
 } from "@chakra-ui/react";
 import { Formik, Form, Field } from "formik";
 import { useState } from "react";
@@ -24,10 +25,9 @@ const SignupSchema = Yup.object().shape({
   //email: Yup.string().email('Invalid email').required('Required'),
 });
 
-function RegisterForm() {
+function RegisterForm({setForm, form}) {
   const [toggle, setToggle] = useState(true);
   const [register, { data }] = useRegMutation();
-
   return (
     <Formik
       initialValues={{ username: "", password: "" }}
@@ -53,9 +53,9 @@ function RegisterForm() {
             isLoading={props.isSubmitting}
             type="submit"
           >
-            Register
+            Sign Up
           </Button>
-          <Link href="/">Back</Link>
+          <Link onClick={(()=> setForm(!form))}>Back to login</Link>
         </Form>
       )}
     </Formik>
