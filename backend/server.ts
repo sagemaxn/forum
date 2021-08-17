@@ -9,7 +9,8 @@ const cors = require("cors");
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema, UseMiddleware } from "type-graphql";
 import { UserResolver } from "./src/UserResolver";
-import { UserModel } from "./models/User";
+import { PostResolver } from "./src/PostResolver"
+import { UserModel } from "./src/models/User";
 
 require("dotenv").config();
 
@@ -43,7 +44,7 @@ mongoose
 
 const main = async () => {
   const schema = await buildSchema({
-    resolvers: [UserResolver],
+    resolvers: [UserResolver, PostResolver],
     //emitSchemaFile: true
   });
   const apolloServer = new ApolloServer({

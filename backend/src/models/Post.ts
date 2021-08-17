@@ -15,7 +15,7 @@ export class Post {
   @prop({ type: String, required: false})
   public comments: string
 
-  @Field(() => Int)
+  @Field(() => Number)
   @prop({ type: String, required: false})
   public likes: number
 }
@@ -28,6 +28,12 @@ export class PostInput {
 
   @Field()
   content: string;
+
+  @Field()
+  comments?: string
+
+  @Field()
+  likes?: number
 }
 
 export const PostModel = getModelForClass(Post);

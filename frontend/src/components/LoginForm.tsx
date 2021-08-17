@@ -36,6 +36,9 @@ function LoginForm({setForm, form}) {
         <Form>
           <FormField name="username"></FormField>
           <FormField name="password" toggle={toggle}></FormField>
+          <Button onClick={() => setToggle(!toggle)}>
+            {toggle ? "unmask password" : "mask password"}
+          </Button>
 
           <Button
             mt={4}

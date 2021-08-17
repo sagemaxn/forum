@@ -1,19 +1,20 @@
 import { Resolver, Query, Mutation, Arg, Ctx} from 'type-graphql'
-import { Post, PostModel } from './models/Post'
+import { Post, PostModel, PostInput } from './models/Post'
 //import PostInput
 
-@Resolver
+@Resolver()
 export class PostResolver {
+  @Mutation(() => Post)
 	 async createPost(
     @Arg("input") { username, content, comments, likes }: PostInput
   ): Promise<Post> {
 	 	if(!likes){
 	 		likes = 0
 	 	}
-    //console.log(input)
-    //const user = await
-    // user.password = null
-    return post;
+     const post = await PostModel.create({ username, content, comments, likes });
+     post.save();
+     
+     return post;
   }
 }
 
