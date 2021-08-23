@@ -1,5 +1,7 @@
-import { ObjectType, InputType, Field } from "type-graphql";
+import { ObjectType, InputType, Field, Int, ID } from "type-graphql";
 import { prop, getModelForClass } from "@typegoose/typegoose";
+import { User } from './User'
+import { Comment } from './Comment'
 
 @ObjectType()
 export class Post {
@@ -11,14 +13,17 @@ export class Post {
   @prop({ type: String, required: true })
   public content: string;
 
-  @Field(() => String)
-  @prop({ type: String, required: false})
-  public comments: string
+  // @Field(() => String)
+  // @prop({ type: String, required: false})
+  @Field(() => [Comment])
+  @prop()
+  public comments: [Comment]
 
-  @Field(() => Number)
-  @prop({ type: String, required: false})
-  public likes: number
+  @Field(() => [ID])
+  @prop({ ref: User })
+  public likes: [any]
 }
+
 
 
 @InputType()
@@ -33,7 +38,7 @@ export class PostInput {
   comments?: string
 
   @Field()
-  likes?: number
+  likes?: string
 }
 
 export const PostModel = getModelForClass(Post);
