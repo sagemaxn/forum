@@ -15,10 +15,6 @@ import { get } from "lodash";
 
 @Resolver()
 export class UserResolver {
-  @Query(() => User)
-  query() {
-    return { username: "d", password: "password" };
-  }
   @Query(() => LoginToken)
   async checkAuth(
     @Ctx() { req, res },
@@ -50,18 +46,6 @@ export class UserResolver {
         return { token: "yes but invalid" };
       }
     } else return { token: "no" };
-  }
-
-  @Query(() => String)
-  bye() {
-    return "bye";
-  }
-
-  @Mutation(() => String)
-  ctx(@Ctx() { res }): string {
-    //console.log(res)
-    //console.log(res.cookie)
-    return "test";
   }
 
   @Mutation(() => User)
@@ -133,5 +117,27 @@ export class UserResolver {
   logout(@Ctx() { res }): boolean {
     res.cookie.jid.expiresIn = "Thu, 01 Jan 1970 00:00:00 GMT"
     return true;
+  }
+  @Query(() => [User])
+  async users(){
+    const users = await UserModel.find()
+    console.log(users)
+    return users
+  }
+  @Mutation(() => String)
+  async findUser(
+    @Arg('username') username : string){
+      try{
+        const user = await UserModel.find({username: username})
+        console.log(user)
+        if (user.length > 0){
+        return {user: user[0].username, posts: user[0].posts}
+      }
+      else return 'no user found'
+    }
+      catch(err){
+        console.error(err)
+      }
+      return 'no user found' 
   }
 }

@@ -21,7 +21,7 @@ const Navbar = () => {
           justify="end"
           wrap="wrap"
           padding={6}
-          bg="gold"
+          bg="green"
           color="white"
           // {...props}
         >

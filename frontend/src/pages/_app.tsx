@@ -5,6 +5,7 @@ import { AppProps } from "next/app";
 
 import { ApolloProvider } from "@apollo/client";
 import { useApollo } from "../../src/lib/apollo";
+import Layout from "../components/layout";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const client = useApollo(pageProps);
@@ -12,9 +13,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={client}>
       <ChakraProvider resetCSS theme={theme}>
-      
+        <Layout>
           <Component {...pageProps} />
-       
+        </Layout>
       </ChakraProvider>
     </ApolloProvider>
   );

@@ -1,12 +1,17 @@
+import { useQuery } from "@apollo/client";
 import { Container } from "../components/Container";
 import Layout from "../components/layout";
+import { usePostsQuery, PostsDocument } from "../generated/graphql";
+import { useFindUserMutation, FindUserDocument } from "../generated/graphql";
 
-const Index = ({ auth, data, token }) => {
- 
+const Index = ({ auth,  token }) => {
+
+  const { data, loading, error } = useQuery(PostsDocument)
+ if (loading) return 'loading'
   return (
-        <Layout>
-        <Container>posts</Container>
-        </Layout>
+
+  <Container>{JSON.stringify(data)}</Container>
+  
   );
 };
 

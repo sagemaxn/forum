@@ -23,6 +23,7 @@ const login = () => {
        }
     return (
       <Container height="100vh">
+        You must login to continue
       {form ? <LoginForm setForm={setForm} form={form}/> : <RegisterForm setForm={setForm} form={form}/>}
      </Container>
     )

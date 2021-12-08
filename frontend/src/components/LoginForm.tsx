@@ -8,6 +8,7 @@ import {
   FormErrorMessage,
   Link,
 } from "@chakra-ui/react";
+import { HiEye, HiEyeOff } from "react-icons/hi";
 
 import FormField from "../components/FormField";
 import { useLoginMutation } from "../generated/graphql";
@@ -28,7 +29,7 @@ function LoginForm({setForm, form}) {
       initialValues={{ username: "", password: "" }}
       onSubmit={async (values, actions) => {
         await login({ variables: values });
-        //useRouter().push('/')
+        useRouter().push('/')
         actions.setSubmitting(false);
       }}
     >
@@ -36,8 +37,8 @@ function LoginForm({setForm, form}) {
         <Form>
           <FormField name="username"></FormField>
           <FormField name="password" toggle={toggle}></FormField>
-          <Button onClick={() => setToggle(!toggle)}>
-            {toggle ? "unmask password" : "mask password"}
+          <Button onClick={() => setToggle(!toggle)} zIndex='3'>
+            {toggle ? <HiEyeOff/> : <HiEye/>}
           </Button>
 
           <Button

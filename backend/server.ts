@@ -17,13 +17,14 @@ require("dotenv").config();
 //console.log(process.env.MONGODB_URI);
 const app = Express();
 
-app.use(
-  cors({
-    credentials: true,
-    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
-    origin: 'http://localhost:3000',
-  })
-);
+// app.use(
+//   cors({
+//     "origin": "*",
+//     "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+//     "preflightContinue": false,
+//     "optionsSuccessStatus": 204
+//   })
+// );
 
 app.use(cookieParser());
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -54,7 +55,11 @@ const main = async () => {
     },
   });
 
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({ app, cors: {
+    credentials: true,
+    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
+    origin: 'http://localhost:3000',
+  } });
 
   app.listen(4000, () => {
     console.log("Server started on 4000");
