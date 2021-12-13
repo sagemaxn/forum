@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Formik, Form, Field } from "formik";
 import {
   Button,
@@ -16,7 +16,9 @@ import { bool } from "yup";
 import {useRouter} from 'next/router'
 
 function LoginForm({setForm, form}) {
-  const [login, { data }] = useLoginMutation();
+  const [login, { data }] = useLoginMutation({ onCompleted({login}){
+   if(data){ console.log(data)}
+  }});
   const [toggle, setToggle] = useState(true);
   const [boolean, setBoolean] = useState(true)
 
@@ -24,12 +26,20 @@ function LoginForm({setForm, form}) {
     password: string;
     username: string;
   }
+
+  if (data && boolean){
+    if(data.login.token !== 'no token'){
+      useRouter().push('/')
+    }
+  }
   return (
     <Formik
       initialValues={{ username: "", password: "" }}
       onSubmit={async (values, actions) => {
         await login({ variables: values });
-        useRouter().push('/')
+        if(data){
+          console.log(data)
+        }
         actions.setSubmitting(false);
       }}
     >

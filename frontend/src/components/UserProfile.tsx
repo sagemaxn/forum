@@ -1,10 +1,11 @@
 import React from 'react'
+import Post from './Post'
 
 const UserProfile = ({user}) => {
     return (
-        <div>
-            {JSON.stringify(user)}
-        </div>
+        <>
+            {user.posts.map(post => <Post content={post.content} user={''}></Post>)}
+        </>
     )
 }
 

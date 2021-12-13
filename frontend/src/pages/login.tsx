@@ -11,16 +11,12 @@ import RegisterForm from "../components/RegisterForm";
 import { initializeApollo, addApolloState,  } from "../lib/apollo";
 import { useState, useEffect } from "react";
 
-const login = () => {
+const login = ({ auth, token }) => {
     const [loggedIn, setLoggedIn] = useState(false);
     const [logout] = useLogoutMutation();
     const [form, setForm] = useState(true)
     const [login] = useLoginMutation();
-    function logoutHandler(){
-        document.cookie ="jid= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
-        setLoggedIn(false)
-                        
-       }
+    
     return (
       <Container height="100vh">
         You must login to continue

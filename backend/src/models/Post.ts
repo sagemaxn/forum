@@ -13,15 +13,14 @@ export class Post {
   @prop({ type: String, required: true })
   public content: string;
 
-  // @Field(() => String)
-  // @prop({ type: String, required: false})
-  @Field(() => [Comment])
-  @prop()
-  public comments: [Comment]
+  @Field(() => Date)
+  @prop( {type: Date, required: true })
+  public createdAt: Date
 
-  @Field(() => [ID])
-  @prop({ ref: User })
-  public likes: [any]
+  // @Field(() => [Comment])
+  // @prop()
+  // public comments: [Comment]
+
 }
 
 
@@ -35,9 +34,11 @@ export class PostInput {
   content: string;
 
   @Field()
+  @prop({ type: String, required: false })
   comments?: string
 
   @Field()
+  @prop({ type: String, required: false })
   likes?: string
 }
 

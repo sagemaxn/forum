@@ -83,8 +83,7 @@ export class UserResolver {
     console.log(user);
     //console.log(username, user[0].password, password, user.password)
     const passwordCorrect = await compare(password, user[0].password);
-    //return{token: "dsaddsds"}
-    //console.log(res)
+  
     if (user && passwordCorrect) {
       console.log("should wokr");
       const payload = res.cookie(
@@ -100,7 +99,6 @@ export class UserResolver {
         //   httpOnly: true,
         // }
       );
-      console.log(user[0].username);
       return {
         token: sign(
           { userID: user[0]._id, user: user[0].username },
@@ -109,8 +107,7 @@ export class UserResolver {
         ),
       };
     } else {
-      //console.log("invalid");
-      return { token: "ddd" };
+      return { token: "no token" };
     }
   }
   @Mutation(() => Boolean)
@@ -124,20 +121,22 @@ export class UserResolver {
     console.log(users)
     return users
   }
-  @Mutation(() => String)
+
+  @Mutation(() => User)
   async findUser(
     @Arg('username') username : string){
+      let user = {username: '', posts: []}
+      user.username = 'no user found'
       try{
-        const user = await UserModel.find({username: username})
-        console.log(user)
-        if (user.length > 0){
-        return {user: user[0].username, posts: user[0].posts}
+        let bean = await UserModel.find({username: username}).populate('posts')
+        if (bean[0].username !== 'no user found' ){
+        return bean[0]
       }
-      else return 'no user found'
+      else return user
     }
       catch(err){
         console.error(err)
       }
-      return 'no user found' 
+      return user
   }
 }

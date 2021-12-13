@@ -5,15 +5,19 @@ query AllUsers {
 }
 
 query Posts {
-  posts{
-    username
+  posts {
     content
-    likes
+    username
+    createdAt
   }
 }
 
 mutation FindUser($username: String!) {
-  findUser(username: $username)
+  findUser(username: $username) {
+    posts {
+      content
+    }
+  }
 }
 
 mutation Reg($username: String!, $password: String!) {

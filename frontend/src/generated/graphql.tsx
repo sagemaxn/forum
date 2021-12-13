@@ -12,18 +12,15 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-};
-
-export type Comment = {
-  __typename?: 'Comment';
-  username: User;
-  comment: Scalars['String'];
+  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
+  DateTime: any;
 };
 
 export type CommentInput = {
   comment: Scalars['String'];
   userID: Scalars['String'];
 };
+
 
 export type LoginToken = {
   __typename?: 'LoginToken';
@@ -35,7 +32,7 @@ export type Mutation = {
   createUser: User;
   login: LoginToken;
   logout: Scalars['Boolean'];
-  findUser: Scalars['String'];
+  findUser: User;
   createPost: Post;
   createComment: Post;
 };
@@ -57,7 +54,7 @@ export type MutationFindUserArgs = {
 
 
 export type MutationCreatePostArgs = {
-  input: PostInput;
+  input?: Maybe<PostInput>;
 };
 
 
@@ -70,8 +67,7 @@ export type Post = {
   __typename?: 'Post';
   username: Scalars['String'];
   content: Scalars['String'];
-  comments: Array<Comment>;
-  likes: Array<Scalars['ID']>;
+  createdAt: Scalars['DateTime'];
 };
 
 export type PostInput = {
@@ -97,6 +93,7 @@ export type QueryCheckAuthArgs = {
 export type User = {
   __typename?: 'User';
   username: Scalars['String'];
+  posts: Array<Post>;
 };
 
 export type UserInput = {
@@ -122,7 +119,7 @@ export type PostsQuery = (
   { __typename?: 'Query' }
   & { posts: Array<(
     { __typename?: 'Post' }
-    & Pick<Post, 'username' | 'content' | 'likes'>
+    & Pick<Post, 'content' | 'username' | 'createdAt'>
   )> }
 );
 
@@ -133,7 +130,13 @@ export type FindUserMutationVariables = Exact<{
 
 export type FindUserMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'findUser'>
+  & { findUser: (
+    { __typename?: 'User' }
+    & { posts: Array<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'content'>
+    )> }
+  ) }
 );
 
 export type RegMutationVariables = Exact<{
@@ -223,9 +226,9 @@ export type AllUsersQueryResult = Apollo.QueryResult<AllUsersQuery, AllUsersQuer
 export const PostsDocument = gql`
     query Posts {
   posts {
-    username
     content
-    likes
+    username
+    createdAt
   }
 }
     `;
@@ -258,7 +261,11 @@ export type PostsLazyQueryHookResult = ReturnType<typeof usePostsLazyQuery>;
 export type PostsQueryResult = Apollo.QueryResult<PostsQuery, PostsQueryVariables>;
 export const FindUserDocument = gql`
     mutation FindUser($username: String!) {
-  findUser(username: $username)
+  findUser(username: $username) {
+    posts {
+      content
+    }
+  }
 }
     `;
 export type FindUserMutationFn = Apollo.MutationFunction<FindUserMutation, FindUserMutationVariables>;

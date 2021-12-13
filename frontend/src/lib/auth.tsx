@@ -24,6 +24,14 @@ export default async function auth({ req, res }, pageProps) {
     }
     return;
   }
+  else {
+    if(req.url === '/login') {
+      pageProps.redirect = {
+        destination: "/",
+        permanent: false
+      }
+    }
+  }
   pageProps.props.logged = true;
   pageProps.props.auth = auth;
 }

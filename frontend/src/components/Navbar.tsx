@@ -1,16 +1,18 @@
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import {Flex, Button} from '@chakra-ui/react'
+import {useRouter} from 'next/router'
 import {
     useLogoutMutation,
   } from "../generated/graphql";
 
-const Navbar = () => {
-    const [loggedIn, setLoggedIn] = useState(false);
+function Navbar({toLogin}){
     const [logout] = useLogoutMutation();
 
     function logoutHandler(){
+      toLogin()
         document.cookie ="jid= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
-        setLoggedIn(false)
+        //useRouter().push('/login')
+        
                         
        }
 

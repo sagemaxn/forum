@@ -1,5 +1,6 @@
 import { ObjectType, InputType, Field } from "type-graphql";
 import { prop, getModelForClass } from "@typegoose/typegoose";
+import { Post } from './Post'
 
 @ObjectType()
 export class User {
@@ -10,6 +11,10 @@ export class User {
   //@Field(() => String)
   @prop({ type: String, required: true })
   public password: string;
+
+  @Field(() => [Post])
+  @prop({ ref: () => Post})
+  public posts: Post[];
 }
 
 @ObjectType()
@@ -25,6 +30,11 @@ export class UserInput {
 
   @Field()
   password: string;
+}
+
+@InputType()
+export class UsernameInput {
+  
 }
 
 @ObjectType()

@@ -16,7 +16,7 @@ const User = () => {
     setUser(slug)
   }
   checkUser()
-  //console.log(user)
+  console.log(data)
   if (loading) return 'loading'
   if(data){
       console.log(data)
