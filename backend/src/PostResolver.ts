@@ -53,6 +53,7 @@ export class PostResolver {
   @Query(() => [Post])
   async posts(){
     const posts = await PostModel.find()
+    //console.log(posts)
     return posts
   }
 

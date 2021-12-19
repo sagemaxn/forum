@@ -1,5 +1,5 @@
 import { ObjectType, InputType, Field, Int, ID } from "type-graphql";
-import { prop, getModelForClass } from "@typegoose/typegoose";
+import { prop, getModelForClass, mongoose } from "@typegoose/typegoose";
 import { User } from './User'
 import { Comment } from './Comment'
 
@@ -16,6 +16,10 @@ export class Post {
   @Field(() => Date)
   @prop( {type: Date, required: true })
   public createdAt: Date
+
+  @Field(() => String)
+  @prop()
+  public _id: mongoose.Types.ObjectId
 
   // @Field(() => [Comment])
   // @prop()

@@ -112,7 +112,10 @@ export class UserResolver {
   }
   @Mutation(() => Boolean)
   logout(@Ctx() { res }): boolean {
-    res.cookie.jid.expiresIn = "Thu, 01 Jan 1970 00:00:00 GMT"
+    console.log(res.cookie.jid)
+    res.cookie("jid", 'bad token', {maxAge: 0});
+    //res.cookie.jid.expiresIn = "Thu, 01 Jan 1970 00:00:00 GMT"
+    
     return true;
   }
   @Query(() => [User])

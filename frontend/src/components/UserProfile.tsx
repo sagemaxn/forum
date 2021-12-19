@@ -4,7 +4,7 @@ import Post from './Post'
 const UserProfile = ({user}) => {
     return (
         <>
-            {user.posts.map(post => <Post content={post.content} user={''}></Post>)}
+            {user.posts.map(post => <Post content={post.content} user={post.username} createdAt={post.createdAt}></Post>)}
         </>
     )
 }

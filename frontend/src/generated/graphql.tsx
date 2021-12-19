@@ -68,6 +68,7 @@ export type Post = {
   username: Scalars['String'];
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
+  _id: Scalars['String'];
 };
 
 export type PostInput = {
@@ -119,7 +120,7 @@ export type PostsQuery = (
   { __typename?: 'Query' }
   & { posts: Array<(
     { __typename?: 'Post' }
-    & Pick<Post, 'content' | 'username' | 'createdAt'>
+    & Pick<Post, 'content' | 'username' | 'createdAt' | '_id'>
   )> }
 );
 
@@ -134,7 +135,7 @@ export type FindUserMutation = (
     { __typename?: 'User' }
     & { posts: Array<(
       { __typename?: 'Post' }
-      & Pick<Post, 'content'>
+      & Pick<Post, 'content' | 'username' | 'createdAt'>
     )> }
   ) }
 );
@@ -229,6 +230,7 @@ export const PostsDocument = gql`
     content
     username
     createdAt
+    _id
   }
 }
     `;
@@ -264,6 +266,8 @@ export const FindUserDocument = gql`
   findUser(username: $username) {
     posts {
       content
+      username
+      createdAt
     }
   }
 }

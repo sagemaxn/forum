@@ -9,6 +9,7 @@ query Posts {
     content
     username
     createdAt
+    _id
   }
 }
 
@@ -16,6 +17,8 @@ mutation FindUser($username: String!) {
   findUser(username: $username) {
     posts {
       content
+      username
+      createdAt
     }
   }
 }

@@ -10,10 +10,10 @@ const Index = ({ auth,  token }) => {
   const { data, loading, error } = useQuery(PostsDocument)
  if (loading) return 'loading'
   return (
-
-  <Container>{data.posts.map(post => {console.log(1) 
-    return <Post content={post.content} user={post.username} createdAt={post.createdAt}></Post>})}</Container>
-  
+    <>
+    {data.posts.map(post => {console.log(post._id) 
+    return <Post content={post.content} user={post.username} createdAt={post.createdAt} key={post._id}></Post>})}
+    </>
   );
 };
 
