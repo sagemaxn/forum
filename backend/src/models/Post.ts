@@ -18,8 +18,9 @@ export class Post {
   public createdAt: Date
 
   @Field(() => String)
-  @prop()
-  public _id: mongoose.Types.ObjectId
+  _id: mongoose.Types.ObjectId
+  // @prop()
+  // public _id: mongoose.Types.ObjectId
 
   // @Field(() => [Comment])
   // @prop()
@@ -31,19 +32,14 @@ export class Post {
 
 @InputType()
 export class PostInput {
-  @Field()
+  @Field(() => String)
+  @prop({type: String,required: true})
   username: string;
 
-  @Field()
+  @Field(() => String)
+  @prop({type: String,required: true})
   content: string;
 
-  @Field()
-  @prop({ type: String, required: false })
-  comments?: string
-
-  @Field()
-  @prop({ type: String, required: false })
-  likes?: string
 }
 
 export const PostModel = getModelForClass(Post);

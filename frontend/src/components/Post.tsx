@@ -5,7 +5,9 @@ const Post = ({ content, user, createdAt }) => {
   return (
     <Flex
       w="600px"
-      border="solid 1px"
+      border="solid 0.5px"
+      borderTop="0"
+      bg="white"
     >
         <Image
         borderRadius='full'

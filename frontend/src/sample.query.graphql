@@ -13,6 +13,13 @@ query Posts {
   }
 }
 
+mutation Post($username: String!, $content: String!) {
+  createPost(input:{username:$username, content:$content}){
+    content
+    createdAt
+  }
+}
+
 mutation FindUser($username: String!) {
   findUser(username: $username) {
     posts {

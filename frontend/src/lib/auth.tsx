@@ -1,4 +1,4 @@
-import { decode } from "jsonwebtoken";
+import { decode, verify } from "jsonwebtoken";
 import { AuthDocument } from "../generated/graphql";
 import { initializeApollo } from "./apollo";
 
@@ -34,6 +34,8 @@ export default async function auth({ req, res }, pageProps) {
   //     }
   //   }
   // }
+  const verified = verify(tok, '123456')
   pageProps.props.logged = true;
   pageProps.props.auth = auth;
+  pageProps.props.decoded = verified
 }

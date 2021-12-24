@@ -14,8 +14,10 @@ function Navbar(pageProps) {
       justify="end"
       wrap="wrap"
       padding={6}
-      bg="green"
-      color="white"
+      //bg="green"
+      color="black"
+      borderBottom="1px"
+      //border="black"
       // {...props}
     >
       <Button

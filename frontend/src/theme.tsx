@@ -10,12 +10,22 @@ const breakpoints = createBreakpoints({
   xl: '80em',
 })
 
+
+
 const theme = extendTheme({
   colors: {
-    green: '#94ecc5',
+    green: '#76BC9D',
+   // grey
   },
   fonts,
   breakpoints,
+  styles: {
+    global: (props) => ({
+      body: {
+       bg: "green"
+      }
+    })
+  },
 })
 
 export default theme

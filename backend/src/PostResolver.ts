@@ -8,14 +8,11 @@ import { UserModel } from "./models/User";
 export class PostResolver {
   @Mutation(() => Post)
   async createPost(
-    @Arg("input", { nullable: true }) { username, content, comments, likes }: PostInput
+    @Arg("input") { username, content }: PostInput
   ): Promise<Post> {
-    if (comments === null){
-      comments = ''
-    }
-    if(likes === null){
-      likes = ''
-    }
+    let comments = ''
+    let likes = ''
+
     let createdAt = new Date()
     
     const post = await PostModel.create({ username, content, comments, likes, createdAt });
@@ -53,7 +50,8 @@ export class PostResolver {
   @Query(() => [Post])
   async posts(){
     const posts = await PostModel.find()
-    //console.log(posts)
+    console.log(posts)
+    
     return posts
   }
 
