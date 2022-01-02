@@ -1,10 +1,19 @@
 import { Box, Text, Heading, Flex, Image, Link } from "@chakra-ui/react";
 import { create } from "lodash";
 
+  // <Container maxW={"7xl"}>
+  //     <Stack
+  //       align={"center"}
+  //       spacing={{ base: 8, md: 10 }}
+  //       py={{ base: 2, md: 10 }}
+  //       direction={{ base: "column" }}
+  //     ></Stack>
+
 const Post = ({ content, user, createdAt }) => {
+  const d = new Date(createdAt).toLocaleString() 
   return (
     <Flex
-      w="600px"
+      w={{md: "xl", base: '100%'}}
       border="solid 0.5px"
       borderTop="0"
       bg="white"
@@ -12,7 +21,7 @@ const Post = ({ content, user, createdAt }) => {
         <Image
         borderRadius='full'
         padding="10px"
-        boxSize='110px'
+        boxSize='80px'
         objectFit="cover"
           src={
             "https://assets-global.website-files.com/6005fac27a49a9cd477afb63/60576840e7d265198541a372_bavassano_homepage_gp.jpg"
@@ -25,10 +34,10 @@ const Post = ({ content, user, createdAt }) => {
           </Link>
         </Heading>
         <Text>
-          {createdAt}
+          {d}
         </Text>
         <Text>
-          {content}{" "}
+          {content}
         </Text>
         </Flex>
     </Flex>

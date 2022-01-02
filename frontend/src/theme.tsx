@@ -10,19 +10,18 @@ const breakpoints = createBreakpoints({
   xl: '80em',
 })
 
-
-
 const theme = extendTheme({
   colors: {
-    green: '#76BC9D',
-   // grey
+    green: '#94ecc5' ,
+    blue: "#67a1a5",
+    brown: "#a58a67"
   },
   fonts,
   breakpoints,
   styles: {
     global: (props) => ({
       body: {
-       bg: "green"
+      // bg: "green"
       }
     })
   },

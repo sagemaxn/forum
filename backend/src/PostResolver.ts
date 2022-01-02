@@ -49,7 +49,7 @@ export class PostResolver {
   }
   @Query(() => [Post])
   async posts(){
-    const posts = await PostModel.find()
+    const posts = await PostModel.find().sort({createdAt:-1})
     console.log(posts)
     
     return posts
