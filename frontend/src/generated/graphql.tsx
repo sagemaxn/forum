@@ -29,12 +29,17 @@ export type LoginToken = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  checkAuth: LoginToken;
   createUser: User;
   login: LoginToken;
   logout: Scalars['Boolean'];
-  findUser: User;
   createPost: Post;
   createComment: Post;
+};
+
+
+export type MutationCheckAuthArgs = {
+  cookie: Scalars['String'];
 };
 
 
@@ -45,11 +50,6 @@ export type MutationCreateUserArgs = {
 
 export type MutationLoginArgs = {
   input: UserInput;
-};
-
-
-export type MutationFindUserArgs = {
-  username: Scalars['String'];
 };
 
 
@@ -78,15 +78,15 @@ export type PostInput = {
 
 export type Query = {
   __typename?: 'Query';
-  checkAuth: LoginToken;
   cookie: LoginToken;
   users: Array<User>;
+  findUser: User;
   posts: Array<Post>;
 };
 
 
-export type QueryCheckAuthArgs = {
-  cookie: Scalars['String'];
+export type QueryFindUserArgs = {
+  username: Scalars['String'];
 };
 
 export type User = {
@@ -136,13 +136,13 @@ export type PostMutation = (
   ) }
 );
 
-export type FindUserMutationVariables = Exact<{
+export type FindUserQueryVariables = Exact<{
   username: Scalars['String'];
 }>;
 
 
-export type FindUserMutation = (
-  { __typename?: 'Mutation' }
+export type FindUserQuery = (
+  { __typename?: 'Query' }
   & { findUser: (
     { __typename?: 'User' }
     & { posts: Array<(
@@ -188,13 +188,13 @@ export type LogoutMutation = (
   & Pick<Mutation, 'logout'>
 );
 
-export type AuthQueryVariables = Exact<{
+export type AuthMutationVariables = Exact<{
   cookie: Scalars['String'];
 }>;
 
 
-export type AuthQuery = (
-  { __typename?: 'Query' }
+export type AuthMutation = (
+  { __typename?: 'Mutation' }
   & { checkAuth: (
     { __typename?: 'LoginToken' }
     & Pick<LoginToken, 'token'>
@@ -309,7 +309,7 @@ export type PostMutationHookResult = ReturnType<typeof usePostMutation>;
 export type PostMutationResult = Apollo.MutationResult<PostMutation>;
 export type PostMutationOptions = Apollo.BaseMutationOptions<PostMutation, PostMutationVariables>;
 export const FindUserDocument = gql`
-    mutation FindUser($username: String!) {
+    query FindUser($username: String!) {
   findUser(username: $username) {
     posts {
       content
@@ -319,32 +319,34 @@ export const FindUserDocument = gql`
   }
 }
     `;
-export type FindUserMutationFn = Apollo.MutationFunction<FindUserMutation, FindUserMutationVariables>;
 
 /**
- * __useFindUserMutation__
+ * __useFindUserQuery__
  *
- * To run a mutation, you first call `useFindUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useFindUserMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
+ * To run a query within a React component, call `useFindUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const [findUserMutation, { data, loading, error }] = useFindUserMutation({
+ * const { data, loading, error } = useFindUserQuery({
  *   variables: {
  *      username: // value for 'username'
  *   },
  * });
  */
-export function useFindUserMutation(baseOptions?: Apollo.MutationHookOptions<FindUserMutation, FindUserMutationVariables>) {
+export function useFindUserQuery(baseOptions: Apollo.QueryHookOptions<FindUserQuery, FindUserQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<FindUserMutation, FindUserMutationVariables>(FindUserDocument, options);
+        return Apollo.useQuery<FindUserQuery, FindUserQueryVariables>(FindUserDocument, options);
       }
-export type FindUserMutationHookResult = ReturnType<typeof useFindUserMutation>;
-export type FindUserMutationResult = Apollo.MutationResult<FindUserMutation>;
-export type FindUserMutationOptions = Apollo.BaseMutationOptions<FindUserMutation, FindUserMutationVariables>;
+export function useFindUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindUserQuery, FindUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindUserQuery, FindUserQueryVariables>(FindUserDocument, options);
+        }
+export type FindUserQueryHookResult = ReturnType<typeof useFindUserQuery>;
+export type FindUserLazyQueryHookResult = ReturnType<typeof useFindUserLazyQuery>;
+export type FindUserQueryResult = Apollo.QueryResult<FindUserQuery, FindUserQueryVariables>;
 export const RegDocument = gql`
     mutation Reg($username: String!, $password: String!) {
   createUser(input: {username: $username, password: $password}) {
@@ -444,37 +446,35 @@ export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const AuthDocument = gql`
-    query Auth($cookie: String!) {
+    mutation Auth($cookie: String!) {
   checkAuth(cookie: $cookie) {
     token
   }
 }
     `;
+export type AuthMutationFn = Apollo.MutationFunction<AuthMutation, AuthMutationVariables>;
 
 /**
- * __useAuthQuery__
+ * __useAuthMutation__
  *
- * To run a query within a React component, call `useAuthQuery` and pass it any options that fit your needs.
- * When your component renders, `useAuthQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
+ * To run a mutation, you first call `useAuthMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAuthMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const { data, loading, error } = useAuthQuery({
+ * const [authMutation, { data, loading, error }] = useAuthMutation({
  *   variables: {
  *      cookie: // value for 'cookie'
  *   },
  * });
  */
-export function useAuthQuery(baseOptions: Apollo.QueryHookOptions<AuthQuery, AuthQueryVariables>) {
+export function useAuthMutation(baseOptions?: Apollo.MutationHookOptions<AuthMutation, AuthMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<AuthQuery, AuthQueryVariables>(AuthDocument, options);
+        return Apollo.useMutation<AuthMutation, AuthMutationVariables>(AuthDocument, options);
       }
-export function useAuthLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AuthQuery, AuthQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<AuthQuery, AuthQueryVariables>(AuthDocument, options);
-        }
-export type AuthQueryHookResult = ReturnType<typeof useAuthQuery>;
-export type AuthLazyQueryHookResult = ReturnType<typeof useAuthLazyQuery>;
-export type AuthQueryResult = Apollo.QueryResult<AuthQuery, AuthQueryVariables>;
+export type AuthMutationHookResult = ReturnType<typeof useAuthMutation>;
+export type AuthMutationResult = Apollo.MutationResult<AuthMutation>;
+export type AuthMutationOptions = Apollo.BaseMutationOptions<AuthMutation, AuthMutationVariables>;

@@ -20,7 +20,7 @@ mutation Post($username: String!, $content: String!) {
   }
 }
 
-mutation FindUser($username: String!) {
+query FindUser($username: String!) {
   findUser(username: $username) {
     posts {
       content
@@ -45,7 +45,8 @@ mutation Login($username: String!, $password: String!) {
 mutation Logout {
   logout
 }
-query Auth($cookie: String!) {
+
+mutation Auth($cookie: String!) {
   checkAuth(cookie: $cookie) {
     token
   }

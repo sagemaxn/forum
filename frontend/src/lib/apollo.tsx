@@ -16,7 +16,7 @@ function createApolloClient(ctx: NextPageContext) {
       uri: 'http://localhost:4000/graphql',
       credentials: 'include',
       headers: {
-        cookie:
+        cookies:
           (typeof window === "undefined"
             ? ctx?.req?.headers.cookie
             : undefined) || "",

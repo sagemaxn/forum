@@ -11,7 +11,7 @@ import {
 import { HiEye, HiEyeOff } from "react-icons/hi";
 
 import FormField from "../components/FormField";
-import { useLoginMutation } from "../generated/graphql";
+import { useLoginMutation} from "../generated/graphql";
 import { bool } from "yup";
 import {useRouter} from 'next/router'
 
@@ -19,6 +19,7 @@ function LoginForm({setForm, form}) {
   const [login, { data }] = useLoginMutation({ onCompleted({login}){
    if(data){ console.log(data)}
   }});
+
   const [toggle, setToggle] = useState(true);
   const [boolean, setBoolean] = useState(true)
 
@@ -45,6 +46,7 @@ function LoginForm({setForm, form}) {
     >
       {(props) => (
         <Form>
+          {/* <Button onClick={() => }/> */}
           <FormField name="username"></FormField>
           <FormField name="password" toggle={toggle}></FormField>
           <Button onClick={() => setToggle(!toggle)} zIndex='3'>

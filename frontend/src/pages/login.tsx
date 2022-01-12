@@ -2,7 +2,6 @@ import React from 'react'
 import {
   useLogoutMutation,
   useLoginMutation,
-  useAuthQuery,
   AuthDocument,
 } from "../generated/graphql";
 import { Container } from "../components/Container";

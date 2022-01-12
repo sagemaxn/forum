@@ -1,36 +1,34 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useFindUserMutation, FindUserDocument } from "../generated/graphql";
+import { useFindUserQuery, FindUserDocument } from "../generated/graphql";
 import { initializeApollo } from "../lib/apollo";
+import auth from "../lib/auth";
+import { compose } from "../lib/compose";
 import UserProfile from '../components/UserProfile'
+import Navbar from "../components/Navbar";
 
-const User = () => {
+const User = ({ decoded }) => {
   const router = useRouter();
   const { slug } = router.query;
   const [user, setUser] = useState('no user found')
-  const [checkUser, { data, loading, error }] = useFindUserMutation({
+  const { data, loading, error } = useFindUserQuery({
     variables: { username: user },
   });
   if(typeof slug === 'string'){
     if (user !== slug)
     setUser(slug)
   }
-  checkUser()
+
   console.log(data)
-  if (loading) return 'loading'
+  if (loading) return <Navbar user={decoded.user}/>
   if(data){
-      console.log(data)
-      if (data.findUser !== 'no user found'){
-      return <UserProfile user={data.findUser}/>
+      if (data.findUser.posts[0].username !== 'no user found'){
+      return <> <Navbar user={decoded.user}/><UserProfile user={data.findUser}/> </>
       }
       else return <div>404 no user found</div>
   }
   return <div>404 no user found</div>
 };
-
-import auth from "../lib/auth";
-import { compose } from "../lib/compose";
-import { useState } from "react";
 
 export const getServerSideProps = compose(auth);
 

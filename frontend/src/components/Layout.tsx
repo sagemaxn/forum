@@ -1,4 +1,3 @@
-import Navbar from './Navbar'
 import {useRouter} from 'next/router'
 import {Container} from '@chakra-ui/react'
 
@@ -9,7 +8,6 @@ export default function Layout({ children }) {
 
   return (
     <>
-      <Navbar/>
       <Container centerContent>
       {children}
       </Container>
