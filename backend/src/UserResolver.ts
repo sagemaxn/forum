@@ -15,11 +15,24 @@ import { get } from "lodash";
 
 @Resolver()
 export class UserResolver {
-  @Query(() => LoginToken)
-  async checkAuth(
+
+  // @Query(() => String)
+  // cookieTest(
+  //   @Ctx() { req, res }
+  // ){
+  //   const cookie = req.cookies.jid
+  //   console.log(req.headers)
+  //   console.log(cookie)
+  //   return cookie
+  // }
+
+  @Mutation(() => LoginToken)
+  checkAuth(
     @Ctx() { req, res },
     @Arg("cookie") cookie: string
-  ): Promise<LoginToken> {
+  ): LoginToken {
+    console.log(req.cookies.jid)
+   
     if (cookie && cookie !== "no refresh") {
       try {
         const payload = verify(cookie, process.env.JWT_REFRESH);
@@ -30,10 +43,11 @@ export class UserResolver {
           sign({ userID }, process.env.JWT_REFRESH, {
             expiresIn: "5d",
           }),
-          // {
-          //   httpOnly: true,
-          // }
+          {
+            httpOnly: true,
+          }
         );
+        console.log(payload)
         const user = JSON.stringify(payload).split(",")[1].slice(8, -1);
         console.log(user);
         return {
@@ -66,9 +80,9 @@ export class UserResolver {
       sign({ payload: "this is a coookie" }, process.env.JWT_REFRESH, {
         expiresIn: "5d",
       }),
-      // {
-      //   httpOnly: true,
-      // }
+      {
+        httpOnly: true,
+      }
     );
     return { token: JSON.stringify(get(req, "cookies.jid") || "no") };
   }
@@ -95,9 +109,9 @@ export class UserResolver {
             expiresIn: "5d",
           }
         ),
-        // {
-        //   httpOnly: true,
-        // }
+        {
+          httpOnly: true,
+        }
       );
       return {
         token: sign(
@@ -125,14 +139,14 @@ export class UserResolver {
     return users
   }
 
-  @Mutation(() => User)
+  @Query(() => User)
   async findUser(
     @Arg('username') username : string){
-      let user = {username: '', posts: []}
-      user.username = 'no user found'
+      let user = {username: 'no user found', posts: []}
+      user.posts = [{username: 'no user found', content: '1', createdAt: new Date}]
       try{
         let bean = await UserModel.find({username: username}).populate('posts')
-        if (bean[0].username !== 'no user found' ){
+        if (bean[0].username !== '' ){
         return bean[0]
       }
       else return user

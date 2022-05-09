@@ -14,19 +14,8 @@ import { UserModel } from "./src/models/User";
 
 require("dotenv").config();
 
-//console.log(process.env.MONGODB_URI);
 const app = Express();
 
-// app.use(
-//   cors({
-//     "origin": "*",
-//     "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-//     "preflightContinue": false,
-//     "optionsSuccessStatus": 204
-//   })
-// );
-
-app.use(cookieParser());
 const MONGODB_URI = process.env.MONGODB_URI;
 
 mongoose
@@ -43,26 +32,69 @@ mongoose
     console.log("error connection to MongoDB:", error.message);
   });
 
-const main = async () => {
-  const schema = await buildSchema({
-    resolvers: [UserResolver, PostResolver],
-    //emitSchemaFile: true
-  });
-  const apolloServer = new ApolloServer({
-    schema,
-    context: async ({ req, res }) => {
-      return { res, req, payload: "asd" };
-    },
-  });
+// const main = async () => {
+//   const schema = await buildSchema({
+//     resolvers: [UserResolver, PostResolver],
+//     //emitSchemaFile: true
+//   });
+//   const apolloServer = new ApolloServer({
+//     schema,
+//     context: async ({ req, res }) => {
+//       return { res, req, payload: "asd" };
+//     },
+//   });
+//   await apolloServer.start()
 
-  apolloServer.applyMiddleware({ app, cors: {
-    credentials: true,
-    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
-    origin: 'http://localhost:3000',
-  } });
+//   const corsOptions = {
+//       credentials: true,
+//       methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
+//       origin: 'http://localhost:3000',
+//     }
 
-  app.listen(4000, () => {
-    console.log("Server started on 4000");
-  });
-};
-main();
+//   app.use(cors(corsOptions));
+
+//   apolloServer.applyMiddleware({ app, path: "/graphql", cors: false });
+
+//   // apolloServer.applyMiddleware({ app, cors: {
+//   //   credentials: true,
+//   //   methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
+//   //   origin: 'http://localhost:3000',
+//   // } });
+//  // app.use(cookieParser());
+//   app.listen(4000, () => {
+//     console.log("Server started on 4000");
+//   });
+// };
+// main();
+
+
+
+  const main = async () => {
+      const schema = await buildSchema({
+        resolvers: [UserResolver, PostResolver],
+        //emitSchemaFile: true
+      });
+      
+    const server = new ApolloServer({
+      schema,
+      context: ({ req, res }) => ({
+        req, res
+      })
+    });
+      await server.start()
+    
+      var corsOptions = {
+        origin: "http://localhost:3000",
+        port: 4000,
+        credentials: true
+      };
+      app.use(cors(corsOptions));
+      app.use(cookieParser())
+    
+      server.applyMiddleware({ app, path: "/graphql", cors: false });
+    
+      app.listen(4000, () => {
+        console.log("Server started on 4000");
+      });
+    };
+    main();

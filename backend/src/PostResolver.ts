@@ -56,8 +56,17 @@ export class PostResolver {
     return newPost;
   }
   @Query(() => [Post])
+<<<<<<< HEAD
   async posts() {
     const posts = await PostModel.find().sort({ createdAt: -1 });
+=======
+  async posts(){
+    const posts = await PostModel.find().sort({createdAt:-1})
+    console.log(posts)
+    
+    return posts
+  }
+>>>>>>> 4be8c9a0708d64ceb126529693704829ee6b918a
 
     return posts;
   }
