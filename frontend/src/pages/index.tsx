@@ -15,7 +15,7 @@ const Index = ({ decoded,  token }) => {
     <>
     <NewPostForm user={decoded.user}/>
     {data.posts.map(post => {console.log(post._id) 
-    return <Post content={post.content} user={post.username} createdAt={post.createdAt} key={post._id}></Post>})}
+    return <Post content={post.content} user={post.username} createdAt={post.createdAt} key={post._id} loggedUser={decoded.user} postID={post._id}></Post>})}
     </>
   );
 };

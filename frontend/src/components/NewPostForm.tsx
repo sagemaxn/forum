@@ -35,7 +35,7 @@ function NewPostForm({user}) {
       {(props) => (<>
 
           <Flex
-        w="600px"
+        w={{md: "xl", base: '100%'}}
         boxShadow={'xl'}
         p={6}
         direction={'column'}
@@ -51,7 +51,8 @@ function NewPostForm({user}) {
 
           <Button
             mt={4}
-            colorScheme="teal"
+            backgroundColor="green"
+            w="100%"
             isLoading={props.isSubmitting}
             type="submit"
           >

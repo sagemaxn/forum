@@ -1,7 +1,3 @@
-import {	useState,
-	useEffect,
-	useRef,
-	TextareaHTMLAttributes,} from "react";
 import {
     Button,
     Input,
@@ -12,6 +8,7 @@ import {
     Textarea
   } from "@chakra-ui/react";
   import { Formik, Form, Field } from "formik";
+  import TextareaAutosize from 'react-textarea-autosize';
 
 
 interface propTypes {
@@ -20,25 +17,8 @@ interface propTypes {
     //validate: (value: string) => string,
     children?: any
   }
-function FormField({ name, toggle, children, ...rest }: propTypes, props: TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
-	const [text, setText] = useState("");
-	const [textAreaHeight, setTextAreaHeight] = useState("auto");
-	const [parentHeight, setParentHeight] = useState("auto");
-  
-  useEffect(() => {
-		setParentHeight(`${textAreaRef.current!.scrollHeight}px`);
-		setTextAreaHeight(`${textAreaRef.current!.scrollHeight}px`);
-  }, [text])
-  
-  const onChangeHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setTextAreaHeight("auto");
-		setParentHeight(`${textAreaRef.current!.scrollHeight}px`);
-		setText(event.target.value);
+function FormField({ name, toggle, children, ...rest }: propTypes) {
 
-
-  };
-  
   return (
         <Field name={name}>
             {({ field, form }) => (
@@ -46,14 +26,7 @@ function FormField({ name, toggle, children, ...rest }: propTypes, props: Textar
                 {name !== 'content' ? <><FormLabel htmlFor={name}>{name}</FormLabel> 
                 <Input {...field} id={name} placeholder={name} type={toggle ? "password" : "input"}/></>
                 : 
-                <Textarea {...field} id={name} placeholder="Make New Post"
-                ref={textAreaRef}
-                //rows={1}
-                style={{
-                  height: textAreaHeight,
-                }}
-                color="black"
-                onChange={onChangeHandler}></Textarea>
+                <TextareaAutosize {...field} id={name} placeholder="Make New Post" color="red" style={{width: "100%"}} autoFocus minRows='1' maxLength='120'></TextareaAutosize>
             }
                 <FormErrorMessage>{form.errors.name}</FormErrorMessage>
               </FormControl>

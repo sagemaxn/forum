@@ -9,9 +9,10 @@ import {
 } from "@chakra-ui/react";
 import { Formik, Form, Field } from "formik";
 import { useState } from "react";
-import { useRegMutation } from "../generated/graphql";
+import { HiEye, HiEyeOff } from "react-icons/hi";
 import * as Yup from "yup";
 import FormField from "../components/FormField";
+import { useRegMutation } from "../generated/graphql";
 
 const SignupSchema = Yup.object().shape({
   username: Yup.string()
@@ -41,11 +42,10 @@ function RegisterForm({setForm, form}) {
       {(props) => (
         <Form>
           <FormField name="username"></FormField>
-
           <FormField name="password" toggle={toggle}></FormField>
           <FormField name="password" toggle={toggle}></FormField>
           <Button onClick={() => setToggle(!toggle)}>
-            {toggle ? "unmask password" : "mask password"}
+            {toggle ? <HiEyeOff/> : <HiEye/>}
           </Button>
           <Button
             mt={4}
@@ -55,7 +55,7 @@ function RegisterForm({setForm, form}) {
           >
             Sign Up
           </Button>
-          <Link onClick={(()=> setForm(!form))}>Back to login</Link>
+          <Link onClick={(()=> setForm(''))}>Back</Link>
         </Form>
       )}
     </Formik>

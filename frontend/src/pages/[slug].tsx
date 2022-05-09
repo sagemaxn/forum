@@ -4,7 +4,7 @@ import { useFindUserMutation, FindUserDocument } from "../generated/graphql";
 import { initializeApollo } from "../lib/apollo";
 import UserProfile from '../components/UserProfile'
 
-const User = () => {
+const User = ({ decoded }) => {
   const router = useRouter();
   const { slug } = router.query;
   const [user, setUser] = useState('no user found')
@@ -21,7 +21,7 @@ const User = () => {
   if(data){
       console.log(data)
       if (data.findUser !== 'no user found'){
-      return <UserProfile user={data.findUser}/>
+      return <UserProfile user={data.findUser} loggedUser={decoded.user}/>
       }
       else return <div>404 no user found</div>
   }

@@ -7,6 +7,7 @@ import {
   FormControl,
   FormErrorMessage,
   Link,
+  Box
 } from "@chakra-ui/react";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 
@@ -46,20 +47,20 @@ function LoginForm({setForm, form}) {
       {(props) => (
         <Form>
           <FormField name="username"></FormField>
-          <FormField name="password" toggle={toggle}></FormField>
-          <Button onClick={() => setToggle(!toggle)} zIndex='3'>
+          <FormField name="password" toggle={toggle}>      <Box onClick={() => setToggle(!toggle)} zIndex='3'>
             {toggle ? <HiEyeOff/> : <HiEye/>}
-          </Button>
+          </Box></FormField>
+    
 
           <Button
             mt={4}
-            colorScheme="teal"
+            backgroundColor="green"
             isLoading={props.isSubmitting}
             type="submit"
           >
             Login
           </Button>
-          <Link onClick={(()=> setForm(!form))}>SignUp</Link>
+          <Link onClick={(()=> setForm(''))}>Back</Link>
         </Form>
       )}
     </Formik>

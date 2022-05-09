@@ -20,6 +20,10 @@ mutation Post($username: String!, $content: String!) {
   }
 }
 
+mutation DeletePost($postID: String!) {
+  deletePost(postID: $postID)
+}
+
 mutation FindUser($username: String!) {
   findUser(username: $username) {
     posts {

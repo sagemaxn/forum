@@ -1,10 +1,10 @@
 import React from 'react'
 import Post from './Post'
 
-const UserProfile = ({user}) => {
+const UserProfile = ({user, loggedUser}) => {
     return (
         <>
-            {user.posts.map(post => <Post content={post.content} user={post.username} createdAt={post.createdAt}></Post>)}
+            {user.posts.map(post => <Post content={post.content} user={post.username} createdAt={post.createdAt} loggedUser={loggedUser} postID={post._id}></Post>)}
         </>
     )
 }

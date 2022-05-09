@@ -9,7 +9,7 @@ export default function Layout({ children }) {
 
   return (
     <>
-      <Navbar/>
+
       <Container centerContent>
       {children}
       </Container>
