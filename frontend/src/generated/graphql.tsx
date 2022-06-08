@@ -72,6 +72,7 @@ export type MutationCreateCommentArgs = {
 export type Post = {
   __typename?: 'Post';
   username: Scalars['String'];
+  picture: Scalars['String'];
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   _id: Scalars['String'];
@@ -98,6 +99,7 @@ export type QueryFindUserArgs = {
 export type User = {
   __typename?: 'User';
   username: Scalars['String'];
+  picture: Scalars['String'];
   posts: Array<Post>;
 };
 
@@ -124,7 +126,7 @@ export type PostsQuery = (
   { __typename?: 'Query' }
   & { posts: Array<(
     { __typename?: 'Post' }
-    & Pick<Post, 'content' | 'username' | 'createdAt' | '_id'>
+    & Pick<Post, 'content' | 'username' | 'picture' | 'createdAt' | '_id'>
   )> }
 );
 
@@ -142,7 +144,6 @@ export type PostMutation = (
   ) }
 );
 
-<<<<<<< HEAD
 export type DeletePostMutationVariables = Exact<{
   postID: Scalars['String'];
 }>;
@@ -153,10 +154,7 @@ export type DeletePostMutation = (
   & Pick<Mutation, 'deletePost'>
 );
 
-export type FindUserMutationVariables = Exact<{
-=======
 export type FindUserQueryVariables = Exact<{
->>>>>>> 4be8c9a0708d64ceb126529693704829ee6b918a
   username: Scalars['String'];
 }>;
 
@@ -167,7 +165,7 @@ export type FindUserQuery = (
     { __typename?: 'User' }
     & { posts: Array<(
       { __typename?: 'Post' }
-      & Pick<Post, 'content' | 'username' | 'createdAt'>
+      & Pick<Post, 'content' | 'picture' | 'username' | 'createdAt'>
     )> }
   ) }
 );
@@ -261,6 +259,7 @@ export const PostsDocument = gql`
   posts {
     content
     username
+    picture
     createdAt
     _id
   }
@@ -364,6 +363,7 @@ export const FindUserDocument = gql`
   findUser(username: $username) {
     posts {
       content
+      picture
       username
       createdAt
     }

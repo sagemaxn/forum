@@ -18,10 +18,10 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 
-<<<<<<< HEAD
 import { useDeletePostMutation } from "../generated/graphql";
 
-const Post = ({ content, user, createdAt, loggedUser, postID }) => {
+const Post = ({ content, user, picture, createdAt, loggedUser, postID }) => {
+  console.log(picture)
   const [deletePost] = useDeletePostMutation();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
@@ -72,21 +72,6 @@ const Post = ({ content, user, createdAt, loggedUser, postID }) => {
   return (
     <Flex
       w={{ md: "xl", base: "100%" }}
-=======
-  // <Container maxW={"7xl"}>
-  //     <Stack
-  //       align={"center"}
-  //       spacing={{ base: 8, md: 10 }}
-  //       py={{ base: 2, md: 10 }}
-  //       direction={{ base: "column" }}
-  //     ></Stack>
-
-const Post = ({ content, user, createdAt }) => {
-  const d = new Date(createdAt).toLocaleString() 
-  return (
-    <Flex
-      w={{md: "xl", base: '100%'}}
->>>>>>> 4be8c9a0708d64ceb126529693704829ee6b918a
       border="solid 0.5px"
       borderTop="0"
       bg="white"
@@ -96,36 +81,20 @@ const Post = ({ content, user, createdAt }) => {
       <Image
         borderRadius="full"
         padding="10px"
-<<<<<<< HEAD
         boxSize="80px"
-=======
-        boxSize='80px'
->>>>>>> 4be8c9a0708d64ceb126529693704829ee6b918a
         objectFit="cover"
-        src={
-          "https://assets-global.website-files.com/6005fac27a49a9cd477afb63/60576840e7d265198541a372_bavassano_homepage_gp.jpg"
-        }
+        src={picture}
       />
       <Flex direction="column">
         <Heading as="h1" size="sm">
           <Link href={`/${user}`}>{user}</Link>
         </Heading>
-<<<<<<< HEAD
         <Text>{d}</Text>
         <Text>{content}</Text>
       </Flex>
       </Flex>
       {loggedUser === user ? <Text onClick={onOpen} padding="10px">Delete</Text> : null}
         <ConfirmDelete />
-=======
-        <Text>
-          {d}
-        </Text>
-        <Text>
-          {content}
-        </Text>
-        </Flex>
->>>>>>> 4be8c9a0708d64ceb126529693704829ee6b918a
     </Flex>
   );
 };

@@ -28,11 +28,7 @@
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
     "react-textarea-autosize": "^8.3.3",
-<<<<<<< HEAD
     "yup": "^0.32.9"
-=======
-    "yup": "^0.32.11"
->>>>>>> 4be8c9a0708d64ceb126529693704829ee6b918a
   },
   "devDependencies": {
     "@graphql-codegen/cli": "1.21.7",

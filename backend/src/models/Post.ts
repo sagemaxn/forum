@@ -11,6 +11,10 @@ export class Post {
 
   @Field(() => String)
   @prop({ type: String, required: true })
+  public picture: string
+
+  @Field(() => String)
+  @prop({ type: String, required: true })
   public content: string;
 
   @Field(() => Date)

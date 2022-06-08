@@ -14,10 +14,10 @@ const Index = ({ decoded,  token }) => {
  if (loading) return <Navbar user={decoded.user}/>
   return (
     <>
-    <Navbar user={decoded.user}/>
-    <NewPostForm user={decoded.user}/>
-    {data.posts.map(post => {console.log(post._id) 
-    return <Post content={post.content} user={post.username} createdAt={post.createdAt} key={post._id} loggedUser={decoded.user} postID={post._id}></Post>})}
+    <Navbar user={decoded.user} />
+    <NewPostForm user={decoded.user} picture={decoded.picture}/>
+    {data.posts.map(post => {console.log(post) 
+    return <Post content={post.content} user={post.username} createdAt={post.createdAt} picture={post.picture} key={post._id} loggedUser={decoded.user} postID={post._id}></Post>})}
     </>
   );
 };

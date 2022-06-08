@@ -12,6 +12,10 @@ export class User {
   @prop({ type: String, required: true })
   public password: string;
 
+  @Field(() => String)
+  @prop({ type: String, required: true })
+  public picture: string
+
   @Field(() => [Post])
   @prop({ ref: () => Post})
   public posts: Post[];

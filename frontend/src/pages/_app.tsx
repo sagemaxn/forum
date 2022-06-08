@@ -14,7 +14,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={client}>
       <ChakraProvider resetCSS theme={theme}>
-      <Navbar {...pageProps}/>
+      
         <Layout>
      
           <Component {...pageProps} />

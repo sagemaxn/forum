@@ -22,14 +22,9 @@ const User = ({ decoded }) => {
   console.log(data)
   if (loading) return <Navbar user={decoded.user}/>
   if(data){
-<<<<<<< HEAD
       console.log(data)
       if (data.findUser !== 'no user found'){
       return <UserProfile user={data.findUser} loggedUser={decoded.user}/>
-=======
-      if (data.findUser.posts[0].username !== 'no user found'){
-      return <> <Navbar user={decoded.user}/><UserProfile user={data.findUser}/> </>
->>>>>>> 4be8c9a0708d64ceb126529693704829ee6b918a
       }
       else return <div>404 no user found</div>
   }

@@ -68,7 +68,7 @@ export class UserResolver {
   ): Promise<User> {
     //console.log(input)
     password = await hash(password, 12);
-    const user = await UserModel.create({ username, password });
+    const user = await UserModel.create({ username, password, picture: 'https://clinicforspecialchildren.org/wp-content/uploads/2016/08/avatar-placeholder.gif' });
     user.save();
     // user.password = null
     return user;

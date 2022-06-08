@@ -17,6 +17,7 @@ export class PostResolver {
 
     const post = await PostModel.create({
       username,
+      picture: 'https://stonegatesl.com/wp-content/uploads/2021/01/avatar-300x300.jpg',
       content,
       comments,
       likes,
@@ -56,17 +57,8 @@ export class PostResolver {
     return newPost;
   }
   @Query(() => [Post])
-<<<<<<< HEAD
   async posts() {
     const posts = await PostModel.find().sort({ createdAt: -1 });
-=======
-  async posts(){
-    const posts = await PostModel.find().sort({createdAt:-1})
-    console.log(posts)
-    
-    return posts
-  }
->>>>>>> 4be8c9a0708d64ceb126529693704829ee6b918a
 
     return posts;
   }
