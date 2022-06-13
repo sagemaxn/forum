@@ -16,16 +16,6 @@ import { get } from "lodash";
 @Resolver()
 export class UserResolver {
 
-  // @Query(() => String)
-  // cookieTest(
-  //   @Ctx() { req, res }
-  // ){
-  //   const cookie = req.cookies.jid
-  //   console.log(req.headers)
-  //   console.log(cookie)
-  //   return cookie
-  // }
-
   @Mutation(() => LoginToken)
   checkAuth(
     @Ctx() { req, res },
@@ -73,6 +63,24 @@ export class UserResolver {
     // user.password = null
     return user;
   }
+
+  @Mutation(() => User)
+  async changeAvatar(
+    @Arg("userID") userID : string,
+    @Arg('newAvi') newAvi : string
+  ){
+    try{
+    const user = await UserModel.findOneAndUpdate({ _id :userID }, { picture: newAvi })
+    user.save()
+    return user
+    }
+    catch(err) {
+      console.error(err)
+    }
+    
+  }
+
+
   @Query(() => LoginToken)
   async cookie(@Ctx() { res, req }): Promise<LoginToken> {
     res.cookie(
