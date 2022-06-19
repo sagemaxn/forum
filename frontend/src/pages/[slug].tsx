@@ -19,16 +19,14 @@ const User = ({ decoded }) => {
     setUser(slug)
   }
 
-  console.log(data)
   if (loading) return <Navbar user={decoded.user}/>
   if(data){
       console.log(data)
       if (data.findUser !== 'no user found'){
-      return <UserProfile user={data.findUser} loggedUser={decoded.user}/>
+      return <> <Navbar user={decoded.user} /><UserProfile user={data.findUser} loggedUser={decoded.user}/></>
       }
-      else return <div>404 no user found</div>
   }
-  return <div>404 no user found</div>
+  return<>  <Navbar user={decoded.user}/> <div>404 no user found</div> </>
 };
 
 export const getServerSideProps = compose(auth);

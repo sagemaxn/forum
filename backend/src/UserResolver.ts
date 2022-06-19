@@ -15,7 +15,6 @@ import { get } from "lodash";
 
 @Resolver()
 export class UserResolver {
-
   // @Query(() => String)
   // cookieTest(
   //   @Ctx() { req, res }
@@ -27,12 +26,9 @@ export class UserResolver {
   // }
 
   @Mutation(() => LoginToken)
-  checkAuth(
-    @Ctx() { req, res },
-    @Arg("cookie") cookie: string
-  ): LoginToken {
-    console.log(req.cookies.jid)
-   
+  checkAuth(@Ctx() { req, res }, @Arg("cookie") cookie: string): LoginToken {
+    console.log(req.cookies.jid);
+
     if (cookie && cookie !== "no refresh") {
       try {
         const payload = verify(cookie, process.env.JWT_REFRESH);
@@ -47,7 +43,7 @@ export class UserResolver {
             httpOnly: true,
           }
         );
-        console.log(payload)
+        console.log(payload);
         const user = JSON.stringify(payload).split(",")[1].slice(8, -1);
         console.log(user);
         return {
@@ -68,7 +64,12 @@ export class UserResolver {
   ): Promise<User> {
     //console.log(input)
     password = await hash(password, 12);
-    const user = await UserModel.create({ username, password, picture: 'https://clinicforspecialchildren.org/wp-content/uploads/2016/08/avatar-placeholder.gif' });
+    const user = await UserModel.create({
+      username,
+      password,
+      picture:
+        "https://clinicforspecialchildren.org/wp-content/uploads/2016/08/avatar-placeholder.gif",
+    });
     user.save();
     // user.password = null
     return user;
@@ -97,7 +98,7 @@ export class UserResolver {
     console.log(user);
     //console.log(username, user[0].password, password, user.password)
     const passwordCorrect = await compare(password, user[0].password);
-  
+
     if (user && passwordCorrect) {
       console.log("should wokr");
       const payload = res.cookie(
@@ -126,34 +127,33 @@ export class UserResolver {
   }
   @Mutation(() => Boolean)
   logout(@Ctx() { res }): boolean {
-    console.log(res.cookie.jid)
-    res.cookie("jid", 'bad token', {maxAge: 0});
+    console.log(res.cookie.jid);
+    res.cookie("jid", "bad token", { maxAge: 0 });
     //res.cookie.jid.expiresIn = "Thu, 01 Jan 1970 00:00:00 GMT"
-    
+
     return true;
   }
   @Query(() => [User])
-  async users(){
-    const users = await UserModel.find()
-    console.log(users)
-    return users
+  async users() {
+    const users = await UserModel.find();
+    console.log(users);
+    return users;
   }
 
   @Query(() => User)
-  async findUser(
-    @Arg('username') username : string){
-      let user = {username: 'no user found', posts: []}
-      user.posts = [{username: 'no user found', content: '1', createdAt: new Date}]
-      try{
-        let bean = await UserModel.find({username: username}).populate('posts')
-        if (bean[0].username !== '' ){
-        return bean[0]
-      }
-      else return user
+  async findUser(@Arg("username") username: string) {
+    let noUser = { username: "no user found", posts: [] };
+    noUser.posts = [
+      { username: "no user found", content: "1", createdAt: new Date() },
+    ];
+    try {
+      let user = await UserModel.find({ username: username }).populate("posts");
+      if (user[0].username !== "") {
+        return user[0];
+      } else return user;
+    } catch (err) {
+      //console.error(err);
     }
-      catch(err){
-        console.error(err)
-      }
-      return user
+    return noUser;
   }
 }

@@ -25,7 +25,7 @@ export class PostResolver {
     });
     post.save();
 
-    const user = await UserModel.find({ username: username });
+    const user = await UserModel.find({ username });
     user[0].posts.push(post.id);
     user[0].save();
 
@@ -59,7 +59,6 @@ export class PostResolver {
   @Query(() => [Post])
   async posts() {
     const posts = await PostModel.find().sort({ createdAt: -1 });
-
     return posts;
   }
 }

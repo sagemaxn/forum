@@ -1,26 +1,17 @@
-import { useState, useEffect } from "react";
 import { Flex, Button } from "@chakra-ui/react";
 import { decode, verify } from "jsonwebtoken";
+import  Link  from 'next/link'
 import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Text,
-  useDisclosure
+  Heading
 } from "@chakra-ui/react";
-import { SettingsIcon } from '@chakra-ui/icons'
 import { useRouter } from "next/router";
-import { useLogoutMutation } from "../generated/graphql";
-import ChangeAvatar from '../components/ChangeAvatar'
 // import { useAuthQuery } from "../generated/graphql";
 
+import Menu from './Menu'
 import auth from "../lib/auth";
 import {compose} from '../lib/compose'
 
-function Navbar({decoded}) {
-  const { onOpen, isOpen, onClose } = useDisclosure()
-  const [logout, { data }] = useLogoutMutation();
+function Navbar({user}) {
   const Router = useRouter();
   if(Router.pathname === '/login'){
     return null
@@ -29,37 +20,21 @@ function Navbar({decoded}) {
   return (
     <>
     <Flex
-      direction="row-reverse"
+      direction="row"
       as="nav"
       align="center"
-      justify="end"
+      justify="space-between"
       wrap="wrap"
       color="black"
       borderBottom="1px"
       height="50px"
       width={{base: "100%", md: "xl"}}
     >
-      
-      <Menu>
-        <MenuButton as={Text}>
-          {decoded ? decoded.user : null}
-          <SettingsIcon/>
-        </MenuButton>
-        <MenuList>
-        <MenuItem onClick={onOpen}>
-          Change Avatar
-          </MenuItem>
-          <MenuItem
-            onClick={async () => {
-              logout();
-            }}
-          >
-            Logout
-          </MenuItem>
-        </MenuList>
-      </Menu>
+        <Heading as="h1" size="sm">
+          <Link href={'/'}>Home</Link>
+        </Heading>
+      <Menu user={user}/>
     </Flex>
-    <ChangeAvatar onClose={onClose} isOpen={isOpen}/>
     </>
   );
 }
