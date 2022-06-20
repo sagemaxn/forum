@@ -14,7 +14,7 @@ export class User {
 
   @Field(() => String)
   @prop({ type: String, required: true })
-  public picture: string
+  public avatar: string
 
   @Field(() => [Post])
   @prop({ ref: () => Post})

@@ -11,7 +11,11 @@ import {
   RefreshToken,
 } from "./models/User";
 
-import { get } from "lodash";
+import {
+  PostModel
+} from './models/Post'
+
+import { fromPairs, get } from "lodash";
 
 @Resolver()
 export class UserResolver {
@@ -45,9 +49,10 @@ export class UserResolver {
         );
         console.log(payload);
         const user = JSON.stringify(payload).split(",")[1].slice(8, -1);
+        const avatar = JSON.stringify(payload).split(",")[2].slice(10, -1)
         console.log(user);
         return {
-          token: sign({ userID, user }, process.env.JWT_SECRET, {
+          token: sign({ userID, user, avatar }, process.env.JWT_SECRET, {
             expiresIn: "60m",
           }),
         };
@@ -67,7 +72,7 @@ export class UserResolver {
     const user = await UserModel.create({
       username,
       password,
-      picture:
+      avatar:
         "https://clinicforspecialchildren.org/wp-content/uploads/2016/08/avatar-placeholder.gif",
     });
     user.save();
@@ -100,11 +105,10 @@ export class UserResolver {
     const passwordCorrect = await compare(password, user[0].password);
 
     if (user && passwordCorrect) {
-      console.log("should wokr");
       const payload = res.cookie(
         "jid",
         sign(
-          { userID: user[0]._id, user: user[0].username },
+          { userID: user[0]._id, user: user[0].username, avatar: user[0].avatar },
           process.env.JWT_REFRESH,
           {
             expiresIn: "5d",
@@ -116,7 +120,7 @@ export class UserResolver {
       );
       return {
         token: sign(
-          { userID: user[0]._id, user: user[0].username },
+          { userID: user[0]._id, user: user[0].username, avatar: user[0].avatar },
           process.env.JWT_SECRET,
           { expiresIn: "60m" }
         ),
@@ -152,8 +156,23 @@ export class UserResolver {
         return user[0];
       } else return user;
     } catch (err) {
-      //console.error(err);
+      console.error(err);
     }
     return noUser;
+  }
+
+  @Mutation(() => User)
+  async changeAvatar(
+    @Arg("avatar") avatar: string,
+    @Arg("username") username: string
+  ) {
+    try{
+    let user = await UserModel.findOneAndUpdate({ username }, { avatar })
+    let posts = await PostModel.updateMany({ username }, { avatar })
+    return user
+  }
+  catch(err){
+    console.error(err)
+  }
   }
 }

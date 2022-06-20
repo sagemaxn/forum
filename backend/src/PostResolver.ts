@@ -17,7 +17,7 @@ export class PostResolver {
 
     const post = await PostModel.create({
       username,
-      picture: 'https://stonegatesl.com/wp-content/uploads/2021/01/avatar-300x300.jpg',
+      avatar: 'https://stonegatesl.com/wp-content/uploads/2021/01/avatar-300x300.jpg',
       content,
       comments,
       likes,

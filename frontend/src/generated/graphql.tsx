@@ -33,6 +33,7 @@ export type Mutation = {
   createUser: User;
   login: LoginToken;
   logout: Scalars['Boolean'];
+  changeAvatar: User;
   createPost: Post;
   deletePost: Scalars['Boolean'];
   createComment: Post;
@@ -54,6 +55,12 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationChangeAvatarArgs = {
+  username: Scalars['String'];
+  avatar: Scalars['String'];
+};
+
+
 export type MutationCreatePostArgs = {
   input: PostInput;
 };
@@ -72,7 +79,7 @@ export type MutationCreateCommentArgs = {
 export type Post = {
   __typename?: 'Post';
   username: Scalars['String'];
-  picture: Scalars['String'];
+  avatar: Scalars['String'];
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   _id: Scalars['String'];
@@ -99,7 +106,7 @@ export type QueryFindUserArgs = {
 export type User = {
   __typename?: 'User';
   username: Scalars['String'];
-  picture: Scalars['String'];
+  avatar: Scalars['String'];
   posts: Array<Post>;
 };
 
@@ -126,7 +133,7 @@ export type PostsQuery = (
   { __typename?: 'Query' }
   & { posts: Array<(
     { __typename?: 'Post' }
-    & Pick<Post, 'content' | 'username' | 'picture' | 'createdAt' | '_id'>
+    & Pick<Post, 'content' | 'username' | 'avatar' | 'createdAt' | '_id'>
   )> }
 );
 
@@ -140,7 +147,7 @@ export type PostMutation = (
   { __typename?: 'Mutation' }
   & { createPost: (
     { __typename?: 'Post' }
-    & Pick<Post, 'content' | 'createdAt'>
+    & Pick<Post, 'avatar' | 'content' | 'createdAt'>
   ) }
 );
 
@@ -165,7 +172,7 @@ export type FindUserQuery = (
     { __typename?: 'User' }
     & { posts: Array<(
       { __typename?: 'Post' }
-      & Pick<Post, 'content' | 'picture' | 'username' | 'createdAt'>
+      & Pick<Post, 'content' | 'avatar' | 'username' | 'createdAt'>
     )> }
   ) }
 );
@@ -204,6 +211,20 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 export type LogoutMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'logout'>
+);
+
+export type ChangeAvatarMutationVariables = Exact<{
+  username: Scalars['String'];
+  avatar: Scalars['String'];
+}>;
+
+
+export type ChangeAvatarMutation = (
+  { __typename?: 'Mutation' }
+  & { changeAvatar: (
+    { __typename?: 'User' }
+    & Pick<User, 'username' | 'avatar'>
+  ) }
 );
 
 export type AuthMutationVariables = Exact<{
@@ -259,7 +280,7 @@ export const PostsDocument = gql`
   posts {
     content
     username
-    picture
+    avatar
     createdAt
     _id
   }
@@ -295,6 +316,7 @@ export type PostsQueryResult = Apollo.QueryResult<PostsQuery, PostsQueryVariable
 export const PostDocument = gql`
     mutation Post($username: String!, $content: String!) {
   createPost(input: {username: $username, content: $content}) {
+    avatar
     content
     createdAt
   }
@@ -363,7 +385,7 @@ export const FindUserDocument = gql`
   findUser(username: $username) {
     posts {
       content
-      picture
+      avatar
       username
       createdAt
     }
@@ -496,6 +518,41 @@ export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<Logou
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const ChangeAvatarDocument = gql`
+    mutation ChangeAvatar($username: String!, $avatar: String!) {
+  changeAvatar(username: $username, avatar: $avatar) {
+    username
+    avatar
+  }
+}
+    `;
+export type ChangeAvatarMutationFn = Apollo.MutationFunction<ChangeAvatarMutation, ChangeAvatarMutationVariables>;
+
+/**
+ * __useChangeAvatarMutation__
+ *
+ * To run a mutation, you first call `useChangeAvatarMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangeAvatarMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changeAvatarMutation, { data, loading, error }] = useChangeAvatarMutation({
+ *   variables: {
+ *      username: // value for 'username'
+ *      avatar: // value for 'avatar'
+ *   },
+ * });
+ */
+export function useChangeAvatarMutation(baseOptions?: Apollo.MutationHookOptions<ChangeAvatarMutation, ChangeAvatarMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ChangeAvatarMutation, ChangeAvatarMutationVariables>(ChangeAvatarDocument, options);
+      }
+export type ChangeAvatarMutationHookResult = ReturnType<typeof useChangeAvatarMutation>;
+export type ChangeAvatarMutationResult = Apollo.MutationResult<ChangeAvatarMutation>;
+export type ChangeAvatarMutationOptions = Apollo.BaseMutationOptions<ChangeAvatarMutation, ChangeAvatarMutationVariables>;
 export const AuthDocument = gql`
     mutation Auth($cookie: String!) {
   checkAuth(cookie: $cookie) {

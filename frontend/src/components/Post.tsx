@@ -20,8 +20,7 @@ import {
 
 import { useDeletePostMutation } from "../generated/graphql";
 
-const Post = ({ content, user, picture, createdAt, loggedUser, postID }) => {
-  console.log(picture)
+const Post = ({ content, user, avatar, createdAt, loggedUser, postID }) => {
   const [deletePost] = useDeletePostMutation();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
@@ -83,7 +82,7 @@ const Post = ({ content, user, picture, createdAt, loggedUser, postID }) => {
         padding="10px"
         boxSize="80px"
         objectFit="cover"
-        src={picture}
+        src={avatar}
       />
       <Flex direction="column">
         <Heading as="h1" size="sm">

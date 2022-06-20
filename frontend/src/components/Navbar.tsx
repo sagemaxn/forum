@@ -8,10 +8,9 @@ import { useRouter } from "next/router";
 // import { useAuthQuery } from "../generated/graphql";
 
 import Menu from './Menu'
-import auth from "../lib/auth";
-import {compose} from '../lib/compose'
 
-function Navbar({user}) {
+function Navbar({user, avatar}) {
+  console.log(avatar)
   const Router = useRouter();
   if(Router.pathname === '/login'){
     return null
@@ -33,12 +32,10 @@ function Navbar({user}) {
         <Heading as="h1" size="sm">
           <Link href={'/'}>Home</Link>
         </Heading>
-      <Menu user={user}/>
+      <Menu user={user} avatar={avatar}/>
     </Flex>
     </>
   );
 }
-
-export const getServerSideProps = compose(auth)
 
 export default Navbar;

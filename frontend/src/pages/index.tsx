@@ -8,16 +8,14 @@ import { usePostsQuery, PostsDocument } from "../generated/graphql";
 import { FindUserDocument } from "../generated/graphql";
 
 const Index = ({ decoded,  token }) => {
-
+console.log(decoded)
   const { data, loading, error } = useQuery(PostsDocument)
-  if(data){console.log(data.username)}
- if (loading) return <Navbar user={decoded.user}/>
+ if (loading) return <Navbar user={decoded.user} avatar={decoded.avatar}/>
   return (
     <>
-    <Navbar user={decoded.user} />
-    <NewPostForm user={decoded.user} picture={decoded.picture}/>
-    {data.posts.map(post => {console.log(post) 
-    return <Post content={post.content} user={post.username} createdAt={post.createdAt} picture={post.picture} key={post._id} loggedUser={decoded.user} postID={post._id}></Post>})}
+    <Navbar user={decoded.user} avatar={decoded.avatar}/>
+    <NewPostForm user={decoded.user} avatar={decoded.avatar}/>
+    {data.posts.map(post => <Post content={post.content} user={post.username} createdAt={post.createdAt} avatar={post.avatar} key={post._id} loggedUser={decoded.user} postID={post._id}></Post>)}
     </>
   );
 };

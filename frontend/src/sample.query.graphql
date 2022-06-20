@@ -8,14 +8,15 @@ query Posts {
   posts {
     content
     username
-    picture
+    avatar
     createdAt
     _id
   }
 }
 
 mutation Post($username: String!, $content: String!) {
-  createPost(input:{username:$username, content:$content}){
+  createPost(input: { username: $username, content: $content }) {
+    avatar
     content
     createdAt
   }
@@ -29,7 +30,7 @@ query FindUser($username: String!) {
   findUser(username: $username) {
     posts {
       content
-      picture
+      avatar
       username
       createdAt
     }
@@ -50,6 +51,13 @@ mutation Login($username: String!, $password: String!) {
 
 mutation Logout {
   logout
+}
+
+mutation ChangeAvatar($username: String!, $avatar: String!) {
+  changeAvatar(username: $username, avatar: $avatar) {
+    username
+    avatar
+  }
 }
 
 mutation Auth($cookie: String!) {

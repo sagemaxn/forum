@@ -17,12 +17,12 @@ import { usePostMutation } from "../generated/graphql";
 import { bool } from "yup";
 import {useRouter} from 'next/router'
 
-function NewPostForm({user, picture}) {
+function NewPostForm({user, avatar}) {
   const [post, { data }] = usePostMutation()
   console.log(user)
   return (
     <Formik
-      initialValues={{ username: user, picture ,content: '' }}
+      initialValues={{ username: user, avatar ,content: '' }}
       onSubmit={async (values, actions) => {
           console.log(user)
         await post({ variables: values });

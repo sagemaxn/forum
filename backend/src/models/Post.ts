@@ -12,7 +12,7 @@ export class Post {
 
   @Field(() => String)
   @prop({ type: String, required: true })
-  public picture: string
+  public avatar: string
 
   @Field(() => String)
   @prop({ type: String, required: true })

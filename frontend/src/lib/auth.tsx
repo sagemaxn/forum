@@ -14,18 +14,18 @@ export default async function auth({ req, res }, pageProps) {
   const tok = auth.data.checkAuth.token;
   console.log(auth.data.checkAuth.token);
 
-  // if (!decode(tok)
-  // //&& req.url !=='/login'
-  // ) {
-  //   pageProps.props.logged = false;
-  //   if (req.url !== "/login") {
-  //     pageProps.redirect = {
-  //       destination: "/login",
-  //       permanent: false,
-  //     };
-  //   }
-  //   return;
-  // }
+  if (!decode(tok)
+  //&& req.url !=='/login'
+  ) {
+    pageProps.props.logged = false;
+    if (req.url !== "/login") {
+      pageProps.redirect = {
+        destination: "/login",
+        permanent: false,
+      };
+    }
+    return;
+  }
   let verified: any = "";
   if (tok) {
     try {
