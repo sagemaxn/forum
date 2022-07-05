@@ -26,6 +26,10 @@ const Post = ({ content, user, avatar, createdAt, loggedUser, postID }) => {
   const cancelRef = useRef();
   const d = new Date(createdAt).toLocaleString();
   console.log(postID)
+
+  const avatarList = { default: "https://thumbs.dreamstime.com/b/default-avatar-profile-vector-user-profile-default-avatar-profile-vector-user-profile-profile-179376714.jpg", star: "https://previews.123rf.com/images/jpgon/jpgon1411/jpgon141100521/33774351-illustration-of-a-cute-star-avatar-wearing-glasses.jpg", heart: "https://www.chickensmoothie.com/oekaki/image/image.php?id=2340944&size=large&format=auto&rev=1438546858" };
+  const src = avatarList[avatar];
+
   const ConfirmDelete = () => {
     return (
       <AlertDialog
@@ -82,7 +86,7 @@ const Post = ({ content, user, avatar, createdAt, loggedUser, postID }) => {
         padding="10px"
         boxSize="80px"
         objectFit="cover"
-        src={avatar}
+        src={src}
       />
       <Flex direction="column">
         <Heading as="h1" size="sm">
@@ -92,7 +96,7 @@ const Post = ({ content, user, avatar, createdAt, loggedUser, postID }) => {
         <Text>{content}</Text>
       </Flex>
       </Flex>
-      {loggedUser === user ? <Text onClick={onOpen} padding="10px">Delete</Text> : null}
+      {loggedUser === user ? <Button onClick={onOpen} padding="10px" variant='ghost'>Delete</Button> : null}
         <ConfirmDelete />
     </Flex>
   );
