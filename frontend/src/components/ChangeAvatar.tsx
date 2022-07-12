@@ -11,9 +11,9 @@ import {
   Box,
   HStack,
   FormControl,
-  Image,
   FormLabel
 } from "@chakra-ui/react";
+import Image from 'next/image'
 import { useState } from "react";
 import { Formik, Form, Field, FieldProps } from "formik";
 
@@ -23,10 +23,11 @@ function ChangeAvatar({ isOpen, onClose, avatar, user }) {
   const [val, setVal] = useState("");
 
   function CustomRadio(props) {
-    const { getInputProps, getCheckboxProps } = useRadio(props);
+    const { getInputProps, getCheckboxProps, getLabelProps } = useRadio(props);
     const input = getInputProps();
     const checkbox = getCheckboxProps();
     const [checked, setChecked] = useState(val === props.value);
+
     return (
       <>
         <Box
@@ -34,9 +35,12 @@ function ChangeAvatar({ isOpen, onClose, avatar, user }) {
           as="label"
           htmlFor={input.id}
           {...checkbox}
-          style = { checked ? {background : "red", border: "blue solid"} :  null}
+          w="40px"
+          overflow="hidden"
+          style = { checked ? { outline: "blue solid 3px"} :  null}
         >
-          {props.children}
+          
+          <Image src={`/${props.value}.png`}  width="40px" height="40px"/>
         </Box>
         <input {...input} />
       </>

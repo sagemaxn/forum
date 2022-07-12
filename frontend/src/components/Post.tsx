@@ -3,10 +3,11 @@ import {
   Text,
   Heading,
   Flex,
-  Image,
   Link,
   Button,
+  border,
 } from "@chakra-ui/react";
+import Image from 'next/image'
 import { useRef } from "react";
 import {
   AlertDialog,
@@ -24,11 +25,8 @@ const Post = ({ content, user, avatar, createdAt, loggedUser, postID }) => {
   const [deletePost] = useDeletePostMutation();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
-  const d = new Date(createdAt).toLocaleString();
+  const dateP = new Date(createdAt).toLocaleString();
   console.log(postID)
-
-  const avatarList = { default: "https://thumbs.dreamstime.com/b/default-avatar-profile-vector-user-profile-default-avatar-profile-vector-user-profile-profile-179376714.jpg", star: "https://previews.123rf.com/images/jpgon/jpgon1411/jpgon141100521/33774351-illustration-of-a-cute-star-avatar-wearing-glasses.jpg", heart: "https://www.chickensmoothie.com/oekaki/image/image.php?id=2340944&size=large&format=auto&rev=1438546858" };
-  const src = avatarList[avatar];
 
   const ConfirmDelete = () => {
     return (
@@ -82,17 +80,20 @@ const Post = ({ content, user, avatar, createdAt, loggedUser, postID }) => {
     >
       <Flex>
       <Image
-        borderRadius="full"
-        padding="10px"
-        boxSize="80px"
-        objectFit="cover"
-        src={src}
+       objectFit="contain"
+        src={`/${avatar}.png`}
+        width="80px" height="80px"
+        style={{
+        padding:"10px",
+        borderRadius: "full"
+      ,
+    }}
       />
       <Flex direction="column">
         <Heading as="h1" size="sm">
           <Link href={`/${user}`}>{user}</Link>
         </Heading>
-        <Text>{d}</Text>
+        <Text>{dateP}</Text>
         <Text>{content}</Text>
       </Flex>
       </Flex>
