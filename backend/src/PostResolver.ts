@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Arg, Ctx } from "type-graphql";
+import { Resolver, Query, Mutation, Arg, Int } from "type-graphql";
 import { Post, PostModel, PostInput } from "./models/Post";
 import { CommentInput } from "./models/Comment";
 import { UserModel } from "./models/User";
@@ -58,8 +58,15 @@ export class PostResolver {
     return newPost;
   }
   @Query(() => [Post])
-  async posts() {
-    const posts = await PostModel.find().sort({ createdAt: -1 });
+  
+  async posts(
+    @Arg("limit", () => Int) limit : number,
+    @Arg("offset", () => Int) offset : number
+  ) {
+    const posts = await PostModel.find()
+    .limit(limit)
+    .skip(offset)
+    .sort({ createdAt: -1 })
     return posts;
   }
 }

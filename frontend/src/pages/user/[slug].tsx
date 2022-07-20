@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useFindUserQuery, FindUserDocument } from "../generated/graphql";
-import { initializeApollo } from "../lib/apollo";
-import auth from "../lib/auth";
-import { compose } from "../lib/compose";
-import UserProfile from '../components/UserProfile'
-import Navbar from "../components/Navbar";
+import { useFindUserQuery, FindUserDocument } from "../../generated/graphql";
+import { initializeApollo } from "../../lib/apollo";
+import auth from "../../lib/auth";
+import { compose } from "../../lib/compose";
+import UserProfile from '../../components/UserProfile'
+import Navbar from "../../components/Navbar";
 
 const User = ({ decoded }) => {
   const router = useRouter();

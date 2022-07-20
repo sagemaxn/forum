@@ -4,8 +4,8 @@ query AllUsers {
   }
 }
 
-query Posts {
-  posts {
+query Posts($offset: Int!, $limit: Int!) {
+  posts(offset: $offset, limit: $limit) {
     content
     username
     avatar

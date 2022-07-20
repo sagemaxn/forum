@@ -103,6 +103,12 @@ export type QueryFindUserArgs = {
   username: Scalars['String'];
 };
 
+
+export type QueryPostsArgs = {
+  offset: Scalars['Int'];
+  limit: Scalars['Int'];
+};
+
 export type User = {
   __typename?: 'User';
   username: Scalars['String'];
@@ -126,7 +132,10 @@ export type AllUsersQuery = (
   )> }
 );
 
-export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
+export type PostsQueryVariables = Exact<{
+  offset: Scalars['Int'];
+  limit: Scalars['Int'];
+}>;
 
 
 export type PostsQuery = (
@@ -276,8 +285,8 @@ export type AllUsersQueryHookResult = ReturnType<typeof useAllUsersQuery>;
 export type AllUsersLazyQueryHookResult = ReturnType<typeof useAllUsersLazyQuery>;
 export type AllUsersQueryResult = Apollo.QueryResult<AllUsersQuery, AllUsersQueryVariables>;
 export const PostsDocument = gql`
-    query Posts {
-  posts {
+    query Posts($offset: Int!, $limit: Int!) {
+  posts(offset: $offset, limit: $limit) {
     content
     username
     avatar
@@ -299,10 +308,12 @@ export const PostsDocument = gql`
  * @example
  * const { data, loading, error } = usePostsQuery({
  *   variables: {
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
  *   },
  * });
  */
-export function usePostsQuery(baseOptions?: Apollo.QueryHookOptions<PostsQuery, PostsQueryVariables>) {
+export function usePostsQuery(baseOptions: Apollo.QueryHookOptions<PostsQuery, PostsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<PostsQuery, PostsQueryVariables>(PostsDocument, options);
       }
