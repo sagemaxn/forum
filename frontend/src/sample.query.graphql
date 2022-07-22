@@ -6,11 +6,14 @@ query AllUsers {
 
 query Posts($offset: Int!, $limit: Int!) {
   posts(offset: $offset, limit: $limit) {
-    content
-    username
-    avatar
-    createdAt
-    _id
+    data {
+      content
+      username
+      avatar
+      createdAt
+      _id
+    }
+    total
   }
 }
 

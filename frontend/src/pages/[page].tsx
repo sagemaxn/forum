@@ -18,25 +18,25 @@ const Page = ({ decoded,  token }) => {
   if( typeof(page) === 'string'){
   //  setOffset(6)
     if(parseInt(page, 10) ){
-      offset = parseInt(page)
+      offset = parseInt(page) * 5
 
 console.log(decoded)
   const { data, loading, error, fetchMore } = useQuery(PostsDocument, {
     variables: {
       offset: offset,
-      limit: 1
+      limit: 5
     }
   })
  if (loading) return <Navbar user={decoded.user} avatar={decoded.avatar}/>
+ console.log(data)
   return (
     <>
     <Navbar user={decoded.user} avatar={decoded.avatar}/>
     <NewPostForm user={decoded.user} avatar={decoded.avatar}/>
-    {data.posts.map(post => <Post content={post.content} user={post.username} createdAt={post.createdAt} avatar={post.avatar} key={post._id} loggedUser={decoded.user} postID={post._id}></Post>)}
-    <Link href={`/${parseInt(page) + 1}`} //write little function that will check if there is additional page
-    >Next Page</Link>
+    {data.posts.data.map(post => <Post content={post.content} user={post.username} createdAt={post.createdAt} avatar={post.avatar} key={post._id} loggedUser={decoded.user} postID={post._id}></Post>)}
+    {parseInt(page) * 5 < data.posts.total - 1 && <Link href={`/${parseInt(page) + 1}`}>Next Page</Link>}
     
-    <Link href={`/${parseInt(page) - 1}`}>Prev Page</Link>
+    {parseInt(page) - 1 > 0 && <Link href={`/${parseInt(page) - 1}`}>Prev Page</Link>}
     </>
   );
 }

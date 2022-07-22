@@ -90,12 +90,18 @@ export type PostInput = {
   content: Scalars['String'];
 };
 
+export type PostsQuery = {
+  __typename?: 'PostsQuery';
+  total: Scalars['Float'];
+  data: Array<Post>;
+};
+
 export type Query = {
   __typename?: 'Query';
   cookie: LoginToken;
   users: Array<User>;
   findUser: User;
-  posts: Array<Post>;
+  posts: PostsQuery;
 };
 
 
@@ -140,10 +146,14 @@ export type PostsQueryVariables = Exact<{
 
 export type PostsQuery = (
   { __typename?: 'Query' }
-  & { posts: Array<(
-    { __typename?: 'Post' }
-    & Pick<Post, 'content' | 'username' | 'avatar' | 'createdAt' | '_id'>
-  )> }
+  & { posts: (
+    { __typename?: 'PostsQuery' }
+    & Pick<PostsQuery, 'total'>
+    & { data: Array<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'content' | 'username' | 'avatar' | 'createdAt' | '_id'>
+    )> }
+  ) }
 );
 
 export type PostMutationVariables = Exact<{
@@ -287,11 +297,14 @@ export type AllUsersQueryResult = Apollo.QueryResult<AllUsersQuery, AllUsersQuer
 export const PostsDocument = gql`
     query Posts($offset: Int!, $limit: Int!) {
   posts(offset: $offset, limit: $limit) {
-    content
-    username
-    avatar
-    createdAt
-    _id
+    data {
+      content
+      username
+      avatar
+      createdAt
+      _id
+    }
+    total
   }
 }
     `;

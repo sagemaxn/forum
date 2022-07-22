@@ -3,6 +3,14 @@ import { prop, getModelForClass, mongoose } from "@typegoose/typegoose";
 //import { User } from './User'
 import { Comment } from './Comment'
 
+@ObjectType()
+export class PostsQuery {
+  @Field(() => Number)
+  total: number
+
+  @Field(() => [Post])
+  data: Post[]
+}
 
 @ObjectType()
 export class Post {
