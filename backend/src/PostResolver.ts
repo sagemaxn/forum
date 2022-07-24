@@ -3,9 +3,6 @@ import { Post, PostModel, PostInput, PostsQuery } from "./models/Post";
 import { CommentInput } from "./models/Comment";
 import { UserModel } from "./models/User";
 
-
-
-
 @Resolver()
 export class PostResolver {
   @Mutation(() => Post)
@@ -14,13 +11,12 @@ export class PostResolver {
   ): Promise<Post> {
     let comments = "";
     let likes = "";
-
+    const user = await UserModel.find({ username });
     let createdAt = new Date();
 
     const post = await PostModel.create({
       username,
-      avatar:
-        "https://stonegatesl.com/wp-content/uploads/2021/01/avatar-300x300.jpg",
+      avatar: user[0].avatar,
       content,
       comments,
       likes,
@@ -28,7 +24,6 @@ export class PostResolver {
     });
     post.save();
 
-    const user = await UserModel.find({ username });
     user[0].posts.push(post.id);
     user[0].save();
 
@@ -60,25 +55,50 @@ export class PostResolver {
     return newPost;
   }
   @Query(() => PostsQuery)
-  
   async posts(
-    @Arg("limit", () => Int) limit : number,
-    @Arg("offset", () => Int) offset : number
+    @Arg("limit", () => Int) limit: number,
+    @Arg("offset", () => Int) offset: number
   ) {
     const posts = await PostModel.aggregate([
-      { '$sort'     : { createdAt : -1 } },
-      { '$facet'    : {
-          count: [ { $count: "total" }],
-          data: [ { $skip: offset }, { $limit: limit } ]
-      } }
-    ] )
-    
-    const obj = {total: posts[0].count[0].total, data: posts[0].data}
-    console.log(obj)
+      { $sort: { createdAt: -1 } },
+      {
+        $facet: {
+          count: [{ $count: "total" }],
+          data: [{ $skip: offset }, { $limit: limit }],
+        },
+      },
+    ]);
 
-    return obj
-
+    const obj = { total: posts[0].count[0].total, data: posts[0].data };
+    console.log(obj);
+    return obj;
   }
+
+  @Query(() => PostsQuery)
+  async findUserPosts(
+    @Arg("username") username: string, 
+    @Arg("limit", () => Int) limit : number,
+    @Arg("offset", () => Int) offset : number) {
+      let obj
+    try{const posts = await PostModel.aggregate([
+      { $match: { username } },
+      { $sort: { createdAt: -1 } },
+      {
+        $facet: {
+          count: [{ $count: "total" }],
+          data: [{ $skip: offset }, { $limit: limit }],
+        },
+      },
+    ]);
+
+    obj = { total: posts[0].count[0].total, data: posts[0].data };
+    console.log(obj);}
+    catch(err){
+      console.log(err)
+      obj = { total: 0, data: [] };
+    }
+    return obj;
+  }
+
+    
 }
-
-

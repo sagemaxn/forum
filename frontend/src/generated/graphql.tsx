@@ -100,19 +100,21 @@ export type Query = {
   __typename?: 'Query';
   cookie: LoginToken;
   users: Array<User>;
-  findUser: User;
   posts: PostsQuery;
-};
-
-
-export type QueryFindUserArgs = {
-  username: Scalars['String'];
+  findUserPosts: PostsQuery;
 };
 
 
 export type QueryPostsArgs = {
   offset: Scalars['Int'];
   limit: Scalars['Int'];
+};
+
+
+export type QueryFindUserPostsArgs = {
+  offset: Scalars['Int'];
+  limit: Scalars['Int'];
+  username: Scalars['String'];
 };
 
 export type User = {
@@ -156,6 +158,25 @@ export type PostsQuery = (
   ) }
 );
 
+export type FindUserPostsQueryVariables = Exact<{
+  username: Scalars['String'];
+  offset: Scalars['Int'];
+  limit: Scalars['Int'];
+}>;
+
+
+export type FindUserPostsQuery = (
+  { __typename?: 'Query' }
+  & { findUserPosts: (
+    { __typename?: 'PostsQuery' }
+    & Pick<PostsQuery, 'total'>
+    & { data: Array<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'content' | 'username' | 'avatar' | 'createdAt' | '_id'>
+    )> }
+  ) }
+);
+
 export type PostMutationVariables = Exact<{
   username: Scalars['String'];
   content: Scalars['String'];
@@ -178,22 +199,6 @@ export type DeletePostMutationVariables = Exact<{
 export type DeletePostMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'deletePost'>
-);
-
-export type FindUserQueryVariables = Exact<{
-  username: Scalars['String'];
-}>;
-
-
-export type FindUserQuery = (
-  { __typename?: 'Query' }
-  & { findUser: (
-    { __typename?: 'User' }
-    & { posts: Array<(
-      { __typename?: 'Post' }
-      & Pick<Post, 'content' | 'avatar' | 'username' | 'createdAt'>
-    )> }
-  ) }
 );
 
 export type RegMutationVariables = Exact<{
@@ -337,6 +342,50 @@ export function usePostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Post
 export type PostsQueryHookResult = ReturnType<typeof usePostsQuery>;
 export type PostsLazyQueryHookResult = ReturnType<typeof usePostsLazyQuery>;
 export type PostsQueryResult = Apollo.QueryResult<PostsQuery, PostsQueryVariables>;
+export const FindUserPostsDocument = gql`
+    query FindUserPosts($username: String!, $offset: Int!, $limit: Int!) {
+  findUserPosts(username: $username, offset: $offset, limit: $limit) {
+    data {
+      content
+      username
+      avatar
+      createdAt
+      _id
+    }
+    total
+  }
+}
+    `;
+
+/**
+ * __useFindUserPostsQuery__
+ *
+ * To run a query within a React component, call `useFindUserPostsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindUserPostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindUserPostsQuery({
+ *   variables: {
+ *      username: // value for 'username'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useFindUserPostsQuery(baseOptions: Apollo.QueryHookOptions<FindUserPostsQuery, FindUserPostsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindUserPostsQuery, FindUserPostsQueryVariables>(FindUserPostsDocument, options);
+      }
+export function useFindUserPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindUserPostsQuery, FindUserPostsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindUserPostsQuery, FindUserPostsQueryVariables>(FindUserPostsDocument, options);
+        }
+export type FindUserPostsQueryHookResult = ReturnType<typeof useFindUserPostsQuery>;
+export type FindUserPostsLazyQueryHookResult = ReturnType<typeof useFindUserPostsLazyQuery>;
+export type FindUserPostsQueryResult = Apollo.QueryResult<FindUserPostsQuery, FindUserPostsQueryVariables>;
 export const PostDocument = gql`
     mutation Post($username: String!, $content: String!) {
   createPost(input: {username: $username, content: $content}) {
@@ -404,46 +453,6 @@ export function useDeletePostMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeletePostMutationHookResult = ReturnType<typeof useDeletePostMutation>;
 export type DeletePostMutationResult = Apollo.MutationResult<DeletePostMutation>;
 export type DeletePostMutationOptions = Apollo.BaseMutationOptions<DeletePostMutation, DeletePostMutationVariables>;
-export const FindUserDocument = gql`
-    query FindUser($username: String!) {
-  findUser(username: $username) {
-    posts {
-      content
-      avatar
-      username
-      createdAt
-    }
-  }
-}
-    `;
-
-/**
- * __useFindUserQuery__
- *
- * To run a query within a React component, call `useFindUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindUserQuery({
- *   variables: {
- *      username: // value for 'username'
- *   },
- * });
- */
-export function useFindUserQuery(baseOptions: Apollo.QueryHookOptions<FindUserQuery, FindUserQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindUserQuery, FindUserQueryVariables>(FindUserDocument, options);
-      }
-export function useFindUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindUserQuery, FindUserQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindUserQuery, FindUserQueryVariables>(FindUserDocument, options);
-        }
-export type FindUserQueryHookResult = ReturnType<typeof useFindUserQuery>;
-export type FindUserLazyQueryHookResult = ReturnType<typeof useFindUserLazyQuery>;
-export type FindUserQueryResult = Apollo.QueryResult<FindUserQuery, FindUserQueryVariables>;
 export const RegDocument = gql`
     mutation Reg($username: String!, $password: String!) {
   createUser(input: {username: $username, password: $password}) {

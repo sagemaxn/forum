@@ -144,23 +144,6 @@ export class UserResolver {
     return users;
   }
 
-  @Query(() => User)
-  async findUser(@Arg("username") username: string) {
-    let noUser = { username: "no user found", posts: [] };
-    noUser.posts = [
-      { username: "no user found", content: "1", createdAt: new Date() },
-    ];
-    try {
-      let user = await UserModel.find({ username: username }).populate("posts");
-      if (user[0].username !== "") {
-        return user[0];
-      } else return user;
-    } catch (err) {
-      console.error(err);
-    }
-    return noUser;
-  }
-
   @Mutation(() => User)
   async changeAvatar(
     @Arg("avatar") avatar: string,
