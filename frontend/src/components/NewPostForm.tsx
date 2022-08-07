@@ -51,7 +51,7 @@ function NewPostForm({user, avatar}) {
 
           <Button
             mt={4}
-            backgroundColor="green"
+            backgroundColor="mint"
             w="100%"
             isLoading={props.isSubmitting}
             type="submit"

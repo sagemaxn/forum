@@ -4,11 +4,11 @@ import {Button} from '@chakra-ui/react'
 
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import Post from '../components/Post'
-import NewPostForm from '../components/NewPostForm'
-import Navbar from '../components/Navbar'
-import { usePostsQuery, PostsDocument } from "../generated/graphql";
-import { FindUserDocument } from "../generated/graphql";
+import Post from '../../components/Post'
+import NewPostForm from '../../components/NewPostForm'
+import Navbar from '../../components/Navbar'
+import { usePostsQuery, PostsDocument } from "../../generated/graphql";
+import { FindUserDocument } from "../../generated/graphql";
 
 const Page = ({ decoded,  token }) => {
   const router = useRouter();
@@ -34,9 +34,9 @@ console.log(decoded)
     <Navbar user={decoded.user} avatar={decoded.avatar}/>
     <NewPostForm user={decoded.user} avatar={decoded.avatar}/>
     {data.posts.data.map(post => <Post content={post.content} user={post.username} createdAt={post.createdAt} avatar={post.avatar} key={post._id} loggedUser={decoded.user} postID={post._id}></Post>)}
-    {parseInt(page) * 5 < data.posts.total - 1 && <Link href={`/${parseInt(page) + 1}`}>Next Page</Link>}
+    {parseInt(page) * 5 < data.posts.total - 1 && <Link href={`/posts/${parseInt(page) + 1}`}>Next Page</Link>}
     
-    {parseInt(page) - 1 > 0 && <Link href={`/${parseInt(page) - 1}`}>Prev Page</Link>}
+    {parseInt(page) - 1 > 0 && <Link href={`/posts/${parseInt(page) - 1}`}>Prev Page</Link>}
     </>
   );
 }
@@ -44,8 +44,8 @@ console.log(decoded)
 return <div>dsadasd</div> //redirect to page 1
 };
 
-import auth from "../lib/auth";
-import {compose} from '../lib/compose'
+import auth from "../../lib/auth";
+import {compose} from '../../lib/compose'
 
 export const getServerSideProps = compose(auth)
 

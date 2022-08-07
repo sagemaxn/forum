@@ -13,7 +13,6 @@ import { HiEye, HiEyeOff } from "react-icons/hi";
 
 import FormField from "../components/FormField";
 import { useLoginMutation} from "../generated/graphql";
-import { bool } from "yup";
 import {useRouter} from 'next/router'
 
 function LoginForm({setForm, form}) {
@@ -41,6 +40,9 @@ function LoginForm({setForm, form}) {
         await login({ variables: values });
         if(data){
           console.log(data)
+          if(data.login.token !== 'no token'){
+            useRouter().push('/')
+          }
         }
         actions.setSubmitting(false);
       }}

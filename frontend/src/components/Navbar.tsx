@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 
 import Menu from './Menu'
 
-function Navbar({user, avatar}) {
+const Navbar = ({user, avatar}) => {
   console.log(avatar)
   const Router = useRouter();
   if(Router.pathname === '/login'){

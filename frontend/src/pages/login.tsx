@@ -26,7 +26,7 @@ const login = ({ auth, token }) => {
 
   return (
     <Container height="100vh">
-      <Heading> Welcome to Title </Heading>
+      <Heading> Please login or sign up to enter our website </Heading>
       {Forms()}
     </Container>
   );

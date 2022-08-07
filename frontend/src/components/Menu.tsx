@@ -6,6 +6,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
+import {useRouter} from 'next/router'
 import { SettingsIcon } from "@chakra-ui/icons";
 import ChangeAvatar from "../components/ChangeAvatar";
 import { useLogoutMutation } from "../generated/graphql";
@@ -13,6 +14,11 @@ import { useLogoutMutation } from "../generated/graphql";
 function MenuComp({ user, avatar }) {
   const { onOpen, isOpen, onClose } = useDisclosure();
   const [logout, { data }] = useLogoutMutation();
+
+  const logoutF = () => {
+    logout()
+   // useRouter().push('/login')
+  }
 
   return (
     <>
@@ -25,7 +31,7 @@ function MenuComp({ user, avatar }) {
           <MenuItem onClick={onOpen}>Change Avatar</MenuItem>
           <MenuItem
             onClick={async () => {
-              logout();
+              logoutF()
             }}
           >
             Logout
