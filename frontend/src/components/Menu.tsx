@@ -12,12 +12,13 @@ import ChangeAvatar from "../components/ChangeAvatar";
 import { useLogoutMutation } from "../generated/graphql";
 
 function MenuComp({ user, avatar }) {
+  const router = useRouter()
   const { onOpen, isOpen, onClose } = useDisclosure();
   const [logout, { data }] = useLogoutMutation();
 
   const logoutF = () => {
     logout()
-   // useRouter().push('/login')
+    router.push('/login')
   }
 
   return (

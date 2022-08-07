@@ -31,16 +31,17 @@ function ChangeAvatar({ isOpen, onClose, avatar, user }) {
     return (
       <>
         <Box
+          margin="10px"
           aria-label={props.label}
           as="label"
           htmlFor={input.id}
           {...checkbox}
-          w="40px"
+          w="60px"
           overflow="hidden"
-          style = { checked ? { outline: "blue solid 3px"} :  null}
+          style = { checked ? { outline: "black solid 3px"} :  null}
         >
           
-          <Image src={`/${props.value}.png`}  width="40px" height="40px"/>
+          <Image src={`/${props.value}.png`}  width="60px" height="60px" style={{borderRadius: "100%"}} objectFit="contain"/>
         </Box>
         <input {...input} />
       </>
@@ -54,7 +55,7 @@ function ChangeAvatar({ isOpen, onClose, avatar, user }) {
 
   function Group() {
     const [change, { data }] = useChangeAvatarMutation();
-    const avatars = [{ name: "default" }, { name: "star" }, { name: "heart" }];
+    const avatars = [{ name: "default" }, { name: "star" }, { name: "heart" }, { name: "cat" }, { name: "dog" }];
     const { value, getRootProps, getRadioProps } = useRadioGroup({
       onChange: handleChange,
     });
@@ -82,7 +83,7 @@ function ChangeAvatar({ isOpen, onClose, avatar, user }) {
                     <FormControl
                       id={'avatar'}
                     >
-                      <FormLabel htmlFor={'avatar'}>{'avatar'}</FormLabel>
+                      <FormLabel htmlFor={'avatar'}></FormLabel>
                       {avatars.map((avatar) => (
                         <CustomRadio
                         {...rest}

@@ -11,8 +11,8 @@ import Menu from './Menu'
 
 const Navbar = ({user, avatar}) => {
   console.log(avatar)
-  const Router = useRouter();
-  if(Router.pathname === '/login'){
+  const router = useRouter();
+  if(router.pathname === '/login'){
     return null
   }
 

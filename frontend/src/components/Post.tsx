@@ -84,9 +84,7 @@ const Post = ({ content, user, avatar, createdAt, loggedUser, postID }) => {
         src={`/${avatar}.png`}
         width="80px" height="80px"
         style={{
-        padding:"10px",
-        borderRadius: "full"
-      ,
+        padding:"10px"
     }}
       />
       <Flex direction="column">
