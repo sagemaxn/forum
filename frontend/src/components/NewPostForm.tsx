@@ -39,11 +39,9 @@ function NewPostForm({user, avatar}) {
         boxShadow={'xl'}
         p={6}
         direction={'column'}
-        border="solid"
-        borderLeft="1px"
-        borderRight="1px"
-        borderTop = "0px"
-        borderBottom="1px"
+        //border="solid 1px"
+        margin="2px"
+        backgroundColor="blue"
         >
 
            <Form>

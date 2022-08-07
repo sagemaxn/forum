@@ -23,6 +23,9 @@ const theme = extendTheme({
     global: (props) => ({
       body: {
        bg: "green"
+      },
+      button: {
+       // bg: "mint"
       }
     })
   },

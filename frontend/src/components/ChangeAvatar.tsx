@@ -20,7 +20,7 @@ import { Formik, Form, Field, FieldProps } from "formik";
 import { useChangeAvatarMutation } from "../generated/graphql";
 
 function ChangeAvatar({ isOpen, onClose, avatar, user }) {
-  const [val, setVal] = useState("");
+  const [val, setVal] = useState(avatar);
 
   function CustomRadio(props) {
     const { getInputProps, getCheckboxProps, getLabelProps } = useRadio(props);

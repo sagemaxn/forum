@@ -19,13 +19,15 @@ const Navbar = ({user, avatar}) => {
   return (
     <>
     <Flex
+    padding="3px"
+    
       direction="row"
       as="nav"
       align="center"
       justify="space-between"
       wrap="wrap"
       color="black"
-      borderBottom="1px"
+      
       height="50px"
       width={{base: "100%", md: "xl"}}
     >

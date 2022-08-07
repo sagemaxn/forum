@@ -52,12 +52,15 @@ const Post = ({ content, user, avatar, createdAt, loggedUser, postID }) => {
                 onClick={async () => {
                   try {
                     await deletePost({ variables: {postID}});
+                    //alert for success
                 
                   } catch (err) {
                     console.log("post could not be deleted");
                     console.error(err);
+                    //alert "there was an error deleting this post"
                     
                   }
+                  onClose()
                   
                 }}
                 ml={3}
@@ -73,8 +76,8 @@ const Post = ({ content, user, avatar, createdAt, loggedUser, postID }) => {
   return (
     <Flex
       w={{ md: "xl", base: "100%" }}
-      border="solid 0.5px"
-      borderTop="0"
+      //border="solid 1px"
+      margin="2px"
       bg="white"
       justifyContent="space-between"
     >
@@ -89,7 +92,7 @@ const Post = ({ content, user, avatar, createdAt, loggedUser, postID }) => {
       />
       <Flex direction="column">
         <Heading as="h1" size="sm">
-          <Link href={`/${user}`}>{user}</Link>
+          <Link href={`/user/${user}/1`}>{user}</Link>
         </Heading>
         <Text>{dateP}</Text>
         <Text>{content}</Text>

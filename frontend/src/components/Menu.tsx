@@ -6,6 +6,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
+import Link from 'next/link'
 import {useRouter} from 'next/router'
 import { SettingsIcon } from "@chakra-ui/icons";
 import ChangeAvatar from "../components/ChangeAvatar";
@@ -24,11 +25,12 @@ function MenuComp({ user, avatar }) {
   return (
     <>
       <Menu>
-        <MenuButton as={Text}>
+        <MenuButton>
           {user ? user : null}
           <SettingsIcon />
         </MenuButton>
         <MenuList>
+          <Link href={`/user/${user}`}><MenuItem>Your Posts</MenuItem></Link>
           <MenuItem onClick={onOpen}>Change Avatar</MenuItem>
           <MenuItem
             onClick={async () => {
