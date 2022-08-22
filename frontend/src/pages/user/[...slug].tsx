@@ -12,7 +12,10 @@ const User = ({ decoded }) => {
   const { slug } = router.query;
   const [user, setUser] = useState('no user found')
   const { data, loading, error } = useFindUserQuery({
-    variables: { username: user },
+    variables: {
+      offset: offset,
+      limit: 5
+    }
   });
   if(typeof slug === 'string'){
     if (user !== slug)

@@ -23,11 +23,25 @@ const theme = extendTheme({
     global: (props) => ({
       body: {
        bg: "green"
-      },
-      button: {
-       // bg: "mint"
       }
     })
+  },
+  components: {
+    Button: {
+      variants: {
+        'blue': {
+          bg: 'blue',
+          color: 'white',
+          size: 'md',
+          variant: 'solid'
+        },
+      },
+      defaultProps: {
+        size: 'md', // default is md
+        variant: 'solid', // default is solid
+        colorScheme: 'gray', // default is gray
+      },
+    },
   },
 })
 

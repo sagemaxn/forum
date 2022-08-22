@@ -1,20 +1,23 @@
-import { useState, useEffect } from "react";
-import { Formik, Form, Field } from "formik";
-import { Button, Link, Box, Alert, AlertDescription, AlertIcon, AlertTitle } from "@chakra-ui/react";
+import { useState } from "react";
+import { Formik, Form, ErrorMessage } from "formik";
+import { Button, Flex, Alert, AlertDescription, AlertIcon, AlertTitle, Box, Heading } from "@chakra-ui/react";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 
 import FormField from "../components/FormField";
-<<<<<<< Updated upstream
-import { useLoginMutation} from "../generated/graphql";
-import {useRouter} from 'next/router'
-=======
 import { useLoginMutation } from "../generated/graphql";
 import { useRouter } from "next/router";
->>>>>>> Stashed changes
+
+function AlertMessage(){
+  return <Alert status="error">
+            <AlertIcon />
+            <AlertTitle>Wrong password</AlertTitle>
+            <AlertDescription>
+              
+            </AlertDescription>
+          </Alert>
+}
 
 function LoginForm({ setForm, form }) {
-
-const [hidden, setHidden] = useState(true)
   const [login, { data }] = useLoginMutation({
     onCompleted({ login }) {
       if (data) {
@@ -25,11 +28,6 @@ const [hidden, setHidden] = useState(true)
 
   const [toggle, setToggle] = useState(true);
   const [boolean, setBoolean] = useState(true);
-
-  interface valuesInt {
-    password: string;
-    username: string;
-  }
 
   if (data && boolean) {
     if (data.login.token !== "no token") {
@@ -47,38 +45,34 @@ const [hidden, setHidden] = useState(true)
             useRouter().push('/')
           }
         }
-        else setHidden(false)
         actions.setSubmitting(false);
-        
       }}
     >
       {(props) => (
+        <Box background="white" padding="5" borderRadius="5%" w="md">
+        <Heading margin="4" textAlign="center">Login</Heading>
         <Form>
           <FormField name="username"></FormField>
           <FormField name="password" toggle={toggle}>
-            {" "}
-            <Box onClick={() => setToggle(!toggle)} zIndex="3">
-              {toggle ? <HiEyeOff /> : <HiEye />}
-            </Box>
           </FormField>
-
+          <Flex>
           <Button
             mt={4}
-            backgroundColor="green"
             isLoading={props.isSubmitting}
             type="submit"
+            background="blue"
+            color="white"
+            w="100%"
           >
             Login
           </Button>
-          <Link onClick={() => setForm("")}>Back</Link>
-          <Alert status="error" hidden={hidden}>
-            <AlertIcon />
-            <AlertTitle>Wrong username and/or password</AlertTitle>
-            <AlertDescription>
-              
-            </AlertDescription>
-          </Alert>
+          <Button onClick={() => setToggle(!toggle)} mt={4}>
+            {toggle ? <HiEyeOff/> : <HiEye/>}
+          </Button>         
+          </Flex>
+          <Button onClick={() => setForm('register')} background="mint" mt={4} w="100%">Sign Up</Button>
         </Form>
+        </Box>
       )}
     </Formik>
   );
