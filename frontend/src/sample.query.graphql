@@ -17,6 +17,19 @@ query Posts($offset: Int!, $limit: Int!) {
   }
 }
 
+query UserPosts($offset: Int!, $limit: Int!, $username: String!) {
+  userPosts(offset: $offset, limit: $limit, username: $username) {
+    data {
+      content
+      avatar
+      username
+      createdAt
+      _id
+    }
+    total
+  }
+}
+
 mutation Post($username: String!, $content: String!) {
   createPost(input: { username: $username, content: $content }) {
     avatar
@@ -27,17 +40,6 @@ mutation Post($username: String!, $content: String!) {
 
 mutation DeletePost($postID: String!) {
   deletePost(postID: $postID)
-}
-
-query FindUser($username: String!) {
-  findUser(username: $username) {
-    posts {
-      content
-      avatar
-      username
-      createdAt
-    }
-  }
 }
 
 mutation Reg($username: String!, $password: String!) {

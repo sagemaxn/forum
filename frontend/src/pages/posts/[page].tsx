@@ -8,7 +8,6 @@ import Post from '../../components/Post'
 import NewPostForm from '../../components/NewPostForm'
 import Navbar from '../../components/Navbar'
 import { usePostsQuery, PostsDocument } from "../../generated/graphql";
-import { FindUserDocument } from "../../generated/graphql";
 
 const Page = ({ decoded,  token }) => {
   const router = useRouter();

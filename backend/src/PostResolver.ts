@@ -3,9 +3,6 @@ import { Post, PostModel, PostInput, PostsQuery } from "./models/Post";
 import { CommentInput } from "./models/Comment";
 import { UserModel } from "./models/User";
 
-
-
-
 @Resolver()
 export class PostResolver {
   @Mutation(() => Post)
@@ -59,26 +56,48 @@ export class PostResolver {
     });
     return newPost;
   }
+
   @Query(() => PostsQuery)
-  
   async posts(
-    @Arg("limit", () => Int) limit : number,
-    @Arg("offset", () => Int) offset : number
+    @Arg("limit", () => Int) limit: number,
+    @Arg("offset", () => Int) offset: number
   ) {
     const posts = await PostModel.aggregate([
-      { '$sort'     : { createdAt : -1 } },
-      { '$facet'    : {
-          count: [ { $count: "total" }],
-          data: [ { $skip: offset }, { $limit: limit } ]
-      } }
-    ] )
-    
-    const obj = {total: posts[0].count[0].total, data: posts[0].data}
-    console.log(obj)
+      { $sort: { createdAt: -1 } },
+      {
+        $facet: {
+          count: [{ $count: "total" }],
+          data: [{ $skip: offset }, { $limit: limit }],
+        },
+      },
+    ]);
 
-    return obj
+    const obj = { total: posts[0].count[0].total, data: posts[0].data };
+    console.log(obj);
 
+    return obj;
+  }
+
+  @Query(() => PostsQuery)
+  async userPosts(
+    @Arg("username") username: string,
+    @Arg("limit", () => Int) limit: number,
+    @Arg("offset", () => Int) offset: number
+  ) {
+    const posts = await PostModel.aggregate([
+      { $match: { username }},
+      { $sort: { createdAt: -1 } },
+      {
+        $facet: {
+          count: [{ $count: "total" }],
+          data: [{ $skip: offset }, { $limit: limit }],
+        },
+      },
+    ]);
+
+    const obj = { total: posts[0].count[0].total, data: posts[0].data };
+    console.log(obj);
+
+    return obj;
   }
 }
-
-

@@ -7,6 +7,9 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 import { ApolloServer } from "apollo-server-express";
+const {
+  ApolloServerPluginLandingPageLocalDefault
+} = require('apollo-server-core');
 import { buildSchema, UseMiddleware } from "type-graphql";
 import { UserResolver } from "./src/UserResolver";
 import { PostResolver } from "./src/PostResolver"
@@ -79,14 +82,19 @@ mongoose
       schema,
       context: ({ req, res }) => ({
         req, res
-      })
+      }),
+      plugins: [
+        ApolloServerPluginLandingPageLocalDefault({ embed: true }),
+      ],
+    
     });
       await server.start()
     
       var corsOptions = {
         origin: "http://localhost:3000",
+        methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
         port: 4000,
-        credentials: true
+        credentials: true,
       };
       app.use(cors(corsOptions));
       app.use(cookieParser())

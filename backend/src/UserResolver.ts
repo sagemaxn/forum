@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Arg, Ctx } from "type-graphql";
+import { Resolver, Query, Mutation, Arg, Ctx, Int } from "type-graphql";
 import { hash, compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
 import { verify } from "jsonwebtoken";
@@ -12,7 +12,7 @@ import {
 } from "./models/User";
 
 import {
-  PostModel
+  PostModel, PostsQuery
 } from './models/Post'
 
 import { fromPairs, get } from "lodash";
@@ -142,23 +142,6 @@ export class UserResolver {
     const users = await UserModel.find();
     console.log(users);
     return users;
-  }
-
-  @Query(() => User)
-  async findUser(@Arg("username") username: string) {
-    let noUser = { username: "no user found", posts: [] };
-    noUser.posts = [
-      { username: "no user found", content: "1", createdAt: new Date() },
-    ];
-    try {
-      let user = await UserModel.find({ username: username }).populate("posts");
-      if (user[0].username !== "") {
-        return user[0];
-      } else return user;
-    } catch (err) {
-      console.error(err);
-    }
-    return noUser;
   }
 
   @Mutation(() => User)
