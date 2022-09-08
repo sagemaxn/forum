@@ -7,7 +7,8 @@ import { UserModel } from "./models/User";
 export class PostResolver {
   @Mutation(() => Post)
   async createPost(
-    @Arg("input") { username, content }: PostInput
+    @Arg("input") { username, content }: PostInput,
+    @Arg('avatar') avatar: string
   ): Promise<Post> {
     let comments = "";
     let likes = "";
@@ -16,8 +17,7 @@ export class PostResolver {
 
     const post = await PostModel.create({
       username,
-      avatar:
-        "https://stonegatesl.com/wp-content/uploads/2021/01/avatar-300x300.jpg",
+      avatar,
       content,
       comments,
       likes,

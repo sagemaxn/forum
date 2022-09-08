@@ -7,9 +7,6 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 import { ApolloServer } from "apollo-server-express";
-const {
-  ApolloServerPluginLandingPageLocalDefault
-} = require('apollo-server-core');
 import { buildSchema, UseMiddleware } from "type-graphql";
 import { UserResolver } from "./src/UserResolver";
 import { PostResolver } from "./src/PostResolver"
@@ -82,11 +79,7 @@ mongoose
       schema,
       context: ({ req, res }) => ({
         req, res
-      }),
-      plugins: [
-        ApolloServerPluginLandingPageLocalDefault({ embed: true }),
-      ],
-    
+      })
     });
       await server.start()
     

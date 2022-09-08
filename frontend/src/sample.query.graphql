@@ -30,8 +30,8 @@ query UserPosts($offset: Int!, $limit: Int!, $username: String!) {
   }
 }
 
-mutation Post($username: String!, $content: String!) {
-  createPost(input: { username: $username, content: $content }) {
+mutation Post($username: String!, $content: String!, $avatar: String!) {
+  createPost(input: { username: $username, content: $content }, avatar: $avatar) {
     avatar
     content
     createdAt

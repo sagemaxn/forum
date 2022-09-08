@@ -62,6 +62,7 @@ export type MutationChangeAvatarArgs = {
 
 
 export type MutationCreatePostArgs = {
+  avatar: Scalars['String'];
   input: PostInput;
 };
 
@@ -180,6 +181,7 @@ export type UserPostsQuery = (
 export type PostMutationVariables = Exact<{
   username: Scalars['String'];
   content: Scalars['String'];
+  avatar: Scalars['String'];
 }>;
 
 
@@ -387,8 +389,8 @@ export type UserPostsQueryHookResult = ReturnType<typeof useUserPostsQuery>;
 export type UserPostsLazyQueryHookResult = ReturnType<typeof useUserPostsLazyQuery>;
 export type UserPostsQueryResult = Apollo.QueryResult<UserPostsQuery, UserPostsQueryVariables>;
 export const PostDocument = gql`
-    mutation Post($username: String!, $content: String!) {
-  createPost(input: {username: $username, content: $content}) {
+    mutation Post($username: String!, $content: String!, $avatar: String!) {
+  createPost(input: {username: $username, content: $content}, avatar: $avatar) {
     avatar
     content
     createdAt
@@ -412,6 +414,7 @@ export type PostMutationFn = Apollo.MutationFunction<PostMutation, PostMutationV
  *   variables: {
  *      username: // value for 'username'
  *      content: // value for 'content'
+ *      avatar: // value for 'avatar'
  *   },
  * });
  */

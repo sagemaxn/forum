@@ -19,7 +19,7 @@ import {useRouter} from 'next/router'
 
 function NewPostForm({user, avatar}) {
   const [post, { data }] = usePostMutation()
-  console.log(user)
+  console.log(avatar)
   return (
     <Formik
       initialValues={{ username: user, avatar ,content: '' }}
