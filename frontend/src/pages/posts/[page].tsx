@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Link from "next/link";
-import { Button } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
@@ -45,7 +45,7 @@ const Page = ({ decoded, token }) => {
           ))}
           {parseInt(page) * 5 < data.posts.total && (
             <Link href={`/posts/${parseInt(page) + 1}`}>Next Page</Link>
-          )}
+          ) || <Text>end of results</Text>}
 
           {parseInt(page) - 1 > 0 && (
             <Link href={`/posts/${parseInt(page) - 1}`}>Prev Page</Link>

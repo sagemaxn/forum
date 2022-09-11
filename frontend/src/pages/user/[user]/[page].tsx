@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
+import { Text } from '@chakra-ui/react'
 import { useRouter } from "next/router";
 import Link from "next/link";
 
 import {
   useUserPostsQuery,
-  UserPostsDocument,
 } from "../../../generated/graphql";
 import auth from "../../../lib/auth";
 import { compose } from "../../../lib/compose";
@@ -50,7 +50,7 @@ const User = ({ decoded }) => {
           ))}
           {parseInt(page) * 5 < data.userPosts.total && (
             <Link href={`/user/${user}/${parseInt(page) + 1}`}>Next Page</Link>
-          )}
+          ) || <Text>end of results</Text>}
 
           {parseInt(page) - 1 > 0 && (
             <Link href={`/user/${user}/${parseInt(page) - 1}`}>Prev Page</Link>
