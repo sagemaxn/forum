@@ -1,11 +1,13 @@
-{
+const config = {
+  module: {
+    rules: [
+      {
+        test: /\.(graphql|gql)$/,
+        use: 'graphql-tag/loader',
+        exclude: /node_modules/, 
+      }
+    ]
+  }
+};
 
-  loaders: [
-    {
-      test: /\.(graphql|gql)$/,
-      exclude: /node_modules/,
-      loader: 'graphql-tag/loader'
-    }
-  ],
-
-}
+export default config
