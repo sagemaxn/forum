@@ -91,8 +91,8 @@ export type PostInput = {
   content: Scalars['String'];
 };
 
-export type PostsQuery = {
-  __typename?: 'PostsQuery';
+export type Posts = {
+  __typename?: 'Posts';
   total: Scalars['Float'];
   data: Array<Post>;
 };
@@ -101,8 +101,8 @@ export type Query = {
   __typename?: 'Query';
   cookie: LoginToken;
   users: Array<User>;
-  posts: PostsQuery;
-  userPosts: PostsQuery;
+  posts: Posts;
+  userPosts: Posts;
 };
 
 
@@ -150,8 +150,8 @@ export type PostsQueryVariables = Exact<{
 export type PostsQuery = (
   { __typename?: 'Query' }
   & { posts: (
-    { __typename?: 'PostsQuery' }
-    & Pick<PostsQuery, 'total'>
+    { __typename?: 'Posts' }
+    & Pick<Posts, 'total'>
     & { data: Array<(
       { __typename?: 'Post' }
       & Pick<Post, 'content' | 'username' | 'avatar' | 'createdAt' | '_id'>
@@ -169,8 +169,8 @@ export type UserPostsQueryVariables = Exact<{
 export type UserPostsQuery = (
   { __typename?: 'Query' }
   & { userPosts: (
-    { __typename?: 'PostsQuery' }
-    & Pick<PostsQuery, 'total'>
+    { __typename?: 'Posts' }
+    & Pick<Posts, 'total'>
     & { data: Array<(
       { __typename?: 'Post' }
       & Pick<Post, 'content' | 'avatar' | 'username' | 'createdAt' | '_id'>

@@ -1,5 +1,5 @@
 import { Resolver, Query, Mutation, Arg, Int } from "type-graphql";
-import { Post, PostModel, PostInput, PostsQuery } from "./models/Post";
+import { Post, PostModel, PostInput, Posts} from "./models/Post";
 import { CommentInput } from "./models/Comment";
 import { UserModel } from "./models/User";
 
@@ -57,7 +57,7 @@ export class PostResolver {
     return newPost;
   }
 
-  @Query(() => PostsQuery)
+  @Query(() => Posts)
   async posts(
     @Arg("limit", () => Int) limit: number,
     @Arg("offset", () => Int) offset: number
@@ -78,7 +78,7 @@ export class PostResolver {
     return obj;
   }
 
-  @Query(() => PostsQuery)
+  @Query(() => Posts)
   async userPosts(
     @Arg("username") username: string,
     @Arg("limit", () => Int) limit: number,

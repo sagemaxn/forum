@@ -12,22 +12,13 @@ import {
 } from "./models/User";
 
 import {
-  PostModel, PostsQuery
+  PostModel
 } from './models/Post'
 
 import { fromPairs, get } from "lodash";
 
 @Resolver()
 export class UserResolver {
-  // @Query(() => String)
-  // cookieTest(
-  //   @Ctx() { req, res }
-  // ){
-  //   const cookie = req.cookies.jid
-  //   console.log(req.headers)
-  //   console.log(cookie)
-  //   return cookie
-  // }
 
   @Mutation(() => LoginToken)
   checkAuth(@Ctx() { req, res }, @Arg("cookie") cookie: string): LoginToken {

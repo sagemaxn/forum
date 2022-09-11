@@ -4,7 +4,7 @@ import { prop, getModelForClass, mongoose } from "@typegoose/typegoose";
 import { Comment } from './Comment'
 
 @ObjectType()
-export class PostsQuery {
+export class Posts {
   @Field(() => Number)
   total: number
 
