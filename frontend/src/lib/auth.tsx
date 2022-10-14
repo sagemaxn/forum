@@ -5,7 +5,7 @@ import { initializeApollo } from "./apollo";
 export default async function auth({ req, res }, pageProps) {
   const apolloClient = initializeApollo();
   const cook = req.cookies.jid || "no refresh";
-  console.log(cook);
+  console.log(`cookie: ${cook}`);
   const auth = await apolloClient.mutate({
     mutation: AuthDocument,
     variables: { cookie: cook },
@@ -18,18 +18,19 @@ export default async function auth({ req, res }, pageProps) {
   //&& req.url !=='/login'
   ) {
     pageProps.props.logged = false;
-    if (req.url !== "/login") {
-      pageProps.redirect = {
-        destination: "/login",
-        permanent: false,
-      };
-    }
+    // if (req.url !== "/login") {
+    //   pageProps.redirect = {
+    //     destination: "/login",
+    //     permanent: false,
+    //   };
+    // }
     return;
   }
   let verified: any = "";
   if (tok) {
     try {
       verified = verify(tok, "123456");
+      console.log(`verify: ${verified}`)
     } catch (err) {
       console.error(err);
     }

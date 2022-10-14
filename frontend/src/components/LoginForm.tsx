@@ -42,6 +42,7 @@ function LoginForm({ setForm, form }) {
         if(data){
           console.log(data)
           if(data.login.token !== 'no token'){
+            console.log('yop')
             useRouter().push('/')
           }
         }

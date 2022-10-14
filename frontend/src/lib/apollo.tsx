@@ -9,12 +9,15 @@ export const APOLLO_STATE_PROP_NAME = '__APOLLO_STATE__'
 let apolloClient
 import { NextPageContext } from "next";
 
+// const uri = process.env.NODE_ENV === 'development' ? 'https://sage-forum-backend.herokuapp.com/graphql' : 'http://localhost:4000/graphql'
+
 function createApolloClient(ctx: NextPageContext) {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: new HttpLink({
-      uri: 'http://localhost:4000/graphql',
+      uri: '/graphql',
       credentials: 'include',
+     
       headers: {
         cookies:
           (typeof window === "undefined"

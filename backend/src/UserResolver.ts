@@ -11,15 +11,12 @@ import {
   RefreshToken,
 } from "./models/User";
 
-import {
-  PostModel
-} from './models/Post'
+import { PostModel } from "./models/Post";
 
 import { fromPairs, get } from "lodash";
 
 @Resolver()
 export class UserResolver {
-
   @Mutation(() => LoginToken)
   checkAuth(@Ctx() { req, res }, @Arg("cookie") cookie: string): LoginToken {
     console.log(req.cookies.jid);
@@ -35,16 +32,17 @@ export class UserResolver {
             expiresIn: "5d",
           }),
           {
-            httpOnly: true,
+            
+            secure: true,
+            sameSite: "none",
           }
         );
-        console.log(payload);
         const user = JSON.stringify(payload).split(",")[1].slice(8, -1);
-        const avatar = JSON.stringify(payload).split(",")[2].slice(10, -1)
-        console.log(user);
+        const avatar = JSON.stringify(payload).split(",")[2].slice(10, -1);
         return {
           token: sign({ userID, user, avatar }, process.env.JWT_SECRET, {
             expiresIn: "60m",
+
           }),
         };
       } catch (err) {
@@ -64,7 +62,7 @@ export class UserResolver {
       username,
       password,
       avatar:
-        "https://clinicforspecialchildren.org/wp-content/uploads/2016/08/avatar-placeholder.gif",
+        "default",
     });
     user.save();
     // user.password = null
@@ -78,7 +76,8 @@ export class UserResolver {
         expiresIn: "5d",
       }),
       {
-        httpOnly: true,
+        secure: true,
+        sameSite: "none"
       }
     );
     return { token: JSON.stringify(get(req, "cookies.jid") || "no") };
@@ -99,19 +98,28 @@ export class UserResolver {
       const payload = res.cookie(
         "jid",
         sign(
-          { userID: user[0]._id, user: user[0].username, avatar: user[0].avatar },
+          {
+            userID: user[0]._id,
+            user: user[0].username,
+            avatar: user[0].avatar,
+          },
           process.env.JWT_REFRESH,
           {
             expiresIn: "5d",
           }
         ),
         {
-          httpOnly: true,
+          secure: true,
+          sameSite: "none"
         }
       );
       return {
         token: sign(
-          { userID: user[0]._id, user: user[0].username, avatar: user[0].avatar },
+          {
+            userID: user[0]._id,
+            user: user[0].username,
+            avatar: user[0].avatar,
+          },
           process.env.JWT_SECRET,
           { expiresIn: "60m" }
         ),
@@ -140,13 +148,12 @@ export class UserResolver {
     @Arg("avatar") avatar: string,
     @Arg("username") username: string
   ) {
-    try{
-    let user = await UserModel.findOneAndUpdate({ username }, { avatar })
-    let posts = await PostModel.updateMany({ username }, { avatar })
-    return user
-  }
-  catch(err){
-    console.error(err)
-  }
+    try {
+      let user = await UserModel.findOneAndUpdate({ username }, { avatar });
+      let posts = await PostModel.updateMany({ username }, { avatar });
+      return user;
+    } catch (err) {
+      console.error(err);
+    }
   }
 }
