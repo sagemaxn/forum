@@ -73,8 +73,6 @@ export class PostResolver {
     ]);
 
     const obj = { total: posts[0].count[0].total, data: posts[0].data };
-    console.log(obj);
-
     return obj;
   }
 

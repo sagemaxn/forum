@@ -49,7 +49,6 @@ function ChangeAvatar({ isOpen, onClose, avatar, user }) {
   }
 
   const handleChange = (value) => {
-    console.log(value);
     setVal(value);
   };
 
@@ -65,11 +64,7 @@ function ChangeAvatar({ isOpen, onClose, avatar, user }) {
       <Formik
         initialValues={{ username: user, avatar: val }}
         onSubmit={async (values, actions) => {
-          console.log(values);
           await change({ variables: values });
-          if (data) {
-            console.log(data);
-          }
           actions.setSubmitting(false);
         }}
       >

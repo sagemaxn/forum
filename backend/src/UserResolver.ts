@@ -15,11 +15,20 @@ import { PostModel } from "./models/Post";
 
 import { fromPairs, get } from "lodash";
 
+const signOptions = () => {
+  process.env.NODE_ENV === 'production' ? {
+    secure: true,
+    sameSite: "none"
+  }
+  :
+  null
+}
+
 @Resolver()
 export class UserResolver {
   @Mutation(() => LoginToken)
   checkAuth(@Ctx() { req, res }, @Arg("cookie") cookie: string): LoginToken {
-    console.log(req.cookies.jid);
+    console.log('jid: ' + req.cookies.jid);
 
     if (cookie && cookie !== "no refresh") {
       try {
@@ -31,19 +40,16 @@ export class UserResolver {
           sign({ userID }, process.env.JWT_REFRESH, {
             expiresIn: "5d",
           }),
-          {
-            
-            secure: true,
-            sameSite: "none",
-          }
+          signOptions
         );
         const user = JSON.stringify(payload).split(",")[1].slice(8, -1);
         const avatar = JSON.stringify(payload).split(",")[2].slice(10, -1);
+        const token = sign({ userID, user, avatar }, process.env.JWT_SECRET, {
+          expiresIn: "60m",
+        })
+        console.log(`token: ${token}`)
         return {
-          token: sign({ userID, user, avatar }, process.env.JWT_SECRET, {
-            expiresIn: "60m",
-
-          }),
+          token
         };
       } catch (err) {
         console.log(err);
@@ -56,7 +62,6 @@ export class UserResolver {
   async createUser(
     @Arg("input") { username, password }: UserInput
   ): Promise<User> {
-    //console.log(input)
     password = await hash(password, 12);
     const user = await UserModel.create({
       username,
@@ -75,10 +80,7 @@ export class UserResolver {
       sign({ payload: "this is a coookie" }, process.env.JWT_REFRESH, {
         expiresIn: "5d",
       }),
-      {
-        secure: true,
-        sameSite: "none"
-      }
+      signOptions
     );
     return { token: JSON.stringify(get(req, "cookies.jid") || "no") };
   }
@@ -88,10 +90,20 @@ export class UserResolver {
     @Arg("input") { username, password }: UserInput,
     @Ctx() { res }
   ): Promise<LoginToken> {
-    //console.log(con)
+
+    res.cookie(
+      "hi",
+      sign(
+        {hi: 'hi'},
+        process.env.JWT_REFRESH,
+        {
+          expiresIn: "5d",
+        }
+      ),
+      signOptions
+    );
+
     const user = await UserModel.find({ username: username });
-    console.log(user);
-    //console.log(username, user[0].password, password, user.password)
     const passwordCorrect = await compare(password, user[0].password);
 
     if (user && passwordCorrect) {
@@ -108,21 +120,21 @@ export class UserResolver {
             expiresIn: "5d",
           }
         ),
-        {
-          secure: true,
-          sameSite: "none"
-        }
+        signOptions
       );
+      console.log(`payload: ${payload}`)
+      const token = sign(
+        {
+          userID: user[0]._id,
+          user: user[0].username,
+          avatar: user[0].avatar,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "60m" }
+      )
+      console.log(`(login) token: ${token}`)
       return {
-        token: sign(
-          {
-            userID: user[0]._id,
-            user: user[0].username,
-            avatar: user[0].avatar,
-          },
-          process.env.JWT_SECRET,
-          { expiresIn: "60m" }
-        ),
+        token: token
       };
     } else {
       return { token: "no token" };

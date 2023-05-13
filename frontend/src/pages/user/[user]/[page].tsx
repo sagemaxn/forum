@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Text } from '@chakra-ui/react'
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -8,7 +8,6 @@ import {
 } from "../../../generated/graphql";
 import auth from "../../../lib/auth";
 import { compose } from "../../../lib/compose";
-import UserProfile from "../../../components/UserProfile";
 import Post from "../../../components/Post";
 import Navbar from "../../../components/Navbar";
 
