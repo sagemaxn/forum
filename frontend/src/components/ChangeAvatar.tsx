@@ -64,7 +64,7 @@ function ChangeAvatar({ isOpen, onClose, avatar, user }) {
       <Formik
         initialValues={{ username: user, avatar: val }}
         onSubmit={async (values, actions) => {
-          await change({ variables: values });
+          await change({ variables: { ...values, username: user } });
           actions.setSubmitting(false);
         }}
       >

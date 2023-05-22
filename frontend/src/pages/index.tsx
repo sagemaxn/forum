@@ -6,6 +6,7 @@ import auth from "../lib/auth";
 import Navbar from '../components/Navbar'
 
 const Index = ({ decoded }) => {
+    console.log( `decode: ${decoded}` )
     return <><Navbar user={decoded.user} avatar={decoded.avatar}/><Heading>Welcome to our website</Heading> <Link href={'/posts/1'}>Posts</Link> </>
 }
 

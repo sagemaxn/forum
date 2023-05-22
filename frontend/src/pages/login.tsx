@@ -1,4 +1,4 @@
-import { Heading, Button, Flex, Box } from "@chakra-ui/react";
+import { Heading, Button, Flex, Box, Text } from "@chakra-ui/react";
 import { Container } from "../components/Container";
 import LoginForm from "../components/LoginForm";
 import RegisterForm from "../components/RegisterForm";
@@ -13,7 +13,7 @@ const login = ({ auth, token }) => {
     } else return   <RegisterForm setForm={setForm} form={form} />
   }
 
-  return <Container height="100vh"><Heading>Members Only</Heading>{Forms()}</Container>;
+  return <Container height="100vh"><Heading>Members Only</Heading><Text>Please login or sing up to continue</Text>{Forms()}</Container>;
 };
 
 export default login;

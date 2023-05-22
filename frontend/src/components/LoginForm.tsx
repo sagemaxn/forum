@@ -41,10 +41,6 @@ function LoginForm({ setForm, form }) {
         await login({ variables: values });
         if(data){
           console.log(data)
-          if(data.login.token !== 'no token'){
-            console.log('yop')
-            useRouter().push('/')
-          }
         }
         actions.setSubmitting(false);
       }}
