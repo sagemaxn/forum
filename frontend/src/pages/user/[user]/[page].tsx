@@ -32,7 +32,7 @@ const User = ({ decoded }) => {
 
     if (loading) return <Navbar user={decoded.user} avatar={decoded.avatar} />;
     if (data) {
-      console.log(data);
+      console.log(`data from UserPostsQuery: ${data}`);
       return (
         <>
           <Navbar user={decoded.user} avatar={decoded.avatar} />

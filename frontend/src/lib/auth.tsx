@@ -1,7 +1,6 @@
 import { decode, verify } from "jsonwebtoken";
 import { AuthDocument } from "../generated/graphql";
 import { initializeApollo } from "./apollo";
-
 export default async function auth(ctx, pageProps) {
   const apolloClient = initializeApollo();
   const cookie = ctx.req.cookies.jid || "no refresh";
@@ -11,7 +10,7 @@ export default async function auth(ctx, pageProps) {
   });
 
   const tok = ctx.req.cookies.jid || "no refresh";
-  console.log(auth.data.checkAuth.token);
+  //console.log(auth.data.checkAuth.token);
 
   if (!decode(tok)) {
     pageProps.props.logged = false;
@@ -25,7 +24,7 @@ export default async function auth(ctx, pageProps) {
   let verified: any = "";
   if (tok) {
     try {
-      verified = verify(tok, process.env.NEXT_PUBLIC_JWT_REFRESH);
+      verified = verify(tok, '123456');
      // console.log(`verify: ${verified}`)
     } catch (err) {
       console.error(err);
@@ -44,6 +43,6 @@ export default async function auth(ctx, pageProps) {
   pageProps.props.logged = true;
   pageProps.props.auth = auth;
   pageProps.props.decoded = verified;
-  console.log(`pageProps.props.decoded = ${pageProps.props.decoded}`)
+  console.log(`pageProps.props.decoded = ${JSON.stringify(pageProps.props.decoded)}`)
 
 }

@@ -32,12 +32,12 @@ export class UserResolver {
 
     if (cookie && cookie !== "no refresh") {
       try {
-        const payload = verify(cookie, process.env.JWT_REFRESH);
+        const payload = verify(cookie, '123456');
 
         let userID = JSON.stringify(payload).split(",")[0].slice(11, -1);
         res.cookie(
           "jid",
-          sign({ userID }, process.env.JWT_REFRESH, {
+          sign({ userID }, '123456', {
             expiresIn: "5d",
           }),
           signOptions
@@ -77,7 +77,7 @@ export class UserResolver {
   async cookie(@Ctx() { res, req }): Promise<LoginToken> {
     res.cookie(
       "yum",
-      sign({ payload: "this is a coookie" }, process.env.JWT_REFRESH, {
+      sign({ payload: "this is a coookie" }, '123456', {
         expiresIn: "5d",
       }),
       signOptions

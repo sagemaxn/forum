@@ -28,7 +28,7 @@ export function compose(...middlewares) {
       };
   
       await runner(0);
-  console.log(pageProps)
+  console.log(`compose.tsx pageProps: ${JSON.stringify(pageProps)}`)
       return addApolloState(apolloClient, pageProps);
     };
   }

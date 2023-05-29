@@ -17,8 +17,8 @@ import Image from 'next/image'
 import { useState } from "react";
 import { Formik, Form, Field, FieldProps } from "formik";
 
-import { useChangeAvatarMutation } from "../generated/graphql";
-
+import { useChangeAvatarMutation, PostsDocument } from "../generated/graphql";
+import {initializeApollo} from "../lib/apollo";
 function ChangeAvatar({ isOpen, onClose, avatar, user }) {
   const [val, setVal] = useState(avatar);
 
@@ -53,59 +53,61 @@ function ChangeAvatar({ isOpen, onClose, avatar, user }) {
   };
 
   function Group() {
-    const [change, { data }] = useChangeAvatarMutation();
+    const [changeAvatar, { data }] = useChangeAvatarMutation();
     const avatars = [{ name: "default" }, { name: "star" }, { name: "heart" }, { name: "cat" }, { name: "dog" }];
     const { value, getRootProps, getRadioProps } = useRadioGroup({
       onChange: handleChange,
     });
 
     const group = getRootProps();
+
     return (
-      <Formik
-        initialValues={{ username: user, avatar: val }}
-        onSubmit={async (values, actions) => {
-          await change({ variables: { ...values, username: user } });
-          actions.setSubmitting(false);
-        }}
-      >
-        {(props) => (
-          <Form>
-            <HStack {...group}>
-              <Field name="avatar">
-                {({ field, form }: FieldProps) => {
-                  const { onChange, ...rest } = field;
-                  return (
-                    <FormControl
-                      id={'avatar'}
-                    >
-                      <FormLabel htmlFor={'avatar'}></FormLabel>
-                      {avatars.map((avatar) => (
-                        <CustomRadio
-                        {...rest}
-                          {...getRadioProps({ value: avatar.name })}
-                          key={avatar.name}
-                          id={avatar.name}
-                        >
-                          {avatar.name}
-                        </CustomRadio>
-                      ))}
-                    </FormControl>
-                  );
-                }}
-              </Field>
-              ;;
-              <Button
-                mt={4}
-                backgroundColor="green"
-                isLoading={props.isSubmitting}
-                type="submit"
-              >
-                Save
-              </Button>
-            </HStack>
-          </Form>
-        )}
-      </Formik>
+        <Formik
+            initialValues={{ username: user, avatar: val }}
+            onSubmit={async (values, actions) => {
+              await changeAvatar({ variables: { ...values, username: user } });
+              actions.setSubmitting(false);
+              onClose();
+              const apolloClient = initializeApollo();
+              await apolloClient.refetchQueries({ include: [PostsDocument] });
+            }}
+
+        >
+          {(props) => (
+              <Form>
+                <HStack {...group}>
+                  <Field name="avatar">
+                    {({ field, form }: FieldProps) => {
+                      const { onChange, ...rest } = field;
+                      return (
+                          <FormControl id={"avatar"}>
+                            <FormLabel htmlFor={"avatar"}></FormLabel>
+                            {avatars.map((avatar) => (
+                                <CustomRadio
+                                    {...rest}
+                                    {...getRadioProps({ value: avatar.name })}
+                                    key={avatar.name}
+                                    id={avatar.name}
+                                >
+                                  {avatar.name}
+                                </CustomRadio>
+                            ))}
+                          </FormControl>
+                      );
+                    }}
+                  </Field>
+                  <Button
+                      mt={4}
+                      backgroundColor="green"
+                      isLoading={props.isSubmitting}
+                      type="submit"
+                  >
+                    Save
+                  </Button>
+                </HStack>
+              </Form>
+          )}
+        </Formik>
     );
   }
 

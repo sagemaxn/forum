@@ -18,7 +18,7 @@ const Page = ({ decoded, token }) => {
     if (parseInt(page, 10)) {
       offset = (parseInt(page) - 1) * 5;
 
-      console.log(decoded);
+      //console.log(decoded);
       const { data, loading, error, fetchMore } = useQuery(PostsDocument, {
         variables: {
           offset: offset,
@@ -27,7 +27,6 @@ const Page = ({ decoded, token }) => {
       });
       if (loading)
         return <Navbar user={decoded.user} avatar={decoded.avatar} />;
-      console.log(data);
       return (
         <>
           <Navbar user={decoded.user} avatar={decoded.avatar} />

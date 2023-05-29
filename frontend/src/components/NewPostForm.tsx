@@ -19,15 +19,14 @@ import {useRouter} from 'next/router'
 
 function NewPostForm({user, avatar}) {
   const [post, { data }] = usePostMutation()
-  console.log(avatar)
+  console.log(`New post form avatar prop: ${avatar}`)
   return (
     <Formik
       initialValues={{ username: user, avatar ,content: '' }}
       onSubmit={async (values, actions) => {
-          console.log(user)
         await post({ variables: values });
         if(data){
-          console.log(data)
+          console.log(`If data after post in NewPostForm.tsx: ${data}`)
         }
         actions.setSubmitting(false);
       }}

@@ -21,7 +21,7 @@ function LoginForm({ setForm, form }) {
   const [login, { data }] = useLoginMutation({
     onCompleted({ login }) {
       if (data) {
-        console.log(data);
+        console.log(`login data: ${data}`);
       }
     },
   });
@@ -39,9 +39,6 @@ function LoginForm({ setForm, form }) {
       initialValues={{ username: "", password: "" }}
       onSubmit={async (values, actions) => {
         await login({ variables: values });
-        if(data){
-          console.log(data)
-        }
         actions.setSubmitting(false);
       }}
     >

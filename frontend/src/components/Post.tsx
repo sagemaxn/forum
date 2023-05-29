@@ -26,7 +26,6 @@ const Post = ({ content, user, avatar, createdAt, loggedUser, postID }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
   const dateP = new Date(createdAt).toLocaleString();
-  console.log(postID)
 
   const ConfirmDelete = () => {
     return (
