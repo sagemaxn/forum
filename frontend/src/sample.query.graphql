@@ -70,3 +70,12 @@ mutation Auth($cookie: String!) {
     token
   }
 }
+
+query Threads($offset: Int!, $limit: Int!) {
+  threads(offset: $offset, limit: $limit) {
+    title
+    username
+    createdAt
+    _id
+  }
+}

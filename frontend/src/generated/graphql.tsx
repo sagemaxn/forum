@@ -12,7 +12,6 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
 };
 
@@ -29,14 +28,22 @@ export type LoginToken = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  changeAvatar: User;
   checkAuth: LoginToken;
+  createComment: Post;
+  createPost: Post;
+  createThread: Thread;
   createUser: User;
+  deletePost: Scalars['Boolean'];
+  deleteThread: Scalars['Boolean'];
   login: LoginToken;
   logout: Scalars['Boolean'];
-  changeAvatar: User;
-  createPost: Post;
-  deletePost: Scalars['Boolean'];
-  createComment: Post;
+};
+
+
+export type MutationChangeAvatarArgs = {
+  avatar: Scalars['String'];
+  username: Scalars['String'];
 };
 
 
@@ -45,19 +52,9 @@ export type MutationCheckAuthArgs = {
 };
 
 
-export type MutationCreateUserArgs = {
-  input: UserInput;
-};
-
-
-export type MutationLoginArgs = {
-  input: UserInput;
-};
-
-
-export type MutationChangeAvatarArgs = {
-  username: Scalars['String'];
-  avatar: Scalars['String'];
+export type MutationCreateCommentArgs = {
+  comment: CommentInput;
+  postID: Scalars['String'];
 };
 
 
@@ -67,67 +64,119 @@ export type MutationCreatePostArgs = {
 };
 
 
+export type MutationCreateThreadArgs = {
+  avatar: Scalars['String'];
+  input: ThreadInput;
+};
+
+
+export type MutationCreateUserArgs = {
+  input: UserInput;
+};
+
+
 export type MutationDeletePostArgs = {
   postID: Scalars['String'];
 };
 
 
-export type MutationCreateCommentArgs = {
-  postID: Scalars['String'];
-  comment: CommentInput;
+export type MutationDeleteThreadArgs = {
+  threadID: Scalars['String'];
+};
+
+
+export type MutationLoginArgs = {
+  input: UserInput;
 };
 
 export type Post = {
   __typename?: 'Post';
-  username: Scalars['String'];
+  _id: Scalars['String'];
   avatar: Scalars['String'];
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
-  _id: Scalars['String'];
+  username: Scalars['String'];
 };
 
 export type PostInput = {
-  username: Scalars['String'];
   content: Scalars['String'];
+  username: Scalars['String'];
 };
 
 export type Posts = {
   __typename?: 'Posts';
-  total: Scalars['Float'];
   data: Array<Post>;
+  total: Scalars['Float'];
 };
 
 export type Query = {
   __typename?: 'Query';
   cookie: LoginToken;
-  users: Array<User>;
+  currentUser?: Maybe<User>;
   posts: Posts;
+  threads: Array<Thread>;
   userPosts: Posts;
+  userThreads: Array<Thread>;
+  users: Array<User>;
+};
+
+
+export type QueryCurrentUserArgs = {
+  username: Scalars['String'];
 };
 
 
 export type QueryPostsArgs = {
-  offset: Scalars['Int'];
   limit: Scalars['Int'];
+  offset: Scalars['Int'];
+};
+
+
+export type QueryThreadsArgs = {
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
 };
 
 
 export type QueryUserPostsArgs = {
-  offset: Scalars['Int'];
   limit: Scalars['Int'];
+  offset: Scalars['Int'];
+  username: Scalars['String'];
+};
+
+
+export type QueryUserThreadsArgs = {
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+  username: Scalars['String'];
+};
+
+export type Thread = {
+  __typename?: 'Thread';
+  _id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  posts: Array<Post>;
+  title: Scalars['String'];
+  username: Scalars['String'];
+};
+
+export type ThreadInput = {
+  firstPostContent: Scalars['String'];
+  title: Scalars['String'];
   username: Scalars['String'];
 };
 
 export type User = {
   __typename?: 'User';
-  username: Scalars['String'];
   avatar: Scalars['String'];
   posts: Array<Post>;
+  threads: Array<Thread>;
+  username: Scalars['String'];
 };
 
 export type UserInput = {
-  username: Scalars['String'];
   password: Scalars['String'];
+  username: Scalars['String'];
 };
 
 export type AllUsersQueryVariables = Exact<{ [key: string]: never; }>;
@@ -264,6 +313,20 @@ export type AuthMutation = (
     { __typename?: 'LoginToken' }
     & Pick<LoginToken, 'token'>
   ) }
+);
+
+export type ThreadsQueryVariables = Exact<{
+  offset: Scalars['Int'];
+  limit: Scalars['Int'];
+}>;
+
+
+export type ThreadsQuery = (
+  { __typename?: 'Query' }
+  & { threads: Array<(
+    { __typename?: 'Thread' }
+    & Pick<Thread, 'title' | 'username' | 'createdAt' | '_id'>
+  )> }
 );
 
 
@@ -622,3 +685,42 @@ export function useAuthMutation(baseOptions?: Apollo.MutationHookOptions<AuthMut
 export type AuthMutationHookResult = ReturnType<typeof useAuthMutation>;
 export type AuthMutationResult = Apollo.MutationResult<AuthMutation>;
 export type AuthMutationOptions = Apollo.BaseMutationOptions<AuthMutation, AuthMutationVariables>;
+export const ThreadsDocument = gql`
+    query Threads($offset: Int!, $limit: Int!) {
+  threads(offset: $offset, limit: $limit) {
+    title
+    username
+    createdAt
+    _id
+  }
+}
+    `;
+
+/**
+ * __useThreadsQuery__
+ *
+ * To run a query within a React component, call `useThreadsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useThreadsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useThreadsQuery({
+ *   variables: {
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useThreadsQuery(baseOptions: Apollo.QueryHookOptions<ThreadsQuery, ThreadsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ThreadsQuery, ThreadsQueryVariables>(ThreadsDocument, options);
+      }
+export function useThreadsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ThreadsQuery, ThreadsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ThreadsQuery, ThreadsQueryVariables>(ThreadsDocument, options);
+        }
+export type ThreadsQueryHookResult = ReturnType<typeof useThreadsQuery>;
+export type ThreadsLazyQueryHookResult = ReturnType<typeof useThreadsLazyQuery>;
+export type ThreadsQueryResult = Apollo.QueryResult<ThreadsQuery, ThreadsQueryVariables>;

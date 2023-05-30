@@ -1,21 +1,11 @@
-import { useState, useEffect } from "react";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form } from "formik";
 import {
   Button,
-  Input,
-  FormLabel,
-  FormControl,
-  FormErrorMessage,
-  Link,
   Flex,
-  Heading
 } from "@chakra-ui/react";
-import { HiEye, HiEyeOff } from "react-icons/hi";
 
 import FormField from "../components/FormField";
 import { usePostMutation } from "../generated/graphql";
-import { bool } from "yup";
-import {useRouter} from 'next/router'
 
 function NewPostForm({user, avatar}) {
   const [post, { data }] = usePostMutation()
@@ -58,7 +48,7 @@ function NewPostForm({user, avatar}) {
           </Form>
           </Flex>
           </>
-      
+
       )}
     </Formik>
   );

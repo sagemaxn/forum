@@ -13,11 +13,13 @@ import * as http from 'http'
 
 
 
-import { buildSchema, UseMiddleware } from "type-graphql";
+import { buildSchema } from "type-graphql";
 import { UserResolver } from "./src/UserResolver";
 import { PostResolver } from "./src/PostResolver";
+import {ThreadResolver} from "./src/ThreadResolver";
+import { AuthResolver } from "./src/AuthResolver";
 
-require("dotenv").config();;
+require("dotenv").config();
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -39,7 +41,7 @@ mongoose
 const main = async () => {
   const app = Express()
   const schema = await buildSchema({
-    resolvers: [UserResolver, PostResolver],
+    resolvers: [UserResolver, PostResolver, ThreadResolver, AuthResolver],
     //emitSchemaFile: true
   });
   const httpServer = http.createServer(app);

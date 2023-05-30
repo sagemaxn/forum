@@ -30,7 +30,7 @@ function MenuComp({ user, avatar }) {
           <SettingsIcon />
         </MenuButton>
         <MenuList>
-          <Link href={`/user/${user}`}><MenuItem>Your Posts</MenuItem></Link>
+          <Link href={`/user/${user}/1`}><MenuItem>Your Posts</MenuItem></Link>
           <MenuItem onClick={onOpen}>Change Avatar</MenuItem>
           <MenuItem
             onClick={async () => {

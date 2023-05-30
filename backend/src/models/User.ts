@@ -1,6 +1,7 @@
 import { ObjectType, InputType, Field } from "type-graphql";
 import { prop, getModelForClass } from "@typegoose/typegoose";
 import { Post } from './Post'
+import { Thread } from './Thread'
 
 @ObjectType()
 export class User {
@@ -8,7 +9,6 @@ export class User {
   @prop({ type: String, required: true, minlength: 3 })
   public username: string;
 
-  //@Field(() => String)
   @prop({ type: String, required: true })
   public password: string;
 
@@ -19,6 +19,10 @@ export class User {
   @Field(() => [Post])
   @prop({ ref: () => Post})
   public posts: Post[];
+
+  @Field(() => [Thread])
+  @prop({ ref: () => Thread})
+  public threads: Thread[];
 }
 
 @ObjectType()

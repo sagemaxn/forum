@@ -4,10 +4,10 @@ import { Text } from "@chakra-ui/react";
 
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import Post from "../../components/Post";
-import NewPostForm from "../../components/NewPostForm";
-import Navbar from "../../components/Navbar";
-import { usePostsQuery, PostsDocument } from "../../generated/graphql";
+import Post from "../../../components/Post";
+import NewPostForm from "../../../components/NewPostForm";
+import Navbar from "../../../components/Navbar";
+import { usePostsQuery, PostsDocument } from "../../../generated/graphql";
 
 const Page = ({ decoded, token }) => {
   const router = useRouter();
@@ -56,8 +56,8 @@ const Page = ({ decoded, token }) => {
   return <div>dsadasd</div>; //redirect to page 1
 };
 
-import auth from "../../lib/auth";
-import { compose } from "../../lib/compose";
+import auth from "../../../lib/auth";
+import { compose } from "../../../lib/compose";
 
 export const getServerSideProps = compose(auth);
 
