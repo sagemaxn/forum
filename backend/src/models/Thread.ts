@@ -4,6 +4,14 @@ import { prop, getModelForClass, mongoose } from "@typegoose/typegoose";
 import { Post } from './Post'
 
 @ObjectType()
+export class Threads {
+    @Field(() => Number)
+    total: number
+
+    @Field(() => [Thread])
+    data: Thread[]
+}
+@ObjectType()
 export class Thread {
     @Field(() => String)
     @prop({ type: String, required: true })
@@ -12,6 +20,10 @@ export class Thread {
     @Field(() => String)
     @prop({ type: String, required: true })
     public username: string;
+
+    @Field(() => String)
+    @prop({ type: String, required: true })
+    public avatar: string
 
     @Field(() => [Post])
     @prop({ ref: () => Post})
@@ -38,6 +50,10 @@ export class ThreadInput {
     @Field(() => String)
     @prop({type: String,required: true})
     username: string;
+
+    @Field(() => String)
+    @prop({type: String, required: true})
+    avatar: string
 }
 
 export const ThreadModel = getModelForClass(Thread);

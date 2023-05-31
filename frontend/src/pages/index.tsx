@@ -19,7 +19,7 @@ const Threads = ({ decoded }) => {
 
     if (typeof page === "string" || page === undefined) {
         if (parseInt(page, 10) || page === undefined) {
-            offset = (parseInt(page) - 1) * 5;
+            offset = 0
 
             const { data, loading, error, fetchMore } = useQuery(ThreadsDocument, {
                 variables: {
@@ -29,18 +29,16 @@ const Threads = ({ decoded }) => {
             });
             if (loading)
                 return <Navbar user={decoded.user} avatar={decoded.avatar} />;
-            console.error(error)
-            console.log(`data: ${data}`)
+if (data){ console.log(`data: ${data}`)}
+
             return (
                 <>
-                    <Navbar user={decoded.user} avatar={decoded.avatar} />
-                    <NewThreadForm user={decoded.user} avatar={decoded.avatar} />
                     {data.threads.data.map((thread) => (
                         <Thread
                             title={thread.title}
                             user={thread.username}
                             createdAt={thread.createdAt}
-                            avatar={'avatar'}
+                            avatar={thread.avatar}
                             key={thread._id}
                             loggedUser={decoded.user}
                             threadID={thread._id}

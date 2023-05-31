@@ -1,15 +1,14 @@
 // ThreadResolver.ts
 import {Arg, Int, Mutation, Query, Resolver} from "type-graphql";
-import {Thread, ThreadInput, ThreadModel} from "./models/Thread";
+import {Thread, Threads, ThreadInput, ThreadModel} from "./models/Thread";
 import {UserModel} from "./models/User";
-import { PostModel } from './models/Post'
+import {PostModel} from './models/Post'
 
 @Resolver()
 export class ThreadResolver {
     @Mutation(() => Thread)
     async createThread(
-        @Arg("input") { title, username, firstPostContent }: ThreadInput,
-        @Arg('avatar') avatar: string
+        @Arg("input") { title, username, firstPostContent, avatar }: ThreadInput,
     ): Promise<Thread> {
         let createdAt = new Date();
 
@@ -24,6 +23,7 @@ console.log(firstPost)
         const thread = await ThreadModel.create({
             title,
             username,
+            avatar,
             posts: [firstPost.id],
             createdAt,
         });
@@ -43,26 +43,42 @@ console.log(firstPost)
         return true;
     }
 
-    @Query(() => [Thread])
+    @Query(() => Threads)
     async threads(
         @Arg("limit", () => Int) limit: number,
         @Arg("offset", () => Int) offset: number
     ) {
-        return ThreadModel.find()
-            .sort({createdAt: -1})
-            .skip(offset)
-            .limit(limit);
+        const threads = await ThreadModel.aggregate([
+            { $sort: { createdAt: -1 } },
+            {
+                $facet: {
+                    count: [{ $count: "total" }],
+                    data: [{ $skip: offset }, { $limit: limit }],
+                },
+            },
+        ]);
+
+        return {total: threads[0]?.count[0]?.total || 0, data: threads[0]?.data || []};
     }
 
-    @Query(() => [Thread])
+    @Query(() => Threads)
     async userThreads(
         @Arg("username") username: string,
         @Arg("limit", () => Int) limit: number,
         @Arg("offset", () => Int) offset: number
     ) {
-        return ThreadModel.find({username})
-            .sort({createdAt: -1})
-            .skip(offset)
-            .limit(limit);
+        const threads = await ThreadModel.aggregate([
+            { $match: { username: username } },
+            { $sort: { createdAt: -1 } },
+            {
+                $facet: {
+                    count: [{ $count: "total" }],
+                    data: [{ $skip: offset }, { $limit: limit }],
+                },
+            },
+        ]);
+
+        return { total: threads[0]?.count[0]?.total || 0, data: threads[0]?.data || [] };
     }
+
 }

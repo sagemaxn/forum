@@ -73,9 +73,13 @@ mutation Auth($cookie: String!) {
 
 query Threads($offset: Int!, $limit: Int!) {
   threads(offset: $offset, limit: $limit) {
-    title
-    username
-    createdAt
-    _id
+    data {
+      _id
+      createdAt
+      title
+      username
+      avatar
+    }
+    total
   }
 }

@@ -65,7 +65,6 @@ export type MutationCreatePostArgs = {
 
 
 export type MutationCreateThreadArgs = {
-  avatar: Scalars['String'];
   input: ThreadInput;
 };
 
@@ -114,7 +113,7 @@ export type Query = {
   cookie: LoginToken;
   currentUser?: Maybe<User>;
   posts: Posts;
-  threads: Array<Thread>;
+  threads: Threads;
   userPosts: Posts;
   userThreads: Array<Thread>;
   users: Array<User>;
@@ -154,6 +153,7 @@ export type QueryUserThreadsArgs = {
 export type Thread = {
   __typename?: 'Thread';
   _id: Scalars['String'];
+  avatar: Scalars['String'];
   createdAt: Scalars['DateTime'];
   posts: Array<Post>;
   title: Scalars['String'];
@@ -161,9 +161,16 @@ export type Thread = {
 };
 
 export type ThreadInput = {
+  avatar: Scalars['String'];
   firstPostContent: Scalars['String'];
   title: Scalars['String'];
   username: Scalars['String'];
+};
+
+export type Threads = {
+  __typename?: 'Threads';
+  data: Array<Thread>;
+  total: Scalars['Float'];
 };
 
 export type User = {
@@ -323,10 +330,14 @@ export type ThreadsQueryVariables = Exact<{
 
 export type ThreadsQuery = (
   { __typename?: 'Query' }
-  & { threads: Array<(
-    { __typename?: 'Thread' }
-    & Pick<Thread, 'title' | 'username' | 'createdAt' | '_id'>
-  )> }
+  & { threads: (
+    { __typename?: 'Threads' }
+    & Pick<Threads, 'total'>
+    & { data: Array<(
+      { __typename?: 'Thread' }
+      & Pick<Thread, '_id' | 'createdAt' | 'title' | 'username' | 'avatar'>
+    )> }
+  ) }
 );
 
 
@@ -688,10 +699,14 @@ export type AuthMutationOptions = Apollo.BaseMutationOptions<AuthMutation, AuthM
 export const ThreadsDocument = gql`
     query Threads($offset: Int!, $limit: Int!) {
   threads(offset: $offset, limit: $limit) {
-    title
-    username
-    createdAt
-    _id
+    data {
+      _id
+      createdAt
+      title
+      username
+      avatar
+    }
+    total
   }
 }
     `;
