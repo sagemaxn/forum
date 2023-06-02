@@ -1,8 +1,9 @@
 // ThreadResolver.ts
 import {Arg, Int, Mutation, Query, Resolver} from "type-graphql";
-import {Thread, Threads, ThreadInput, ThreadModel} from "./models/Thread";
+import {Thread, ThreadInput, ThreadModel, Threads, ThreadWithPosts} from "./models/Thread";
 import {UserModel} from "./models/User";
 import {PostModel} from './models/Post'
+import {mongoose} from "@typegoose/typegoose";
 
 @Resolver()
 export class ThreadResolver {
@@ -12,22 +13,26 @@ export class ThreadResolver {
     ): Promise<Thread> {
         let createdAt = new Date();
 
+        const thread = await ThreadModel.create({
+            title,
+            username,
+            avatar,
+            posts: [],
+            createdAt,
+        });
+        await thread.save();
+
         const firstPost = await PostModel.create({
             username,
             avatar,
             content: firstPostContent,
             createdAt,
+            thread_id: thread.id,
         });
-        firstPost.save();
-console.log(firstPost)
-        const thread = await ThreadModel.create({
-            title,
-            username,
-            avatar,
-            posts: [firstPost.id],
-            createdAt,
-        });
-        thread.save();
+        await firstPost.save();
+
+        thread.posts.push(firstPost.id);
+        await thread.save();
 
         const user = await UserModel.find({ username });
         user[0].threads.push(thread.id);
@@ -80,5 +85,28 @@ console.log(firstPost)
 
         return { total: threads[0]?.count[0]?.total || 0, data: threads[0]?.data || [] };
     }
+
+    @Query(() => ThreadWithPosts)
+    async threadWithPosts(
+        @Arg("id") id: string,
+        @Arg("limit", () => Int, { defaultValue: 5 }) limit: number,
+        @Arg("offset", () => Int, { defaultValue: 0 }) offset: number
+    ) {
+        const thread = await ThreadModel.findById(id);
+
+        const posts = await PostModel.aggregate([
+            { $match: { thread_id: new mongoose.Types.ObjectId(id) } },
+            { $sort: { createdAt: -1 } },
+            {
+                $facet: {
+                    count: [{ $count: "total" }],
+                    data: [{ $skip: offset }, { $limit: limit }],
+                },
+            },
+        ]);
+
+        return { thread, total: posts[0]?.count[0]?.total || 0, data: posts[0]?.data || [] };
+    }
+
 
 }

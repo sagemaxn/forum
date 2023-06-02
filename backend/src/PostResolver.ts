@@ -1,16 +1,16 @@
-import { Resolver, Query, Mutation, Arg, Int } from "type-graphql";
-import { Post, PostModel, PostInput, Posts} from "./models/Post";
-import { CommentInput } from "./models/Comment";
-import { UserModel } from "./models/User";
+import {Arg, Int, Mutation, Query, Resolver} from "type-graphql";
+import {Post, PostInput, PostModel, Posts} from "./models/Post";
+import {CommentInput} from "./models/Comment";
+import {UserModel} from "./models/User";
+import {ThreadModel} from "./models/Thread";
 
 @Resolver()
 export class PostResolver {
   @Mutation(() => Post)
   async createPost(
-    @Arg("input") { username, content }: PostInput,
+    @Arg("input") { username, content, thread_id }: PostInput,
     @Arg('avatar') avatar: string
   ): Promise<Post> {
-    let comments = "";
     let likes = "";
 
     let createdAt = new Date();
@@ -19,15 +19,18 @@ export class PostResolver {
       username,
       avatar,
       content,
-      comments,
-      likes,
+      thread_id,
       createdAt,
     });
-    post.save();
+    await post.save();
 
     const user = await UserModel.find({ username });
     user[0].posts.push(post.id);
     user[0].save();
+
+    const thread = await ThreadModel.findById(thread_id);
+    thread.posts.push(post.id);
+    thread.save();
 
     return post;
   }
@@ -36,25 +39,6 @@ export class PostResolver {
   async deletePost(@Arg("postID") postID: string) {
     const deleted = await PostModel.deleteOne({ _id: postID });
     return true;
-  }
-
-  @Mutation(() => Post)
-  async createComment(
-    @Arg("comment") { comment, userID }: CommentInput,
-    @Arg("postID") postID: string
-  ): Promise<Post> {
-    const update = { $push: { comments: { comment, username: userID } } };
-    // PostModel.updateOne({_id: postID}, update
-    // try{
-    // post.save()
-    // }
-    // catch(err){
-    //   console.log(err)
-    // }
-    const newPost = await PostModel.findByIdAndUpdate(postID, update, {
-      new: true,
-    });
-    return newPost;
   }
 
   @Query(() => Posts)
@@ -72,8 +56,7 @@ export class PostResolver {
       },
     ]);
 
-    const obj = { total: posts[0].count[0].total, data: posts[0].data };
-    return obj;
+    return {total: posts[0].count[0].total, data: posts[0].data};
   }
 
   @Query(() => Posts)

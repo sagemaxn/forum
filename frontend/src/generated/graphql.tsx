@@ -15,11 +15,6 @@ export type Scalars = {
   DateTime: any;
 };
 
-export type CommentInput = {
-  comment: Scalars['String'];
-  userID: Scalars['String'];
-};
-
 
 export type LoginToken = {
   __typename?: 'LoginToken';
@@ -30,7 +25,6 @@ export type Mutation = {
   __typename?: 'Mutation';
   changeAvatar: User;
   checkAuth: LoginToken;
-  createComment: Post;
   createPost: Post;
   createThread: Thread;
   createUser: User;
@@ -49,12 +43,6 @@ export type MutationChangeAvatarArgs = {
 
 export type MutationCheckAuthArgs = {
   cookie: Scalars['String'];
-};
-
-
-export type MutationCreateCommentArgs = {
-  comment: CommentInput;
-  postID: Scalars['String'];
 };
 
 
@@ -94,11 +82,13 @@ export type Post = {
   avatar: Scalars['String'];
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
+  thread_id: Scalars['ID'];
   username: Scalars['String'];
 };
 
 export type PostInput = {
   content: Scalars['String'];
+  thread_id: Scalars['ID'];
   username: Scalars['String'];
 };
 
@@ -113,9 +103,10 @@ export type Query = {
   cookie: LoginToken;
   currentUser?: Maybe<User>;
   posts: Posts;
+  threadWithPosts: Thread;
   threads: Threads;
   userPosts: Posts;
-  userThreads: Array<Thread>;
+  userThreads: Threads;
   users: Array<User>;
 };
 
@@ -128,6 +119,13 @@ export type QueryCurrentUserArgs = {
 export type QueryPostsArgs = {
   limit: Scalars['Int'];
   offset: Scalars['Int'];
+};
+
+
+export type QueryThreadWithPostsArgs = {
+  id: Scalars['String'];
+  limit?: Scalars['Int'];
+  offset?: Scalars['Int'];
 };
 
 
@@ -238,6 +236,7 @@ export type PostMutationVariables = Exact<{
   username: Scalars['String'];
   content: Scalars['String'];
   avatar: Scalars['String'];
+  thread_id: Scalars['ID'];
 }>;
 
 
@@ -245,7 +244,7 @@ export type PostMutation = (
   { __typename?: 'Mutation' }
   & { createPost: (
     { __typename?: 'Post' }
-    & Pick<Post, 'avatar' | 'content' | 'createdAt'>
+    & Pick<Post, 'username' | 'avatar' | 'content' | 'thread_id' | 'createdAt'>
   ) }
 );
 
@@ -336,6 +335,23 @@ export type ThreadsQuery = (
     & { data: Array<(
       { __typename?: 'Thread' }
       & Pick<Thread, '_id' | 'createdAt' | 'title' | 'username' | 'avatar'>
+    )> }
+  ) }
+);
+
+export type ThreadWithPostsQueryVariables = Exact<{
+  threadWithPostsId: Scalars['String'];
+}>;
+
+
+export type ThreadWithPostsQuery = (
+  { __typename?: 'Query' }
+  & { threadWithPosts: (
+    { __typename?: 'Thread' }
+    & Pick<Thread, 'title' | 'username' | 'avatar' | 'createdAt' | '_id'>
+    & { posts: Array<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'username' | 'avatar' | 'content' | 'createdAt' | '_id'>
     )> }
   ) }
 );
@@ -463,10 +479,15 @@ export type UserPostsQueryHookResult = ReturnType<typeof useUserPostsQuery>;
 export type UserPostsLazyQueryHookResult = ReturnType<typeof useUserPostsLazyQuery>;
 export type UserPostsQueryResult = Apollo.QueryResult<UserPostsQuery, UserPostsQueryVariables>;
 export const PostDocument = gql`
-    mutation Post($username: String!, $content: String!, $avatar: String!) {
-  createPost(input: {username: $username, content: $content}, avatar: $avatar) {
+    mutation Post($username: String!, $content: String!, $avatar: String!, $thread_id: ID!) {
+  createPost(
+    input: {username: $username, content: $content, thread_id: $thread_id}
+    avatar: $avatar
+  ) {
+    username
     avatar
     content
+    thread_id
     createdAt
   }
 }
@@ -489,6 +510,7 @@ export type PostMutationFn = Apollo.MutationFunction<PostMutation, PostMutationV
  *      username: // value for 'username'
  *      content: // value for 'content'
  *      avatar: // value for 'avatar'
+ *      thread_id: // value for 'thread_id'
  *   },
  * });
  */
@@ -739,3 +761,49 @@ export function useThreadsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Th
 export type ThreadsQueryHookResult = ReturnType<typeof useThreadsQuery>;
 export type ThreadsLazyQueryHookResult = ReturnType<typeof useThreadsLazyQuery>;
 export type ThreadsQueryResult = Apollo.QueryResult<ThreadsQuery, ThreadsQueryVariables>;
+export const ThreadWithPostsDocument = gql`
+    query ThreadWithPosts($threadWithPostsId: String!) {
+  threadWithPosts(id: $threadWithPostsId) {
+    title
+    username
+    avatar
+    posts {
+      username
+      avatar
+      content
+      createdAt
+      _id
+    }
+    createdAt
+    _id
+  }
+}
+    `;
+
+/**
+ * __useThreadWithPostsQuery__
+ *
+ * To run a query within a React component, call `useThreadWithPostsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useThreadWithPostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useThreadWithPostsQuery({
+ *   variables: {
+ *      threadWithPostsId: // value for 'threadWithPostsId'
+ *   },
+ * });
+ */
+export function useThreadWithPostsQuery(baseOptions: Apollo.QueryHookOptions<ThreadWithPostsQuery, ThreadWithPostsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ThreadWithPostsQuery, ThreadWithPostsQueryVariables>(ThreadWithPostsDocument, options);
+      }
+export function useThreadWithPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ThreadWithPostsQuery, ThreadWithPostsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ThreadWithPostsQuery, ThreadWithPostsQueryVariables>(ThreadWithPostsDocument, options);
+        }
+export type ThreadWithPostsQueryHookResult = ReturnType<typeof useThreadWithPostsQuery>;
+export type ThreadWithPostsLazyQueryHookResult = ReturnType<typeof useThreadWithPostsLazyQuery>;
+export type ThreadWithPostsQueryResult = Apollo.QueryResult<ThreadWithPostsQuery, ThreadWithPostsQueryVariables>;

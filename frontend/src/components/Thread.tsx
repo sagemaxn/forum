@@ -90,7 +90,7 @@ const Thread = ({ title, user, avatar, createdAt, loggedUser, threadID }) => {
                         <Link href={`/user/${user}/1`}>{user}</Link>
                     </Heading>
                     <Text>{dateP}</Text>
-                    <Link href={`/threads/{threadID}`}><Heading as="h2" size="md">{title}</Heading></Link>
+                    <Link href={`/threads/${threadID}/1`}><Heading as="h2" size="md">{title}</Heading></Link>
                 </Flex>
             </Flex>
             {loggedUser === user ? <Button onClick={onOpen} padding="10px" variant='ghost'>Delete</Button> : null}

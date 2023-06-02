@@ -3,14 +3,7 @@ import { ObjectType, InputType, Field, ID } from "type-graphql";
 import { prop, getModelForClass, mongoose } from "@typegoose/typegoose";
 import { Post } from './Post'
 
-@ObjectType()
-export class Threads {
-    @Field(() => Number)
-    total: number
 
-    @Field(() => [Thread])
-    data: Thread[]
-}
 @ObjectType()
 export class Thread {
     @Field(() => String)
@@ -56,4 +49,24 @@ export class ThreadInput {
     avatar: string
 }
 
+@ObjectType()
+export class Threads {
+    @Field(() => Number)
+    total: number
+
+    @Field(() => [Thread])
+    data: Thread[]
+}
+
+@ObjectType()
+export class ThreadWithPosts {
+    @Field(() => Thread)
+    thread: Thread
+
+    @Field(() => Number)
+    total: number
+
+    @Field(() => [Post])
+    data: Post[]
+}
 export const ThreadModel = getModelForClass(Thread);

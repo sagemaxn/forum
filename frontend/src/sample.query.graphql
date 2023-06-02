@@ -30,11 +30,13 @@ query UserPosts($offset: Int!, $limit: Int!, $username: String!) {
   }
 }
 
-mutation Post($username: String!, $content: String!, $avatar: String!) {
-  createPost(input: { username: $username, content: $content }, avatar: $avatar) {
-    avatar
-    content
-    createdAt
+mutation Post($username: String!, $content: String!, $avatar: String!, $thread_id: ID!) {
+  createPost(input: { username: $username, content: $content, thread_id: $thread_id }, avatar: $avatar) {
+    username,
+    avatar,
+    content,
+    thread_id,
+    createdAt,
   }
 }
 
@@ -81,5 +83,22 @@ query Threads($offset: Int!, $limit: Int!) {
       avatar
     }
     total
+  }
+}
+
+query ThreadWithPosts($threadWithPostsId: String!) {
+  threadWithPosts(id: $threadWithPostsId) {
+    title
+    username
+    avatar
+    posts {
+      username
+      avatar
+      content
+      createdAt
+      _id
+    }
+    createdAt
+    _id
   }
 }

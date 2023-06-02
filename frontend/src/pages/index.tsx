@@ -11,15 +11,12 @@ import { useRouter } from "next/router";
 import Thread from "../components/Thread";
 import NewThreadForm from "../components/NewThreadForm";
 import { useThreadsQuery, ThreadsDocument } from "../generated/graphql";
+import {Loading} from "../components/Loading";
 
 const Threads = ({ decoded }) => {
     const router = useRouter();
-    const { page } = router.query;
-    let offset = 1;
-
-    if (typeof page === "string" || page === undefined) {
-        if (parseInt(page, 10) || page === undefined) {
-            offset = 0
+    let page = "1"
+    let offset = 0
 
             const { data, loading, error, fetchMore } = useQuery(ThreadsDocument, {
                 variables: {
@@ -28,7 +25,7 @@ const Threads = ({ decoded }) => {
                 },
             });
             if (loading)
-                return <Navbar user={decoded.user} avatar={decoded.avatar} />;
+                return <></>
 if (data){ console.log(`data: ${data}`)}
 
             return (
@@ -53,21 +50,15 @@ if (data){ console.log(`data: ${data}`)}
                     )}
                 </>
             );
-        }
-    }
-    return <div>dsadasd</div>; //redirect to page 1
+
 };
 
 
 const Index = ({ decoded }) => {
     console.log( `decode: ${decoded}` )
     return <><Navbar user={decoded.user} avatar={decoded.avatar}/><Heading>Welcome to our website</Heading> <Threads decoded={decoded}/>
-
-
-
     </>
 }
-
 export const getServerSideProps = compose(auth)
 export default Index
 

@@ -7,24 +7,23 @@ import { useRouter } from "next/router";
 import Post from "../../../components/Post";
 import NewPostForm from "../../../components/NewPostForm";
 import Navbar from "../../../components/Navbar";
-import { usePostsQuery, PostsDocument } from "../../../generated/graphql";
+import { usePostsQuery, ThreadWithPostsDocument} from "../../../generated/graphql";
 
 const Page = ({ decoded, token }) => {
   const router = useRouter();
-  const { page } = router.query;
+  const { thread, page } = router.query;
   let offset = 1;
   // const [ offset, setOffset ] = useState(3)
   if (typeof page === "string") {
     if (parseInt(page, 10)) {
       offset = (parseInt(page) - 1) * 5;
-
-      //console.log(decoded);
-      const { data, loading, error, fetchMore } = useQuery(PostsDocument, {
+console.log(thread)
+      const { data, loading, error, fetchMore } = useQuery(ThreadWithPostsDocument, {
         variables: {
           offset: offset,
-          limit: 5,
+          limit: 5, id: thread
         },
-      });
+      });   console.log(data)
       if (loading)
         return <Navbar user={decoded.user} avatar={decoded.avatar} />;
       return (

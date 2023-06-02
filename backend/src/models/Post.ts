@@ -30,14 +30,12 @@ export class Post {
   @prop( {type: Date, required: true })
   public createdAt: Date
 
+  @Field(() => ID)
+  @prop({ type: mongoose.Types.ObjectId, required: true })
+  public thread_id: mongoose.Types.ObjectId
+
   @Field(() => String)
   _id: mongoose.Types.ObjectId
-  // @prop()
-  // public _id: mongoose.Types.ObjectId
-
-  // @Field(() => [Comment])
-  // @prop()
-  // public comments: [Comment]
 
 }
 
@@ -52,6 +50,10 @@ export class PostInput {
   @Field(() => String)
   @prop({type: String,required: true})
   content: string;
+
+  @Field(() => ID)
+  @prop({type: String, required: true})
+  thread_id: string
 
 }
 
