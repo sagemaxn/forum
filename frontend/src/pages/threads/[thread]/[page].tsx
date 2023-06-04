@@ -1,55 +1,36 @@
-import { useState } from "react";
-import Link from "next/link";
-import { Text } from "@chakra-ui/react";
-
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import Post from "../../../components/Post";
 import NewPostForm from "../../../components/NewPostForm";
 import Navbar from "../../../components/Navbar";
-import { usePostsQuery, ThreadWithPostsDocument} from "../../../generated/graphql";
+import {PostsList} from "../../../components/PostsList"
+import { ThreadWithPostsDocument} from "../../../generated/graphql";
 
 const Page = ({ decoded, token }) => {
   const router = useRouter();
   const { thread, page } = router.query;
   let offset = 1;
-  // const [ offset, setOffset ] = useState(3)
   if (typeof page === "string") {
     if (parseInt(page, 10)) {
       offset = (parseInt(page) - 1) * 5;
-console.log(thread)
+console.log(thread, page)
       const { data, loading, error, fetchMore } = useQuery(ThreadWithPostsDocument, {
         variables: {
           offset: offset,
-          limit: 5, id: thread
+          limit: 5, threadWithPostsId: thread
         },
-      });   console.log(data)
+      });   console.log(`data :${data}`)
       if (loading)
         return <Navbar user={decoded.user} avatar={decoded.avatar} />;
-      return (
-        <>
-          <Navbar user={decoded.user} avatar={decoded.avatar} />
-          <NewPostForm user={decoded.user} avatar={decoded.avatar} />
-          {data.posts.data.map((post) => (
-            <Post
-              content={post.content}
-              user={post.username}
-              createdAt={post.createdAt}
-              avatar={post.avatar}
-              key={post._id}
-              loggedUser={decoded.user}
-              postID={post._id}
-            ></Post>
-          ))}
-          {parseInt(page) * 5 < data.posts.total && (
-            <Link href={`/posts/${parseInt(page) + 1}`}>Next Page</Link>
-          ) || <Text>end of results</Text>}
 
-          {parseInt(page) - 1 > 0 && (
-            <Link href={`/posts/${parseInt(page) - 1}`}>Prev Page</Link>
-          )}
-        </>
-      );
+            console.log(`data :${data}`)
+            return (
+                <>
+                    <Navbar user={decoded.user} avatar={decoded.avatar}/>
+                    <NewPostForm user={decoded.user} avatar={decoded.avatar}/>
+                    <PostsList data={data} user={decoded.user} page={page}/>
+                </>
+            );
     }
   }
   return <div>dsadasd</div>; //redirect to page 1

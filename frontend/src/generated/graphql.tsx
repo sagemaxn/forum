@@ -103,7 +103,7 @@ export type Query = {
   cookie: LoginToken;
   currentUser?: Maybe<User>;
   posts: Posts;
-  threadWithPosts: Thread;
+  threadWithPosts: ThreadWithPosts;
   threads: Threads;
   userPosts: Posts;
   userThreads: Threads;
@@ -163,6 +163,13 @@ export type ThreadInput = {
   firstPostContent: Scalars['String'];
   title: Scalars['String'];
   username: Scalars['String'];
+};
+
+export type ThreadWithPosts = {
+  __typename?: 'ThreadWithPosts';
+  posts: Array<Post>;
+  thread: Thread;
+  total: Scalars['Float'];
 };
 
 export type Threads = {
@@ -321,6 +328,23 @@ export type AuthMutation = (
   ) }
 );
 
+export type CreateThreadMutationVariables = Exact<{
+  input: ThreadInput;
+}>;
+
+
+export type CreateThreadMutation = (
+  { __typename?: 'Mutation' }
+  & { createThread: (
+    { __typename?: 'Thread' }
+    & Pick<Thread, 'title' | 'username' | 'createdAt' | '_id' | 'avatar'>
+    & { posts: Array<(
+      { __typename?: 'Post' }
+      & Pick<Post, '_id'>
+    )> }
+  ) }
+);
+
 export type ThreadsQueryVariables = Exact<{
   offset: Scalars['Int'];
   limit: Scalars['Int'];
@@ -341,17 +365,26 @@ export type ThreadsQuery = (
 
 export type ThreadWithPostsQueryVariables = Exact<{
   threadWithPostsId: Scalars['String'];
+  offset: Scalars['Int'];
+  limit: Scalars['Int'];
 }>;
 
 
 export type ThreadWithPostsQuery = (
   { __typename?: 'Query' }
   & { threadWithPosts: (
-    { __typename?: 'Thread' }
-    & Pick<Thread, 'title' | 'username' | 'avatar' | 'createdAt' | '_id'>
-    & { posts: Array<(
+    { __typename?: 'ThreadWithPosts' }
+    & Pick<ThreadWithPosts, 'total'>
+    & { thread: (
+      { __typename?: 'Thread' }
+      & Pick<Thread, 'username'>
+      & { posts: Array<(
+        { __typename?: 'Post' }
+        & Pick<Post, '_id'>
+      )> }
+    ), posts: Array<(
       { __typename?: 'Post' }
-      & Pick<Post, 'username' | 'avatar' | 'content' | 'createdAt' | '_id'>
+      & Pick<Post, '_id' | 'username' | 'content' | 'avatar' | 'createdAt' | 'thread_id'>
     )> }
   ) }
 );
@@ -718,6 +751,46 @@ export function useAuthMutation(baseOptions?: Apollo.MutationHookOptions<AuthMut
 export type AuthMutationHookResult = ReturnType<typeof useAuthMutation>;
 export type AuthMutationResult = Apollo.MutationResult<AuthMutation>;
 export type AuthMutationOptions = Apollo.BaseMutationOptions<AuthMutation, AuthMutationVariables>;
+export const CreateThreadDocument = gql`
+    mutation CreateThread($input: ThreadInput!) {
+  createThread(input: $input) {
+    title
+    username
+    createdAt
+    _id
+    avatar
+    posts {
+      _id
+    }
+  }
+}
+    `;
+export type CreateThreadMutationFn = Apollo.MutationFunction<CreateThreadMutation, CreateThreadMutationVariables>;
+
+/**
+ * __useCreateThreadMutation__
+ *
+ * To run a mutation, you first call `useCreateThreadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateThreadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createThreadMutation, { data, loading, error }] = useCreateThreadMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateThreadMutation(baseOptions?: Apollo.MutationHookOptions<CreateThreadMutation, CreateThreadMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateThreadMutation, CreateThreadMutationVariables>(CreateThreadDocument, options);
+      }
+export type CreateThreadMutationHookResult = ReturnType<typeof useCreateThreadMutation>;
+export type CreateThreadMutationResult = Apollo.MutationResult<CreateThreadMutation>;
+export type CreateThreadMutationOptions = Apollo.BaseMutationOptions<CreateThreadMutation, CreateThreadMutationVariables>;
 export const ThreadsDocument = gql`
     query Threads($offset: Int!, $limit: Int!) {
   threads(offset: $offset, limit: $limit) {
@@ -762,20 +835,23 @@ export type ThreadsQueryHookResult = ReturnType<typeof useThreadsQuery>;
 export type ThreadsLazyQueryHookResult = ReturnType<typeof useThreadsLazyQuery>;
 export type ThreadsQueryResult = Apollo.QueryResult<ThreadsQuery, ThreadsQueryVariables>;
 export const ThreadWithPostsDocument = gql`
-    query ThreadWithPosts($threadWithPostsId: String!) {
-  threadWithPosts(id: $threadWithPostsId) {
-    title
-    username
-    avatar
-    posts {
+    query ThreadWithPosts($threadWithPostsId: String!, $offset: Int!, $limit: Int!) {
+  threadWithPosts(id: $threadWithPostsId, offset: $offset, limit: $limit) {
+    thread {
       username
-      avatar
-      content
-      createdAt
-      _id
+      posts {
+        _id
+      }
     }
-    createdAt
-    _id
+    total
+    posts {
+      _id
+      username
+      content
+      avatar
+      createdAt
+      thread_id
+    }
   }
 }
     `;
@@ -793,6 +869,8 @@ export const ThreadWithPostsDocument = gql`
  * const { data, loading, error } = useThreadWithPostsQuery({
  *   variables: {
  *      threadWithPostsId: // value for 'threadWithPostsId'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
  *   },
  * });
  */

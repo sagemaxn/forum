@@ -1,13 +1,12 @@
 // components/Thread.tsx
 import {
-    Box,
     Text,
     Heading,
     Flex,
     Link,
     Button,
-    border,
 } from "@chakra-ui/react";
+import NextLink from 'next/link'
 import Image from 'next/image'
 import { useRef } from "react";
 import {
@@ -70,12 +69,14 @@ const Thread = ({ title, user, avatar, createdAt, loggedUser, threadID }) => {
         );
     };
     return (
+        <Link as={NextLink} href={`/threads/${threadID}/1`} >
         <Flex
             w={{ md: "xl", base: "100%" }}
             margin="2px"
             bg="white"
             justifyContent="space-between"
         >
+
             <Flex>
                 <Image
                     objectFit="contain"
@@ -87,15 +88,17 @@ const Thread = ({ title, user, avatar, createdAt, loggedUser, threadID }) => {
                 />
                 <Flex direction="column">
                     <Heading as="h1" size="sm">
-                        <Link href={`/user/${user}/1`}>{user}</Link>
+                        <Link as={NextLink} href={`/user/${user}/1`}>{user}</Link>
                     </Heading>
                     <Text>{dateP}</Text>
-                    <Link href={`/threads/${threadID}/1`}><Heading as="h2" size="md">{title}</Heading></Link>
+                   <Heading as="h2" size="md">{title}</Heading>
                 </Flex>
             </Flex>
             {loggedUser === user ? <Button onClick={onOpen} padding="10px" variant='ghost'>Delete</Button> : null}
             {/*<ConfirmDelete />*/}
+
         </Flex>
+        </Link>
     );
 };
 

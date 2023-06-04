@@ -73,6 +73,20 @@ mutation Auth($cookie: String!) {
   }
 }
 
+mutation CreateThread($input: ThreadInput!) {
+  createThread(input: $input) {
+    title
+    username
+    createdAt
+    _id
+    avatar
+    posts {
+      _id
+    }
+
+  }
+}
+
 query Threads($offset: Int!, $limit: Int!) {
   threads(offset: $offset, limit: $limit) {
     data {
@@ -86,19 +100,22 @@ query Threads($offset: Int!, $limit: Int!) {
   }
 }
 
-query ThreadWithPosts($threadWithPostsId: String!) {
-  threadWithPosts(id: $threadWithPostsId) {
-    title
-    username
-    avatar
-    posts {
+query ThreadWithPosts($threadWithPostsId: String!, $offset: Int!, $limit: Int!) {
+  threadWithPosts(id: $threadWithPostsId, offset: $offset, limit: $limit) {
+    thread {
       username
-      avatar
-      content
-      createdAt
-      _id
+      posts {
+        _id
+      }
     }
-    createdAt
-    _id
+    total
+    posts {
+      _id
+      username
+      content
+      avatar
+      createdAt
+      thread_id
+    }
   }
 }

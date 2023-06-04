@@ -12,6 +12,7 @@ import Thread from "../components/Thread";
 import NewThreadForm from "../components/NewThreadForm";
 import { useThreadsQuery, ThreadsDocument } from "../generated/graphql";
 import {Loading} from "../components/Loading";
+import {ThreadsList} from "../components/ThreadsList";
 
 
 const Threads = ({ decoded }) => {
@@ -29,32 +30,10 @@ const Threads = ({ decoded }) => {
                     limit: 5,
                 },
             });
-            if (loading)
-                return <Loading/>
-            if (data){ console.log(`data: ${data}`)}
+            if(loading)return <Loading />
+            return <ThreadsList data={data} user={decoded.user} page={page}/>
 
-            return (
-                <>
-                    {data.threads.data.map((thread) => (
-                        <Thread
-                            title={thread.title}
-                            user={thread.username}
-                            createdAt={thread.createdAt}
-                            avatar={thread.avatar}
-                            key={thread._id}
-                            loggedUser={decoded.user}
-                            threadID={thread._id}
-                        ></Thread>
-                    ))}
-                    {parseInt(page) * 5 < data.threads.total && (
-                        <Link href={`/threads/${parseInt(page) + 1}`}>Next Page</Link>
-                    ) || <Text>end of results</Text>}
 
-                    {parseInt(page) - 1 > 0 && (
-                        <Link href={`/threads/${parseInt(page) - 1}`}>Prev Page</Link>
-                    )}
-                </>
-            );
         }
     }
 };
@@ -62,7 +41,7 @@ const Threads = ({ decoded }) => {
 
 const Index = ({ decoded }) => {
     console.log( `decode: ${decoded}` )
-    return <><Navbar user={decoded.user} avatar={decoded.avatar}/><Heading>Welcome to our website</Heading> <Threads decoded={decoded}/>
+    return <><Navbar user={decoded.user} avatar={decoded.avatar}/><Threads decoded={decoded}/>
 
 
 

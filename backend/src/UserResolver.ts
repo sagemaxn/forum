@@ -4,6 +4,7 @@ import { hash} from "bcryptjs";
 import { User, UserInput, UserModel,} from "./models/User";
 
 import {PostModel} from "./models/Post";
+import {ThreadModel} from "./models/Thread";
 
 @Resolver()
 export class UserResolver {
@@ -30,6 +31,7 @@ export class UserResolver {
     try {
       let user = await UserModel.findOneAndUpdate({ username }, { avatar });
       let posts = await PostModel.updateMany({ username }, { avatar });
+      let threads = await ThreadModel.updateMany({ username }, {avatar})
       return user;
     } catch (err) {
       console.error(err);

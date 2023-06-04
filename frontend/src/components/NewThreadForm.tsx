@@ -4,18 +4,18 @@ import {
     Flex,
 } from "@chakra-ui/react";
 import FormField from "../components/FormField";
-import { useThreadMutation } from "../generated/graphql";
+import { useCreateThreadMutation } from "../generated/graphql";
 
 function NewThreadForm({ user, avatar }) {
-    const [createThread, { data }] = useThreadMutation();
+    const [createThread, { data }] = useCreateThreadMutation();
 
     return (
         <Formik
-            initialValues={{ username: user, avatar, title: "", content: "" }}
+            initialValues={{ username: user, avatar, title: "", firstPostContent: "" }}
             onSubmit={async (values, actions) => {
-                await createThread({ variables: values });
+                await createThread({ variables: {input: values} });
                 if (data) {
-                    console.log(`If data after post in NewThreadForm.tsx: ${data}`);
+                    console.log(`If data after thread in NewThreadForm.tsx: ${data}`);
                 }
                 actions.setSubmitting(false);
             }}
@@ -32,7 +32,7 @@ function NewThreadForm({ user, avatar }) {
                     >
                         <Form>
                             <FormField name="title"></FormField>
-                            <FormField name="content"></FormField>
+                            <FormField name="firstPostContent"></FormField>
 
                             <Button
                                 mt={4}

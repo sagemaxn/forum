@@ -96,7 +96,7 @@ export class ThreadResolver {
 
         const posts = await PostModel.aggregate([
             { $match: { thread_id: new mongoose.Types.ObjectId(id) } },
-            { $sort: { createdAt: -1 } },
+
             {
                 $facet: {
                     count: [{ $count: "total" }],
@@ -105,7 +105,7 @@ export class ThreadResolver {
             },
         ]);
 
-        return { thread, total: posts[0]?.count[0]?.total || 0, data: posts[0]?.data || [] };
+        return { thread, total: posts[0]?.count[0]?.total || 0, posts: posts[0]?.data || [] };
     }
 
 

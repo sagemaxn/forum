@@ -20,17 +20,14 @@ function FormField({ name, toggle, children, ...rest }: propTypes) {
     );
 
     function InputField(name, field) {
-        if (name === "content") {
+        if (name === ("content" || "firstPostContent")) {
             return (
-                <TextareaAutosize {...field} id={name} placeholder="Make New Post" color="red" style={{width: "100%"}} autoFocus minRows='1' maxLength='120'></TextareaAutosize>
+                <TextareaAutosize {...field} id={name} placeholder="Make New Post" color="red" style={{width: "100%"}} autoFocus minRows='1' maxLength='200' required={true}></TextareaAutosize>
             )
         } else if (name === "title") {
             return (
                 <>
-                    <FormLabel htmlFor={name} margin="1.5">
-                        {name}
-                    </FormLabel>
-                    <Input {...field} id={name} placeholder="Thread Title" background="white" maxLength='20'/>
+                    <Input {...field} id={name} placeholder="Thread Title" background="white" maxLength='50' required={true}/>
                 </>
             )
         } else {

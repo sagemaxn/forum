@@ -67,6 +67,6 @@ export class ThreadWithPosts {
     total: number
 
     @Field(() => [Post])
-    data: Post[]
+    posts: Post[]
 }
 export const ThreadModel = getModelForClass(Thread);
