@@ -1,7 +1,7 @@
 import { ObjectType, InputType, Field, Int, ID } from "type-graphql";
-import { prop, getModelForClass, mongoose } from "@typegoose/typegoose";
+import { prop, getModelForClass, mongoose, Ref } from "@typegoose/typegoose";
 //import { User } from './User'
-import { Comment } from './Comment'
+import {User} from "./User";
 
 @ObjectType()
 export class Posts {
@@ -12,15 +12,10 @@ export class Posts {
   data: Post[]
 }
 
-@ObjectType()
+@ObjectType({ description: 'The Post model' })
 export class Post {
-  @Field(() => String)
-  @prop({ type: String, required: true })
-  public username: string
-
-  @Field(() => String)
-  @prop({ type: String, required: true })
-  public avatar: string
+  @Field(() => ID)
+  _id: mongoose.Types.ObjectId
 
   @Field(() => String)
   @prop({ type: String, required: true })
@@ -28,18 +23,13 @@ export class Post {
 
   @Field(() => Date)
   @prop( {type: Date, required: true })
-  public createdAt: Date
-
-  @Field(() => ID)
-  @prop({ type: mongoose.Types.ObjectId, required: true })
-  public thread_id: mongoose.Types.ObjectId
+  public createdAt: Date;
 
   @Field(() => String)
-  _id: mongoose.Types.ObjectId
+  @prop({ ref: 'User' })
+  public user: Ref<User>;
 
 }
-
-
 
 @InputType()
 export class PostInput {

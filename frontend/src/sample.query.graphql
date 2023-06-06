@@ -67,6 +67,12 @@ mutation ChangeAvatar($username: String!, $avatar: String!) {
   }
 }
 
+query CurrentUserAvatar($username: String!) {
+  currentUser(username: $username) {
+    avatar
+  }
+}
+
 mutation Auth($cookie: String!) {
   checkAuth(cookie: $cookie) {
     token
@@ -111,11 +117,13 @@ query ThreadWithPosts($threadWithPostsId: String!, $offset: Int!, $limit: Int!) 
     total
     posts {
       _id
-      username
       content
       avatar
       createdAt
       thread_id
+      user {
+
+      }
     }
   }
 }

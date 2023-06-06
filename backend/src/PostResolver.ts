@@ -1,6 +1,5 @@
 import {Arg, Int, Mutation, Query, Resolver} from "type-graphql";
 import {Post, PostInput, PostModel, Posts} from "./models/Post";
-import {CommentInput} from "./models/Comment";
 import {UserModel} from "./models/User";
 import {ThreadModel} from "./models/Thread";
 
@@ -8,25 +7,24 @@ import {ThreadModel} from "./models/Thread";
 export class PostResolver {
   @Mutation(() => Post)
   async createPost(
-    @Arg("input") { username, content, thread_id }: PostInput,
-    @Arg('avatar') avatar: string
+      @Arg("input") { username, content, thread_id }: PostInput
   ): Promise<Post> {
-    let likes = "";
+    const user = await UserModel.findOne({ username });
+    if (!user) {
+      throw new Error('User not found');
+    }
 
     let createdAt = new Date();
-
     const post = await PostModel.create({
-      username,
-      avatar,
+      user,
       content,
       thread_id,
       createdAt,
     });
     await post.save();
 
-    const user = await UserModel.find({ username });
-    user[0].posts.push(post.id);
-    user[0].save();
+    user.posts.push(post.id);
+    user.save();
 
     const thread = await ThreadModel.findById(thread_id);
     thread.posts.push(post.id);
@@ -34,6 +32,7 @@ export class PostResolver {
 
     return post;
   }
+
 
   @Mutation(() => Boolean)
   async deletePost(@Arg("postID") postID: string) {

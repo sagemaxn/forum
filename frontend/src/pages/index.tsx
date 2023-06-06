@@ -26,8 +26,8 @@ const Threads = ({ decoded }) => {
 
 
 const Index = ({ decoded }) => {
-    console.log( `decode: ${decoded}` )
-    return <><Navbar user={decoded.user} avatar={decoded.avatar}/><Heading>Most Recent Threads</Heading> <NewThreadForm user={decoded.user} avatar={decoded.avatar}/><Threads decoded={decoded}/>
+    console.log( `decode: ${JSON.stringify(decoded)}` )
+    return <><Navbar user={decoded.user}/><Heading>Most Recent Threads</Heading> <NewThreadForm user={decoded.user} avatar={decoded.avatar}/><Threads decoded={decoded}/>
     </>
 }
 export const getServerSideProps = compose(auth)

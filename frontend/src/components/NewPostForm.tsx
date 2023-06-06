@@ -3,22 +3,31 @@ import {
   Button,
   Flex,
 } from "@chakra-ui/react";
+import { useApolloClient} from "@apollo/client";
 
 import FormField from "../components/FormField";
 import { usePostMutation } from "../generated/graphql";
+import { CurrentUserAvatarDocument} from "../generated/graphql";
 
-function NewPostForm({user, avatar}) {
+function NewPostForm({user, thread_id}) {
   const [post, { data }] = usePostMutation()
-  console.log(`New post form avatar prop: ${avatar}`)
+    const apolloClient = useApolloClient();
   return (
     <Formik
-      initialValues={{ username: user, avatar ,content: '' }}
+      initialValues={{ username: user, avatar: '' ,content: '', thread_id }}
       onSubmit={async (values, actions) => {
-        await post({ variables: values });
-        if(data){
-          console.log(`If data after post in NewPostForm.tsx: ${data}`)
-        }
-        actions.setSubmitting(false);
+          const response = await apolloClient.query({
+              query: CurrentUserAvatarDocument,
+              variables: { username: user },
+          });
+
+          const avatar = response.data.currentUser.avatar;
+
+          await post({ variables: {...values, avatar} });
+          if(data){
+              console.log(`If data after post in NewPostForm.tsx: ${data}`)
+          }
+          actions.setSubmitting(false);
       }}
     >
       {(props) => (<>

@@ -30,12 +30,12 @@ const User = ({ decoded }) => {
       setUser(user);
     }
 
-    if (loading) return <Navbar user={decoded.user} avatar={decoded.avatar} />;
+    if (loading) return <Navbar user={decoded.user} />;
     if (data) {
       console.log(`data from UserPostsQuery: ${data}`);
       return (
         <>
-          <Navbar user={decoded.user} avatar={decoded.avatar} />
+          <Navbar user={decoded.user} />
           {data.userPosts.data.map((post) => (
             <Post
               content={post.content}

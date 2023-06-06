@@ -21,13 +21,13 @@ console.log(thread, page)
         },
       });   console.log(`data :${data}`)
       if (loading)
-        return <Navbar user={decoded.user} avatar={decoded.avatar} />;
+        return <Navbar user={decoded.user} />;
 
             console.log(`data :${data}`)
             return (
                 <>
-                    <Navbar user={decoded.user} avatar={decoded.avatar}/>
-                    <NewPostForm user={decoded.user} avatar={decoded.avatar}/>
+                    <Navbar user={decoded.user} />
+                    <NewPostForm user={decoded.user} thread_id={thread}/>
                     <PostsList data={data} user={decoded.user} page={page}/>
                 </>
             );

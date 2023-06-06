@@ -315,6 +315,19 @@ export type ChangeAvatarMutation = (
   ) }
 );
 
+export type CurrentUserAvatarQueryVariables = Exact<{
+  username: Scalars['String'];
+}>;
+
+
+export type CurrentUserAvatarQuery = (
+  { __typename?: 'Query' }
+  & { currentUser?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'avatar'>
+  )> }
+);
+
 export type AuthMutationVariables = Exact<{
   cookie: Scalars['String'];
 }>;
@@ -718,6 +731,41 @@ export function useChangeAvatarMutation(baseOptions?: Apollo.MutationHookOptions
 export type ChangeAvatarMutationHookResult = ReturnType<typeof useChangeAvatarMutation>;
 export type ChangeAvatarMutationResult = Apollo.MutationResult<ChangeAvatarMutation>;
 export type ChangeAvatarMutationOptions = Apollo.BaseMutationOptions<ChangeAvatarMutation, ChangeAvatarMutationVariables>;
+export const CurrentUserAvatarDocument = gql`
+    query CurrentUserAvatar($username: String!) {
+  currentUser(username: $username) {
+    avatar
+  }
+}
+    `;
+
+/**
+ * __useCurrentUserAvatarQuery__
+ *
+ * To run a query within a React component, call `useCurrentUserAvatarQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCurrentUserAvatarQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCurrentUserAvatarQuery({
+ *   variables: {
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useCurrentUserAvatarQuery(baseOptions: Apollo.QueryHookOptions<CurrentUserAvatarQuery, CurrentUserAvatarQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CurrentUserAvatarQuery, CurrentUserAvatarQueryVariables>(CurrentUserAvatarDocument, options);
+      }
+export function useCurrentUserAvatarLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CurrentUserAvatarQuery, CurrentUserAvatarQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CurrentUserAvatarQuery, CurrentUserAvatarQueryVariables>(CurrentUserAvatarDocument, options);
+        }
+export type CurrentUserAvatarQueryHookResult = ReturnType<typeof useCurrentUserAvatarQuery>;
+export type CurrentUserAvatarLazyQueryHookResult = ReturnType<typeof useCurrentUserAvatarLazyQuery>;
+export type CurrentUserAvatarQueryResult = Apollo.QueryResult<CurrentUserAvatarQuery, CurrentUserAvatarQueryVariables>;
 export const AuthDocument = gql`
     mutation Auth($cookie: String!) {
   checkAuth(cookie: $cookie) {
