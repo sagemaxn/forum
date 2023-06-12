@@ -7,77 +7,81 @@ import {ThreadModel} from "./models/Thread";
 export class PostResolver {
   @Mutation(() => Post)
   async createPost(
-      @Arg("input") { username, content, thread_id }: PostInput
+      @Arg("input") {username, content, thread_id}: PostInput
   ): Promise<Post> {
-    const user = await UserModel.findOne({ username });
+    const user = await UserModel.findOne({username});
     if (!user) {
       throw new Error('User not found');
     }
 
     let createdAt = new Date();
     const post = await PostModel.create({
-      user,
+      user: user,
       content,
-      thread_id,
+      thread: thread_id,
       createdAt,
     });
     await post.save();
 
     user.posts.push(post.id);
-    user.save();
+    await user.save();
 
     const thread = await ThreadModel.findById(thread_id);
     thread.posts.push(post.id);
-    thread.save();
+    await thread.save();
 
     return post;
   }
 
-
   @Mutation(() => Boolean)
   async deletePost(@Arg("postID") postID: string) {
-    const deleted = await PostModel.deleteOne({ _id: postID });
+    const deleted = await PostModel.deleteOne({_id: postID});
     return true;
   }
 
   @Query(() => Posts)
   async posts(
-    @Arg("limit", () => Int) limit: number,
-    @Arg("offset", () => Int) offset: number
+      @Arg("limit", () => Int) limit: number,
+      @Arg("offset", () => Int) offset: number
   ) {
-    const posts = await PostModel.aggregate([
-      { $sort: { createdAt: -1 } },
-      {
-        $facet: {
-          count: [{ $count: "total" }],
-          data: [{ $skip: offset }, { $limit: limit }],
-        },
-      },
-    ]);
+    const posts = await PostModel.find()
+        .sort({ createdAt: -1 })
+        .skip(offset)
+        .limit(limit)
+        .populate({
+          path: 'user',
+          select: 'username avatar'
+        });
 
-    return {total: posts[0].count[0].total, data: posts[0].data};
+    const total = await PostModel.countDocuments();
+
+    return { total, data: posts };
   }
 
   @Query(() => Posts)
   async userPosts(
-    @Arg("username") username: string,
-    @Arg("limit", () => Int) limit: number,
-    @Arg("offset", () => Int) offset: number
+      @Arg("username") username: string,
+      @Arg("limit", () => Int) limit: number,
+      @Arg("offset", () => Int) offset: number
   ) {
-    const posts = await PostModel.aggregate([
-      { $match: { username }},
-      { $sort: { createdAt: -1 } },
-      {
-        $facet: {
-          count: [{ $count: "total" }],
-          data: [{ $skip: offset }, { $limit: limit }],
-        },
-      },
-    ]);
+    const user = await UserModel.findOne({ username });
 
-    const obj = { total: posts[0].count[0].total, data: posts[0].data };
-    console.log(obj);
+    if (!user) {
+      throw new Error("User not found");
+    }
 
-    return obj;
+    const posts = await PostModel.find({ user: user._id })
+        .sort({ createdAt: -1 })
+        .skip(offset)
+        .limit(limit)
+        .populate({
+          path: 'user',
+          select: 'username avatar'
+        });
+
+    const total = posts.length
+
+    return { total, data: posts };
   }
+
 }

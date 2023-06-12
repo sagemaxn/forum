@@ -1,5 +1,5 @@
-import { ObjectType, InputType, Field } from "type-graphql";
-import { prop, getModelForClass, Ref } from "@typegoose/typegoose";
+import {ObjectType, InputType, Field, ID} from "type-graphql";
+import {prop, getModelForClass, Ref, mongoose} from "@typegoose/typegoose";
 import { Post } from './Post'
 import { Thread } from './Thread'
 
@@ -10,19 +10,22 @@ export class User {
   public username: string;
 
   @prop({ type: String, required: true })
-  public password: string;
+  password: string;
 
   @Field(() => String)
   @prop({ type: String, required: true })
   public avatar: string;
 
-  @Field(() => String, {nullable: true})
-  @prop({ ref: 'Post', default: [] })
-  public posts?: Ref<Post>[];
+  @Field(() => [Post])
+  @prop({ ref: () => Post, default: [] })
+  posts: Ref<Post>[];
 
   @Field(() => String, {nullable: true})
   @prop({ ref: 'Thread', default: [] })
   public threads?: Ref<Thread>[];
+
+  @Field(() => ID)
+  _id: mongoose.Types.ObjectId
 }
 
 @ObjectType()

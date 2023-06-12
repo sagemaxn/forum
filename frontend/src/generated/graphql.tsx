@@ -47,7 +47,6 @@ export type MutationCheckAuthArgs = {
 
 
 export type MutationCreatePostArgs = {
-  avatar: Scalars['String'];
   input: PostInput;
 };
 
@@ -78,12 +77,10 @@ export type MutationLoginArgs = {
 
 export type Post = {
   __typename?: 'Post';
-  _id: Scalars['String'];
-  avatar: Scalars['String'];
+  _id: Scalars['ID'];
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
-  thread_id: Scalars['ID'];
-  username: Scalars['String'];
+  user: User;
 };
 
 export type PostInput = {
@@ -150,12 +147,11 @@ export type QueryUserThreadsArgs = {
 
 export type Thread = {
   __typename?: 'Thread';
-  _id: Scalars['String'];
-  avatar: Scalars['String'];
+  _id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
-  posts: Array<Post>;
+  posts?: Maybe<Array<Post>>;
   title: Scalars['String'];
-  username: Scalars['String'];
+  user: User;
 };
 
 export type ThreadInput = {
@@ -167,7 +163,6 @@ export type ThreadInput = {
 
 export type ThreadWithPosts = {
   __typename?: 'ThreadWithPosts';
-  posts: Array<Post>;
   thread: Thread;
   total: Scalars['Float'];
 };
@@ -180,9 +175,10 @@ export type Threads = {
 
 export type User = {
   __typename?: 'User';
+  _id: Scalars['ID'];
   avatar: Scalars['String'];
   posts: Array<Post>;
-  threads: Array<Thread>;
+  threads?: Maybe<Scalars['String']>;
   username: Scalars['String'];
 };
 
@@ -215,7 +211,11 @@ export type PostsQuery = (
     & Pick<Posts, 'total'>
     & { data: Array<(
       { __typename?: 'Post' }
-      & Pick<Post, 'content' | 'username' | 'avatar' | 'createdAt' | '_id'>
+      & Pick<Post, '_id' | 'content' | 'createdAt'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'username' | 'avatar'>
+      ) }
     )> }
   ) }
 );
@@ -234,16 +234,17 @@ export type UserPostsQuery = (
     & Pick<Posts, 'total'>
     & { data: Array<(
       { __typename?: 'Post' }
-      & Pick<Post, 'content' | 'avatar' | 'username' | 'createdAt' | '_id'>
+      & Pick<Post, '_id' | 'content' | 'createdAt'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'username' | 'avatar'>
+      ) }
     )> }
   ) }
 );
 
 export type PostMutationVariables = Exact<{
-  username: Scalars['String'];
-  content: Scalars['String'];
-  avatar: Scalars['String'];
-  thread_id: Scalars['ID'];
+  input: PostInput;
 }>;
 
 
@@ -251,7 +252,11 @@ export type PostMutation = (
   { __typename?: 'Mutation' }
   & { createPost: (
     { __typename?: 'Post' }
-    & Pick<Post, 'username' | 'avatar' | 'content' | 'thread_id' | 'createdAt'>
+    & Pick<Post, '_id' | 'content' | 'createdAt'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'avatar' | 'username'>
+    ) }
   ) }
 );
 
@@ -350,11 +355,11 @@ export type CreateThreadMutation = (
   { __typename?: 'Mutation' }
   & { createThread: (
     { __typename?: 'Thread' }
-    & Pick<Thread, 'title' | 'username' | 'createdAt' | '_id' | 'avatar'>
-    & { posts: Array<(
-      { __typename?: 'Post' }
-      & Pick<Post, '_id'>
-    )> }
+    & Pick<Thread, 'title' | 'createdAt' | '_id'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'username'>
+    ) }
   ) }
 );
 
@@ -371,15 +376,17 @@ export type ThreadsQuery = (
     & Pick<Threads, 'total'>
     & { data: Array<(
       { __typename?: 'Thread' }
-      & Pick<Thread, '_id' | 'createdAt' | 'title' | 'username' | 'avatar'>
+      & Pick<Thread, '_id' | 'createdAt' | 'title'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'avatar' | 'username'>
+      ) }
     )> }
   ) }
 );
 
 export type ThreadWithPostsQueryVariables = Exact<{
   threadWithPostsId: Scalars['String'];
-  offset: Scalars['Int'];
-  limit: Scalars['Int'];
 }>;
 
 
@@ -390,15 +397,15 @@ export type ThreadWithPostsQuery = (
     & Pick<ThreadWithPosts, 'total'>
     & { thread: (
       { __typename?: 'Thread' }
-      & Pick<Thread, 'username'>
-      & { posts: Array<(
+      & Pick<Thread, 'title' | 'createdAt'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'avatar' | 'username' | '_id'>
+      ), posts?: Maybe<Array<(
         { __typename?: 'Post' }
         & Pick<Post, '_id'>
-      )> }
-    ), posts: Array<(
-      { __typename?: 'Post' }
-      & Pick<Post, '_id' | 'username' | 'content' | 'avatar' | 'createdAt' | 'thread_id'>
-    )> }
+      )>> }
+    ) }
   ) }
 );
 
@@ -441,11 +448,13 @@ export const PostsDocument = gql`
     query Posts($offset: Int!, $limit: Int!) {
   posts(offset: $offset, limit: $limit) {
     data {
-      content
-      username
-      avatar
-      createdAt
       _id
+      content
+      createdAt
+      user {
+        username
+        avatar
+      }
     }
     total
   }
@@ -484,11 +493,13 @@ export const UserPostsDocument = gql`
     query UserPosts($offset: Int!, $limit: Int!, $username: String!) {
   userPosts(offset: $offset, limit: $limit, username: $username) {
     data {
-      content
-      avatar
-      username
-      createdAt
       _id
+      content
+      createdAt
+      user {
+        username
+        avatar
+      }
     }
     total
   }
@@ -525,16 +536,15 @@ export type UserPostsQueryHookResult = ReturnType<typeof useUserPostsQuery>;
 export type UserPostsLazyQueryHookResult = ReturnType<typeof useUserPostsLazyQuery>;
 export type UserPostsQueryResult = Apollo.QueryResult<UserPostsQuery, UserPostsQueryVariables>;
 export const PostDocument = gql`
-    mutation Post($username: String!, $content: String!, $avatar: String!, $thread_id: ID!) {
-  createPost(
-    input: {username: $username, content: $content, thread_id: $thread_id}
-    avatar: $avatar
-  ) {
-    username
-    avatar
+    mutation Post($input: PostInput!) {
+  createPost(input: $input) {
+    _id
     content
-    thread_id
     createdAt
+    user {
+      avatar
+      username
+    }
   }
 }
     `;
@@ -553,10 +563,7 @@ export type PostMutationFn = Apollo.MutationFunction<PostMutation, PostMutationV
  * @example
  * const [postMutation, { data, loading, error }] = usePostMutation({
  *   variables: {
- *      username: // value for 'username'
- *      content: // value for 'content'
- *      avatar: // value for 'avatar'
- *      thread_id: // value for 'thread_id'
+ *      input: // value for 'input'
  *   },
  * });
  */
@@ -803,13 +810,11 @@ export const CreateThreadDocument = gql`
     mutation CreateThread($input: ThreadInput!) {
   createThread(input: $input) {
     title
-    username
+    user {
+      username
+    }
     createdAt
     _id
-    avatar
-    posts {
-      _id
-    }
   }
 }
     `;
@@ -842,14 +847,16 @@ export type CreateThreadMutationOptions = Apollo.BaseMutationOptions<CreateThrea
 export const ThreadsDocument = gql`
     query Threads($offset: Int!, $limit: Int!) {
   threads(offset: $offset, limit: $limit) {
+    total
     data {
       _id
       createdAt
       title
-      username
-      avatar
+      user {
+        avatar
+        username
+      }
     }
-    total
   }
 }
     `;
@@ -883,23 +890,21 @@ export type ThreadsQueryHookResult = ReturnType<typeof useThreadsQuery>;
 export type ThreadsLazyQueryHookResult = ReturnType<typeof useThreadsLazyQuery>;
 export type ThreadsQueryResult = Apollo.QueryResult<ThreadsQuery, ThreadsQueryVariables>;
 export const ThreadWithPostsDocument = gql`
-    query ThreadWithPosts($threadWithPostsId: String!, $offset: Int!, $limit: Int!) {
-  threadWithPosts(id: $threadWithPostsId, offset: $offset, limit: $limit) {
+    query ThreadWithPosts($threadWithPostsId: String!) {
+  threadWithPosts(id: $threadWithPostsId) {
     thread {
-      username
+      title
+      user {
+        avatar
+        username
+        _id
+      }
+      createdAt
       posts {
         _id
       }
     }
     total
-    posts {
-      _id
-      username
-      content
-      avatar
-      createdAt
-      thread_id
-    }
   }
 }
     `;
@@ -917,8 +922,6 @@ export const ThreadWithPostsDocument = gql`
  * const { data, loading, error } = useThreadWithPostsQuery({
  *   variables: {
  *      threadWithPostsId: // value for 'threadWithPostsId'
- *      offset: // value for 'offset'
- *      limit: // value for 'limit'
  *   },
  * });
  */

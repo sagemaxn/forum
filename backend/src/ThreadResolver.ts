@@ -9,22 +9,25 @@ import {mongoose} from "@typegoose/typegoose";
 export class ThreadResolver {
     @Mutation(() => Thread)
     async createThread(
-        @Arg("input") { title, username, firstPostContent, avatar }: ThreadInput,
+        @Arg("input") { title, username, firstPostContent }: ThreadInput,
     ): Promise<Thread> {
         let createdAt = new Date();
 
+        const user = await UserModel.findOne({ username });
+        if (!user) {
+            throw new Error("User not found");
+        }
+
         const thread = await ThreadModel.create({
             title,
-            username,
-            avatar,
+            user: user,
             posts: [],
             createdAt,
         });
         await thread.save();
 
         const firstPost = await PostModel.create({
-            username,
-            avatar,
+            user,
             content: firstPostContent,
             createdAt,
             thread_id: thread.id,
@@ -34,13 +37,13 @@ export class ThreadResolver {
         thread.posts.push(firstPost.id);
         await thread.save();
 
-        const user = await UserModel.find({ username });
-        user[0].threads.push(thread.id);
-        user[0].posts.push(firstPost.id);
-        user[0].save();
+        user.threads.push(thread.id);
+        user.posts.push(firstPost.id);
+        await user.save();
 
         return thread;
     }
+
 
     @Mutation(() => Boolean)
     async deleteThread(@Arg("threadID") threadID: string) {
@@ -53,17 +56,20 @@ export class ThreadResolver {
         @Arg("limit", () => Int) limit: number,
         @Arg("offset", () => Int) offset: number
     ) {
-        const threads = await ThreadModel.aggregate([
-            { $sort: { createdAt: -1 } },
-            {
-                $facet: {
-                    count: [{ $count: "total" }],
-                    data: [{ $skip: offset }, { $limit: limit }],
-                },
-            },
-        ]);
+        const total = await ThreadModel.countDocuments();
 
-        return {total: threads[0]?.count[0]?.total || 0, data: threads[0]?.data || []};
+        const threads = await ThreadModel.find()
+            .sort({ createdAt: -1 })
+            .skip(offset)
+            .limit(limit)
+            .populate({
+                path: 'user',
+                select: 'username avatar'
+            });
+
+        console.log({ total: total, threads: threads })
+
+        return { total, data: threads };
     }
 
     @Query(() => Threads)
@@ -72,18 +78,24 @@ export class ThreadResolver {
         @Arg("limit", () => Int) limit: number,
         @Arg("offset", () => Int) offset: number
     ) {
-        const threads = await ThreadModel.aggregate([
-            { $match: { username: username } },
-            { $sort: { createdAt: -1 } },
-            {
-                $facet: {
-                    count: [{ $count: "total" }],
-                    data: [{ $skip: offset }, { $limit: limit }],
-                },
-            },
-        ]);
+        const user = await UserModel.findOne({ username });
 
-        return { total: threads[0]?.count[0]?.total || 0, data: threads[0]?.data || [] };
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        const threads = await ThreadModel.find({ user: user._id })
+            .sort({ createdAt: -1 })
+            .skip(offset)
+            .limit(limit)
+            .populate({
+                path: 'user',
+                select: 'avatar'
+            });
+
+        const total = threads.length
+
+        return { total, data: threads };
     }
 
     @Query(() => ThreadWithPosts)
@@ -92,21 +104,31 @@ export class ThreadResolver {
         @Arg("limit", () => Int, { defaultValue: 5 }) limit: number,
         @Arg("offset", () => Int, { defaultValue: 0 }) offset: number
     ) {
-        const thread = await ThreadModel.findById(id);
-
-        const posts = await PostModel.aggregate([
-            { $match: { thread_id: new mongoose.Types.ObjectId(id) } },
-
-            {
-                $facet: {
-                    count: [{ $count: "total" }],
-                    data: [{ $skip: offset }, { $limit: limit }],
+        const thread = await ThreadModel.findById(id)
+            .populate({
+                path: 'posts',
+                populate: {
+                    path: 'user',
+                    select: 'avatar'
                 },
-            },
-        ]);
+                options: {
+                    sort: { createdAt: -1 },
+                    skip: offset,
+                    limit: limit
+                }
+            })
+            .populate({
+                path: 'user',
+                select: 'username avatar'
+            });
 
-        return { thread, total: posts[0]?.count[0]?.total || 0, posts: posts[0]?.data || [] };
+        const total = thread.posts.length
+
+        console.log(JSON.stringify({ thread, total }));
+
+        return { thread, total };
     }
+
 
 
 }

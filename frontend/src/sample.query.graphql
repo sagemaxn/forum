@@ -7,11 +7,13 @@ query AllUsers {
 query Posts($offset: Int!, $limit: Int!) {
   posts(offset: $offset, limit: $limit) {
     data {
-      content
-      username
-      avatar
-      createdAt
       _id
+      content
+      createdAt
+      user {
+        username
+        avatar
+      }
     }
     total
   }
@@ -20,23 +22,27 @@ query Posts($offset: Int!, $limit: Int!) {
 query UserPosts($offset: Int!, $limit: Int!, $username: String!) {
   userPosts(offset: $offset, limit: $limit, username: $username) {
     data {
-      content
-      avatar
-      username
-      createdAt
       _id
+      content
+      createdAt
+      user {
+        username
+        avatar
+      }
     }
     total
   }
 }
 
-mutation Post($username: String!, $content: String!, $avatar: String!, $thread_id: ID!) {
-  createPost(input: { username: $username, content: $content, thread_id: $thread_id }, avatar: $avatar) {
-    username,
-    avatar,
-    content,
-    thread_id,
-    createdAt,
+mutation Post($input: PostInput!) {
+  createPost(input: $input) {
+    _id
+    content
+    createdAt
+    user {
+      avatar
+      username
+    }
   }
 }
 
@@ -82,48 +88,44 @@ mutation Auth($cookie: String!) {
 mutation CreateThread($input: ThreadInput!) {
   createThread(input: $input) {
     title
-    username
+    user {
+      username
+    }
     createdAt
     _id
-    avatar
-    posts {
-      _id
-    }
-
   }
 }
 
+
 query Threads($offset: Int!, $limit: Int!) {
   threads(offset: $offset, limit: $limit) {
+    total
     data {
       _id
       createdAt
       title
-      username
-      avatar
+      user {
+        avatar
+        username
+      }
     }
-    total
   }
 }
 
-query ThreadWithPosts($threadWithPostsId: String!, $offset: Int!, $limit: Int!) {
-  threadWithPosts(id: $threadWithPostsId, offset: $offset, limit: $limit) {
+query ThreadWithPosts($threadWithPostsId: String!) {
+  threadWithPosts(id: $threadWithPostsId) {
     thread {
-      username
+      title
+      user {
+        avatar
+        username
+        _id
+      }
+      createdAt
       posts {
         _id
       }
     }
     total
-    posts {
-      _id
-      content
-      avatar
-      createdAt
-      thread_id
-      user {
-
-      }
-    }
   }
 }

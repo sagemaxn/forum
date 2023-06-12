@@ -12,7 +12,7 @@ export class Posts {
   data: Post[]
 }
 
-@ObjectType({ description: 'The Post model' })
+@ObjectType()
 export class Post {
   @Field(() => ID)
   _id: mongoose.Types.ObjectId
@@ -25,9 +25,10 @@ export class Post {
   @prop( {type: Date, required: true })
   public createdAt: Date;
 
-  @Field(() => String)
+  @Field(() => User)
   @prop({ ref: 'User' })
   public user: Ref<User>;
+
 
 }
 

@@ -2,7 +2,7 @@ import Post from "./Post";
 import Link from "next/link";
 import {Text} from "@chakra-ui/react";
 export const PostsList = ({data, user, page}) =>
-<>{data.threadWithPosts.posts.map((post) => (
+<>{data.threadWithPosts.thread.posts.map((post) => (
     <Post
         content={post.content}
         user={post.username}
