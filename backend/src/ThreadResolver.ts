@@ -1,8 +1,8 @@
 // ThreadResolver.ts
 import {Arg, Int, Mutation, Query, Resolver} from "type-graphql";
-import {Thread, ThreadInput, ThreadModel, Threads, ThreadWithPosts} from "./models/Thread";
-import {UserModel} from "./models/User";
-import {PostModel} from './models/Post'
+import {Thread, ThreadInput, ThreadModel, Threads, ThreadWithPosts} from "./models";
+import {UserModel} from "./models";
+import {PostModel} from './models'
 import {mongoose} from "@typegoose/typegoose";
 
 @Resolver()
@@ -93,7 +93,7 @@ export class ThreadResolver {
                 select: 'avatar'
             });
 
-        const total = threads.length
+        const total = await ThreadModel.countDocuments()
 
         return { total, data: threads };
     }
@@ -109,7 +109,7 @@ export class ThreadResolver {
                 path: 'posts',
                 populate: {
                     path: 'user',
-                    select: 'avatar'
+                    select: 'avatar username'
                 },
                 options: {
                     sort: { createdAt: -1 },
@@ -122,11 +122,11 @@ export class ThreadResolver {
                 select: 'username avatar'
             });
 
-        const total = thread.posts.length
+        const total = await ThreadModel.countDocuments()
 
         console.log(JSON.stringify({ thread, total }));
 
-        return { thread, total };
+        return { data: thread, total };
     }
 
 

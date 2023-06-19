@@ -26,7 +26,6 @@ const Post = ({ content, user, avatar, createdAt, loggedUser, postID }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
   const dateP = new Date(createdAt).toLocaleString();
-
   const ConfirmDelete = () => {
     return (
       <AlertDialog
@@ -91,7 +90,11 @@ const Post = ({ content, user, avatar, createdAt, loggedUser, postID }) => {
       />
       <Flex direction="column">
         <Heading as="h1" size="sm">
-          <Link href={`/user/${user}/1`}>{user}</Link>
+
+              <Link href={`/user/${user}/1`}>
+                {user}
+              </Link>
+
         </Heading>
         <Text>{dateP}</Text>
         <Text>{content}</Text>

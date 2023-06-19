@@ -43,6 +43,5 @@ export default async function auth(ctx, pageProps) {
   pageProps.props.logged = true;
   pageProps.props.auth = auth;
   pageProps.props.decoded = verified;
-  console.log(`pageProps.props.decoded = ${JSON.stringify(pageProps.props.decoded)}`)
 
 }

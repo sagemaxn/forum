@@ -1,8 +1,7 @@
-// Thread.ts
-import { ObjectType, InputType, Field, ID } from "type-graphql";
+import {ObjectType, InputType, Field, ID, createUnionType} from "type-graphql";
 import { prop, getModelForClass, mongoose, Ref } from "@typegoose/typegoose";
-import { Post } from './Post'
-import { User } from './User';
+import { Post, PostModel, PostInput } from '.';
+import { User, UserModel, UserInput } from '.';
 
 @ObjectType()
 export class Thread {
@@ -57,10 +56,11 @@ export class Threads {
 @ObjectType()
 export class ThreadWithPosts {
     @Field(() => Thread)
-    thread: Thread
+    data: Thread
 
     @Field(() => Number)
     total: number
 
 }
+
 export const ThreadModel = getModelForClass(Thread);

@@ -30,17 +30,17 @@ function ChangeAvatar({ isOpen, onClose, user }) {
     const apolloClient = useApolloClient();
     const [val, setVal] = useState(null);
 
-    // Fetch the current avatar when the modal opens
     useEffect(() => {
-        if (isOpen) {
-            apolloClient.query({
+        const getCurrentAvatar = async () => {
+            const { data } = await apolloClient.query({
                 query: CurrentUserAvatarDocument,
                 variables: { username: user },
-            }).then((response) => {
-                setVal(response.data.currentUser.avatar);
             });
-        }
-    }, [isOpen, user, apolloClient]);
+            setVal(data.currentUser.avatar);
+        };
+
+        getCurrentAvatar();
+    }, []);
 
     function CustomRadio(props) {
         const { getInputProps, getCheckboxProps } = useRadio(props);
@@ -48,21 +48,10 @@ function ChangeAvatar({ isOpen, onClose, user }) {
         const checkbox = getCheckboxProps();
 
         return (
-            <>
-                <Box
-                    margin="10px"
-                    aria-label={props.label}
-                    as="label"
-                    htmlFor={input.id}
-                    {...checkbox}
-                    w="60px"
-                    overflow="hidden"
-                    style={val === props.value ? { outline: "black solid 3px" } : null}
-                >
-                    <Image src={`/${props.value}.png`} width="60px" height="60px" style={{ borderRadius: "100%" }} objectFit="contain" />
-                </Box>
+            <Box as="label" htmlFor={input.id} {...checkbox} w="60px" overflow="hidden" margin="10px" style={val === props.value ? { outline: "black solid 3px" } : null}>
+                <Image src={`/${props.value}.png`} width="60px" height="60px" style={{ borderRadius: "100%" }} objectFit="contain" />
                 <input {...input} />
-            </>
+            </Box>
         );
     }
 
@@ -71,35 +60,31 @@ function ChangeAvatar({ isOpen, onClose, user }) {
     };
 
     function Group() {
-        const [changeAvatar, { data }] = useChangeAvatarMutation({
-            onCompleted: (data) => {
-                apolloClient.cache.writeQuery({
-                    query: CurrentUserAvatarDocument,
-                    variables: { user },
-                    data: {
-                        currentUser: {
-                            __typename: 'User',
-                            avatar: data.changeAvatar.avatar,
-                        },
-                    },
-                });
-                // Also update the local state
-                setVal(data.changeAvatar.avatar);
-            },
-        });
-
-        const avatars = [{ name: "default" }, { name: "star" }, { name: "heart" }, { name: "cat" }, { name: "dog" }];
+        const [changeAvatar] = useChangeAvatarMutation();
+        const avatars = ["default", "star", "heart", "cat", "dog"];
         const { getRootProps, getRadioProps } = useRadioGroup({
             onChange: handleChange,
+            value: val,
         });
-
         const group = getRootProps();
 
         return (
             <Formik
-                initialValues={{ username: user, avatar: val }}
+                enableReinitialize
+                initialValues={{ avatar: val }}
                 onSubmit={async (values, actions) => {
-                    await changeAvatar({ variables: { ...values, username: user } });
+                    const response = await changeAvatar({ variables: { username: user, avatar: values.avatar } });
+                    apolloClient.writeQuery({
+                        query: CurrentUserAvatarDocument,
+                        variables: { username: user },
+                        data: {
+                            currentUser: {
+                                __typename: 'User',
+                                avatar: response.data.changeAvatar.avatar,
+                            },
+                        },
+                    });
+                    actions.setFieldValue('avatar', response.data.changeAvatar.avatar);
                     actions.setSubmitting(false);
                     onClose();
                     await apolloClient.refetchQueries({ include: [ThreadWithPostsDocument, ThreadsDocument] });
@@ -109,33 +94,15 @@ function ChangeAvatar({ isOpen, onClose, user }) {
                     <Form>
                         <HStack {...group}>
                             <Field name="avatar">
-                                {({ field }: FieldProps) => {
-                                    const { onChange, ...rest } = field;
-                                    return (
-                                        <FormControl id={"avatar"}>
-                                            <FormLabel htmlFor={"avatar"}></FormLabel>
-                                            {avatars.map((avatar) => (
-                                                <CustomRadio
-                                                    {...rest}
-                                                    {...getRadioProps({ value: avatar.name })}
-                                                    key={avatar.name}
-                                                    id={avatar.name}
-                                                >
-                                                    {avatar.name}
-                                                </CustomRadio>
-                                            ))}
-                                        </FormControl>
-                                    );
-                                }}
+                                {({ field }: FieldProps) => (
+                                    <FormControl id="avatar">
+                                        {avatars.map((avatar) => (
+                                            <CustomRadio {...field} {...getRadioProps({ value: avatar })} key={avatar} id={avatar} />
+                                        ))}
+                                    </FormControl>
+                                )}
                             </Field>
-                            <Button
-                                mt={4}
-                                backgroundColor="green"
-                                isLoading={props.isSubmitting}
-                                type="submit"
-                            >
-                                Save
-                            </Button>
+                            <Button mt={4}  backgroundColor="green" isLoading={props.isSubmitting} type="submit">Save</Button>
                         </HStack>
                     </Form>
                 )}
@@ -144,18 +111,16 @@ function ChangeAvatar({ isOpen, onClose, user }) {
     }
 
     return (
-        <>
-            <Modal isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>Pick New Avatar</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                        <Group />
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
-        </>
+        <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+                <ModalHeader>Pick New Avatar</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                    <Group />
+                </ModalBody>
+            </ModalContent>
+        </Modal>
     );
 }
 

@@ -1,10 +1,11 @@
-import {Arg, Mutation, Query, Resolver} from "type-graphql";
+import {Arg, Int, Mutation, Query, Resolver} from "type-graphql";
 import { hash} from "bcryptjs";
 
-import { User, UserInput, UserModel,} from "./models/User";
+import {User, UserInput, UserModel,} from "./models";
+import { UserActivity} from './models'
 
-import {PostModel} from "./models/Post";
-import {ThreadModel} from "./models/Thread";
+import {PostModel} from "./models";
+import {ThreadModel, Threads} from "./models";
 
 @Resolver()
 export class UserResolver {
@@ -47,4 +48,41 @@ export class UserResolver {
   async currentUser(@Arg('username') username: string): Promise<User | null>{
     return UserModel.findOne({username});
   }
+
+  @Query(() => UserActivity)
+  async userActivity(
+      @Arg("username") username: string,
+      @Arg("limit", () => Int) limit: number,
+      @Arg("offset", () => Int) offset: number
+  ) {
+    const user = await UserModel.findOne({ username });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const threads = await ThreadModel.find({ user: user._id })
+        .populate({
+          path: 'user',
+          select: 'username avatar'
+        });
+
+    const posts =  await PostModel.find({ user: user._id })
+        .populate({
+          path: 'user',
+          select: 'username avatar'
+        });
+    const activities = (posts as Array<any>).concat(threads as Array<any>);
+
+    activities.sort((a, b) => b.createdAt - a.createdAt)
+    console.log(activities)
+
+    const threadsTotal = await ThreadModel.countDocuments()
+    const postsTotal = await PostModel.countDocuments()
+    const total = threadsTotal + postsTotal
+
+
+    return { total, data: activities.slice(offset, offset + limit) };
+  }
 }
+

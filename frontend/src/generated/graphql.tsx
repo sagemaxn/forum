@@ -89,6 +89,8 @@ export type PostInput = {
   username: Scalars['String'];
 };
 
+export type PostOrThread = Post | Thread;
+
 export type Posts = {
   __typename?: 'Posts';
   data: Array<Post>;
@@ -102,6 +104,7 @@ export type Query = {
   posts: Posts;
   threadWithPosts: ThreadWithPosts;
   threads: Threads;
+  userActivity: UserActivity;
   userPosts: Posts;
   userThreads: Threads;
   users: Array<User>;
@@ -129,6 +132,13 @@ export type QueryThreadWithPostsArgs = {
 export type QueryThreadsArgs = {
   limit: Scalars['Int'];
   offset: Scalars['Int'];
+};
+
+
+export type QueryUserActivityArgs = {
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+  username: Scalars['String'];
 };
 
 
@@ -163,7 +173,7 @@ export type ThreadInput = {
 
 export type ThreadWithPosts = {
   __typename?: 'ThreadWithPosts';
-  thread: Thread;
+  data: Thread;
   total: Scalars['Float'];
 };
 
@@ -180,6 +190,12 @@ export type User = {
   posts: Array<Post>;
   threads?: Maybe<Scalars['String']>;
   username: Scalars['String'];
+};
+
+export type UserActivity = {
+  __typename?: 'UserActivity';
+  data: Array<PostOrThread>;
+  total: Scalars['Float'];
 };
 
 export type UserInput = {
@@ -395,7 +411,7 @@ export type ThreadWithPostsQuery = (
   & { threadWithPosts: (
     { __typename?: 'ThreadWithPosts' }
     & Pick<ThreadWithPosts, 'total'>
-    & { thread: (
+    & { data: (
       { __typename?: 'Thread' }
       & Pick<Thread, 'title' | 'createdAt'>
       & { user: (
@@ -403,9 +419,43 @@ export type ThreadWithPostsQuery = (
         & Pick<User, 'avatar' | 'username' | '_id'>
       ), posts?: Maybe<Array<(
         { __typename?: 'Post' }
-        & Pick<Post, '_id'>
+        & Pick<Post, 'content' | 'createdAt' | '_id'>
+        & { user: (
+          { __typename?: 'User' }
+          & Pick<User, 'username' | 'avatar'>
+        ) }
       )>> }
     ) }
+  ) }
+);
+
+export type UserActivityQueryVariables = Exact<{
+  offset: Scalars['Int'];
+  username: Scalars['String'];
+  limit: Scalars['Int'];
+}>;
+
+
+export type UserActivityQuery = (
+  { __typename?: 'Query' }
+  & { userActivity: (
+    { __typename?: 'UserActivity' }
+    & Pick<UserActivity, 'total'>
+    & { data: Array<(
+      { __typename?: 'Post' }
+      & Pick<Post, '_id' | 'content' | 'createdAt'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'username' | 'avatar'>
+      ) }
+    ) | (
+      { __typename?: 'Thread' }
+      & Pick<Thread, 'title' | 'createdAt' | '_id'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'avatar' | 'username'>
+      ) }
+    )> }
   ) }
 );
 
@@ -892,7 +942,7 @@ export type ThreadsQueryResult = Apollo.QueryResult<ThreadsQuery, ThreadsQueryVa
 export const ThreadWithPostsDocument = gql`
     query ThreadWithPosts($threadWithPostsId: String!) {
   threadWithPosts(id: $threadWithPostsId) {
-    thread {
+    data {
       title
       user {
         avatar
@@ -901,6 +951,12 @@ export const ThreadWithPostsDocument = gql`
       }
       createdAt
       posts {
+        user {
+          username
+          avatar
+        }
+        content
+        createdAt
         _id
       }
     }
@@ -936,3 +992,60 @@ export function useThreadWithPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type ThreadWithPostsQueryHookResult = ReturnType<typeof useThreadWithPostsQuery>;
 export type ThreadWithPostsLazyQueryHookResult = ReturnType<typeof useThreadWithPostsLazyQuery>;
 export type ThreadWithPostsQueryResult = Apollo.QueryResult<ThreadWithPostsQuery, ThreadWithPostsQueryVariables>;
+export const UserActivityDocument = gql`
+    query UserActivity($offset: Int!, $username: String!, $limit: Int!) {
+  userActivity(offset: $offset, username: $username, limit: $limit) {
+    total
+    data {
+      ... on Thread {
+        title
+        user {
+          avatar
+          username
+        }
+        createdAt
+        _id
+      }
+      ... on Post {
+        _id
+        content
+        createdAt
+        user {
+          username
+          avatar
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useUserActivityQuery__
+ *
+ * To run a query within a React component, call `useUserActivityQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserActivityQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserActivityQuery({
+ *   variables: {
+ *      offset: // value for 'offset'
+ *      username: // value for 'username'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useUserActivityQuery(baseOptions: Apollo.QueryHookOptions<UserActivityQuery, UserActivityQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UserActivityQuery, UserActivityQueryVariables>(UserActivityDocument, options);
+      }
+export function useUserActivityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserActivityQuery, UserActivityQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UserActivityQuery, UserActivityQueryVariables>(UserActivityDocument, options);
+        }
+export type UserActivityQueryHookResult = ReturnType<typeof useUserActivityQuery>;
+export type UserActivityLazyQueryHookResult = ReturnType<typeof useUserActivityLazyQuery>;
+export type UserActivityQueryResult = Apollo.QueryResult<UserActivityQuery, UserActivityQueryVariables>;

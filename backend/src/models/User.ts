@@ -1,7 +1,7 @@
-import {ObjectType, InputType, Field, ID} from "type-graphql";
+import {ObjectType, InputType, Field, ID, createUnionType} from "type-graphql";
 import {prop, getModelForClass, Ref, mongoose} from "@typegoose/typegoose";
-import { Post } from './Post'
-import { Thread } from './Thread'
+import { Post, PostModel, PostInput } from '.';
+import { Thread, ThreadModel, ThreadInput, Threads, ThreadWithPosts } from '.';
 
 @ObjectType()
 export class User {
@@ -54,4 +54,26 @@ export class RefreshToken {
   refreshToken: string
 }
 
+export const PostOrThread = createUnionType({
+  name: "PostOrThread",
+  types: () => [Post, Thread],
+  resolveType: value => {
+    if ('content' in value) {
+      return Post; // it's a Post type
+    }
+    if ('title' in value) {
+      return Thread; // it's a Thread type
+    }
+    return undefined; // or throw an error
+  }
+});
+
+@ObjectType()
+export class UserActivity {
+  @Field(() => Number)
+  total: number;
+
+  @Field(() => [PostOrThread])
+  data: Array<typeof PostOrThread>;
+}
 export const UserModel = getModelForClass(User);

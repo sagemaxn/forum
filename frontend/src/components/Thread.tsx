@@ -26,7 +26,6 @@ const Thread = ({ title, user, avatar, createdAt, loggedUser, threadID }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const cancelRef = useRef();
     const dateP = new Date(createdAt).toLocaleString();
-
     const ConfirmDelete = () => {
         return (
             <AlertDialog
@@ -88,7 +87,9 @@ const Thread = ({ title, user, avatar, createdAt, loggedUser, threadID }) => {
                 />
                 <Flex direction="column">
                     <Heading as="h1" size="sm">
-                        <Link as={NextLink} href={`/user/${user}/1`}>{user}</Link>
+                            <Link href={`/user/${user}/1`}>
+                                {user}
+                            </Link>
                     </Heading>
                     <Text>{dateP}</Text>
                    <Heading as="h2" size="md">{title}</Heading>

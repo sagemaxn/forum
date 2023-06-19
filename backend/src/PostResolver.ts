@@ -1,7 +1,7 @@
 import {Arg, Int, Mutation, Query, Resolver} from "type-graphql";
-import {Post, PostInput, PostModel, Posts} from "./models/Post";
-import {UserModel} from "./models/User";
-import {ThreadModel} from "./models/Thread";
+import {Post, PostInput, PostModel, Posts} from "./models";
+import {UserModel} from "./models";
+import {ThreadModel} from "./models";
 
 @Resolver()
 export class PostResolver {
@@ -79,7 +79,7 @@ export class PostResolver {
           select: 'username avatar'
         });
 
-    const total = posts.length
+    const total = await PostModel.countDocuments()
 
     return { total, data: posts };
   }

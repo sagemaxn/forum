@@ -1,7 +1,6 @@
 import { ObjectType, InputType, Field, Int, ID } from "type-graphql";
 import { prop, getModelForClass, mongoose, Ref } from "@typegoose/typegoose";
-//import { User } from './User'
-import {User} from "./User";
+import {User} from ".";
 
 @ObjectType()
 export class Posts {

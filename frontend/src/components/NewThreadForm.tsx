@@ -6,12 +6,12 @@ import {
 import FormField from "../components/FormField";
 import { useCreateThreadMutation } from "../generated/graphql";
 
-function NewThreadForm({ user, avatar }) {
+function NewThreadForm({ user }) {
     const [createThread, { data }] = useCreateThreadMutation();
 
     return (
         <Formik
-            initialValues={{ username: user, avatar, title: "", firstPostContent: "" }}
+            initialValues={{ username: user, avatar: "", title: "", firstPostContent: "" }}
             onSubmit={async (values, actions) => {
                 await createThread({ variables: {input: values} });
                 if (data) {

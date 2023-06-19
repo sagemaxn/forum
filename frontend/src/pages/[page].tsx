@@ -40,8 +40,7 @@ const Threads = ({ decoded }) => {
 
 
 const Index = ({ decoded }) => {
-    console.log( `decode: ${decoded}` )
-    return <><Navbar user={decoded.user} avatar={decoded.avatar}/><Threads decoded={decoded}/>
+    return <><Navbar user={decoded.user}/><Threads decoded={decoded}/>
 
 
 
