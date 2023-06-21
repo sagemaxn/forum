@@ -31,11 +31,11 @@ const User = ({ decoded }) => {
 
     if (loading) return <Navbar user={decoded.user} />;
     if (data) {
-      console.log(`data from UserActivityQuery: ${JSON.stringify(data)}`);
+      console.log(`data from UserActivityQuery: ${JSON.stringify(data.userActivity.data, null, "\t")}`);
       return (
         <>
           <Navbar user={decoded.user} />
-          <UserProfile user={user} loggedUser={decoded.user}/>
+          <UserProfile user={user} data={data} page={page} loggedUser={decoded.user}/>
 
         </>
       );

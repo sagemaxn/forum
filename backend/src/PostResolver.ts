@@ -23,11 +23,11 @@ export class PostResolver {
     });
     await post.save();
 
-    user.posts.push(post.id);
+    user.posts.push(post._id);
     await user.save();
 
     const thread = await ThreadModel.findById(thread_id);
-    thread.posts.push(post.id);
+    thread.posts.push(post._id);
     await thread.save();
 
     return post;

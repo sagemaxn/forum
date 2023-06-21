@@ -1,6 +1,6 @@
 import { ObjectType, InputType, Field, Int, ID } from "type-graphql";
 import { prop, getModelForClass, mongoose, Ref } from "@typegoose/typegoose";
-import {User} from ".";
+import {Thread, User} from ".";
 
 @ObjectType()
 export class Posts {
@@ -28,7 +28,9 @@ export class Post {
   @prop({ ref: 'User' })
   public user: Ref<User>;
 
-
+  @Field(() => Thread)
+  @prop({ ref: 'Thread' })
+  public thread: Ref<Thread>;
 }
 
 @InputType()

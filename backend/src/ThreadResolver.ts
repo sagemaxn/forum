@@ -30,15 +30,15 @@ export class ThreadResolver {
             user,
             content: firstPostContent,
             createdAt,
-            thread_id: thread.id,
+            thread_id: thread._id,
         });
         await firstPost.save();
 
-        thread.posts.push(firstPost.id);
+        thread.posts.push(firstPost._id);
         await thread.save();
 
-        user.threads.push(thread.id);
-        user.posts.push(firstPost.id);
+        user.threads.push(thread._id);
+        user.posts.push(firstPost._id);
         await user.save();
 
         return thread;

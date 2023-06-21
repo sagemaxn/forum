@@ -70,8 +70,12 @@ export class UserResolver {
     const posts =  await PostModel.find({ user: user._id })
         .populate({
           path: 'user',
-          select: 'username avatar'
-        });
+          select: 'username avatar',
+        })
+        .populate({
+        path: 'thread',
+          select: 'title'
+    })
     const activities = (posts as Array<any>).concat(threads as Array<any>);
 
     activities.sort((a, b) => b.createdAt - a.createdAt)
