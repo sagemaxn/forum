@@ -30,7 +30,8 @@ export class ThreadResolver {
             user,
             content: firstPostContent,
             createdAt,
-            thread_id: thread._id,
+            thread: thread._id,
+            isFirstPost: true
         });
         await firstPost.save();
 

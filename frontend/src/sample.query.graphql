@@ -149,6 +149,11 @@ query UserActivity($offset: Int!, $username: String!, $limit: Int!) {
         }
         createdAt
         _id
+        posts {
+          _id
+          content
+          createdAt
+        }
       }
       ... on Post {
         _id
@@ -158,6 +163,13 @@ query UserActivity($offset: Int!, $username: String!, $limit: Int!) {
           username
           avatar
         }
+        thread {
+          _id
+          title
+          createdAt
+        }
+        isFirstPost
+
       }
     }
   }

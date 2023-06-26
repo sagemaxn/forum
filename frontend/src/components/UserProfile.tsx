@@ -1,48 +1,61 @@
-import React from 'react'
-import Post from './Post'
+import {Text, Link, VStack, Box, Flex} from "@chakra-ui/react";
+import NextLink from "next/link";
+import Post from "./Post";
 import Thread from "./Thread";
-import Link from "next/link";
-import {Text} from "@chakra-ui/react";
 
 const UserProfile = ({user, data, page, loggedUser}) => {
     if(data) {
-        return <>   {
-            data.userActivity.data.map((activity) => (
-               activity.__typename === 'Thread' ?   <Thread
-                   title={activity.title}
-                   user={activity.user.username}
-                   createdAt={activity.createdAt}
-                   avatar={activity.user.avatar}
-                   key={activity._id}
-                   loggedUser={user}
-                   threadID={activity._id}
-               ></Thread> :
-                   <>{user} made a post in {activity.}
-                   <Post
-                       content={activity.content}
-                       user={activity.user.username}
-                       createdAt={activity.createdAt}
-                       avatar={activity.user.avatar}
-                       key={activity._id}
-                       loggedUser={user}
-                       postID={activity._id}
-                   ></Post>
-                   </>
-            ))
-        }
-            {
-                parseInt(page) * 5 < data.userActivity.total && (
-                    <Link href={`/user/${user}/${parseInt(page) + 1}`}>Next Page</Link>
-                ) || <Text>end of results</Text>
-            }
+        return (
+            <>
+            <VStack spacing={6} align="stretch">
+                {
+                    data.userActivity.data.map((activity) => {
+                        if(activity.__typename === 'Thread') {
+                            return (
+                                <>
+                                    <Flex align="center" mb={2}>
+                                        <Text>{user} made a new thread titled</Text>
+                                        <Link as={NextLink} href={`/threads/${activity._id}`}>
+                                            <Text as="a" ml={1}>{activity.title}</Text>
+                                        </Link>
+                                    </Flex>
+                                    <Thread {...activity} user={activity.user.username} avatar={activity.user.avatar} loggedUser={user} />
+                                    with the following first post
+                                    <Post {...activity.posts[0]} user={activity.user.username} avatar={activity.user.avatar} loggedUser={user} />
+                                </>
+                            );
+                        }
+                        else if(activity.__typename === 'Post') {
+                            return (
+                                <>
+                                    <Flex align="center" mb={2}>
+                                        <Text>{user} made a post in</Text>
+                                        <Link as={NextLink} href={`/threads/${activity.thread._id}`}>
+                                            <Text as="a" ml={1}>{activity.thread.title}</Text>
+                                        </Link>
+                                    </Flex>
+                                    <Post {...activity} user={activity.user.username} avatar={activity.user.avatar} loggedUser={user} />
+                                </>
+                            );
+                        }
+                    })
+                }
 
-            {
-                parseInt(page) - 1 > 0 && (
-                    <Link href={`/user/${user}/${parseInt(page) - 1}`}>Prev Page</Link>
-                )
-            }
-        </>
+
+            </VStack>
+                <>
+                    {parseInt(page) - 1 > 0 && (
+                        <Link as={NextLink} href={`/user/${user}/${parseInt(page) - 1}`}>Prev Page</Link>
+                    )}
+                    {parseInt(page) * 5 < data.userActivity.total ? (
+                        <Link as={NextLink} href={`/user/${user}/${parseInt(page) + 1}`}>Next Page</Link>
+                    ) : (
+                        <Text>End of results</Text>
+                    )}
+                </>
+           </>
+        );
     }
 }
 
-export default UserProfile
+export default UserProfile;

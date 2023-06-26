@@ -31,6 +31,10 @@ export class Post {
   @Field(() => Thread)
   @prop({ ref: 'Thread' })
   public thread: Ref<Thread>;
+
+  @Field(() => Boolean)
+  @prop({type: Boolean, required: true, default: false})
+  public isFirstPost
 }
 
 @InputType()

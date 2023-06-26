@@ -80,6 +80,8 @@ export type Post = {
   _id: Scalars['ID'];
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
+  isFirstPost: Scalars['Boolean'];
+  thread: Thread;
   user: User;
 };
 
@@ -443,10 +445,13 @@ export type UserActivityQuery = (
     & Pick<UserActivity, 'total'>
     & { data: Array<(
       { __typename?: 'Post' }
-      & Pick<Post, '_id' | 'content' | 'createdAt'>
+      & Pick<Post, '_id' | 'content' | 'createdAt' | 'isFirstPost'>
       & { user: (
         { __typename?: 'User' }
         & Pick<User, 'username' | 'avatar'>
+      ), thread: (
+        { __typename?: 'Thread' }
+        & Pick<Thread, '_id' | 'title' | 'createdAt'>
       ) }
     ) | (
       { __typename?: 'Thread' }
@@ -454,7 +459,10 @@ export type UserActivityQuery = (
       & { user: (
         { __typename?: 'User' }
         & Pick<User, 'avatar' | 'username'>
-      ) }
+      ), posts?: Maybe<Array<(
+        { __typename?: 'Post' }
+        & Pick<Post, '_id' | 'content' | 'createdAt'>
+      )>> }
     )> }
   ) }
 );
@@ -1005,6 +1013,11 @@ export const UserActivityDocument = gql`
         }
         createdAt
         _id
+        posts {
+          _id
+          content
+          createdAt
+        }
       }
       ... on Post {
         _id
@@ -1014,6 +1027,12 @@ export const UserActivityDocument = gql`
           username
           avatar
         }
+        thread {
+          _id
+          title
+          createdAt
+        }
+        isFirstPost
       }
     }
   }

@@ -65,25 +65,43 @@ export class UserResolver {
         .populate({
           path: 'user',
           select: 'username avatar'
-        });
+        })
+        .populate({
+          path: 'posts'
+        })
 
-    const posts =  await PostModel.find({ user: user._id })
+    let posts =  await PostModel.find({ user: user._id })
         .populate({
           path: 'user',
           select: 'username avatar',
         })
         .populate({
-        path: 'thread',
-          select: 'title'
+        path: 'thread', options: {limit: 1}
     })
+
+    let filteredCount = 0;
+
+    posts = posts.filter(post => {
+      for (let i = 0; i < threads.length; i++) {
+        if (threads[i].posts[0]._id.toString() === post._id.toString()) {
+          filteredCount++;
+          return false;
+        }
+      }
+      return true;
+    });
+    //I've heard .countDocuments() is faster than .length(), which is why I'm trying this instead. Although it is slightly more complex than only doing .length() on the filtered result
+    const threadsTotal = await ThreadModel.countDocuments()
+    const postsTotal = await PostModel.countDocuments()
+
+    const correctedPostsTotal = postsTotal - filteredCount;
+
+    const total = threadsTotal + correctedPostsTotal;
+
     const activities = (posts as Array<any>).concat(threads as Array<any>);
 
     activities.sort((a, b) => b.createdAt - a.createdAt)
     console.log(activities)
-
-    const threadsTotal = await ThreadModel.countDocuments()
-    const postsTotal = await PostModel.countDocuments()
-    const total = threadsTotal + postsTotal
 
 
     return { total, data: activities.slice(offset, offset + limit) };
