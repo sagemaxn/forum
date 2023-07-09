@@ -1,16 +1,10 @@
 import {useRouter} from 'next/router'
 import {Container} from '@chakra-ui/react'
 
-export default function Layout({ children }) {
-  if (useRouter().pathname === '/login'){
-  return <>{children}</>
-  }
-
-  return (
-    <>
-      <Container centerContent>
+const Layout = ({ children }) => (
+<Container centerContent maxW={"700px"}>
       {children}
-      </Container>
-    </>
-  )
-}
+</Container>)
+
+export default Layout
+

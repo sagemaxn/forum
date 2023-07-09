@@ -23,7 +23,7 @@ function NewThreadForm({ user }) {
             {(props) => (
                 <>
                     <Flex
-                        w={{ md: "xl", base: "100%" }}
+                        w={"100%"}
                         boxShadow={"xl"}
                         p={6}
                         direction={"column"}

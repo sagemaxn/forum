@@ -23,6 +23,7 @@
     "@emotion/styled": "11.1.5",
     "@types/cookie": "^0.4.1",
     "cookie": "^0.4.2",
+    "date-fns": "^2.30.0",
     "formik": "^2.2.9",
     "framer-motion": "^4.1.17",
     "graphql": "^15.8.0",

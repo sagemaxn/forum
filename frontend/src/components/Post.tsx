@@ -73,7 +73,7 @@ const Post = ({ content, user, avatar, createdAt, loggedUser, postID }) => {
   };
   return (
     <Flex
-      w={{ md: "xl", base: "100%" }}
+      w={"100%"}
       //border="solid 1px"
       margin="2px"
       bg="white"

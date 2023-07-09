@@ -1,49 +1,44 @@
-import {Text, Link, VStack, Box, Flex} from "@chakra-ui/react";
+import {Text, Link, VStack, Flex, Heading} from "@chakra-ui/react";
 import NextLink from "next/link";
 import Post from "./Post";
 import Thread from "./Thread";
+import UserActivity from "./UserActivity";
+import React from "react";
 
-const UserProfile = ({user, data, page, loggedUser}) => {
+const UserProfile = ({user, data, page}) => {
     if(data) {
         return (
-            <>
-            <VStack spacing={6} align="stretch">
-                {
-                    data.userActivity.data.map((activity) => {
-                        if(activity.__typename === 'Thread') {
-                            return (
-                                <>
-                                    <Flex align="center" mb={2}>
-                                        <Text>{user} made a new thread titled</Text>
-                                        <Link as={NextLink} href={`/threads/${activity._id}`}>
-                                            <Text as="a" ml={1}>{activity.title}</Text>
-                                        </Link>
-                                    </Flex>
-                                    <Thread {...activity} user={activity.user.username} avatar={activity.user.avatar} loggedUser={user} />
-                                    with the following first post
-                                    <Post {...activity.posts[0]} user={activity.user.username} avatar={activity.user.avatar} loggedUser={user} />
-                                </>
-                            );
-                        }
-                        else if(activity.__typename === 'Post') {
-                            return (
-                                <>
-                                    <Flex align="center" mb={2}>
-                                        <Text>{user} made a post in</Text>
-                                        <Link as={NextLink} href={`/threads/${activity.thread._id}`}>
-                                            <Text as="a" ml={1}>{activity.thread.title}</Text>
-                                        </Link>
-                                    </Flex>
-                                    <Post {...activity} user={activity.user.username} avatar={activity.user.avatar} loggedUser={user} />
-                                </>
-                            );
-                        }
-                    })
-                }
+            <><Heading p={4}>{`${user}'s Activity`}</Heading>
+                <VStack spacing={6} align="stretch" w={"full"}>
+                    {
+                        data.userActivity.data.map((activity) => {
 
-
-            </VStack>
-                <>
+                            if(activity.__typename === 'Thread') {
+                                return (
+                                    <UserActivity
+                                        thread_id={activity._id}
+                                        title={activity.title}
+                                        createdAt={activity.createdAt}
+                                        postContent={activity.posts[0].content}
+                                        activityType='Thread'
+                                    />
+                                );
+                            }
+                            else if(activity.__typename === 'Post') {
+                                return (
+                                    <UserActivity
+                                        thread_id={activity.thread._id}
+                                        title={activity.thread.title}
+                                        createdAt={activity.createdAt}
+                                        postContent={activity.content}
+                                        activityType='Post'
+                                    />
+                                )
+                            }
+                        })
+                    }
+                </VStack>
+                <Flex mt={4} justify="space-between">
                     {parseInt(page) - 1 > 0 && (
                         <Link as={NextLink} href={`/user/${user}/${parseInt(page) - 1}`}>Prev Page</Link>
                     )}
@@ -52,8 +47,8 @@ const UserProfile = ({user, data, page, loggedUser}) => {
                     ) : (
                         <Text>End of results</Text>
                     )}
-                </>
-           </>
+                </Flex>
+            </>
         );
     }
 }

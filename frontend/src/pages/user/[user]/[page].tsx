@@ -5,14 +5,12 @@ import Link from "next/link";
 
 import {
   useUserActivityQuery,
-  useUserPostsQuery,
 } from "../../../generated/graphql";
 import auth from "../../../lib/auth";
 import { compose } from "../../../lib/compose";
-import Post from "../../../components/Post";
 import Navbar from "../../../components/Navbar";
-import {PostsList} from "../../../components/PostsList";
 import UserProfile from "../../../components/UserProfile";
+import {Loading} from "../../../components/Loading";
 
 const User = ({ decoded }) => {
   const router = useRouter();
@@ -29,13 +27,13 @@ const User = ({ decoded }) => {
       },
     });
 
-    if (loading) return <Navbar user={decoded.user} />;
+    if (loading) return <><Navbar user={decoded.user} /><Loading></Loading></>;
     if (data) {
       console.log(`data from UserActivityQuery: ${JSON.stringify(data.userActivity.data, null, "\t")}`);
       return (
         <>
           <Navbar user={decoded.user} />
-          <UserProfile user={user} data={data} page={page} loggedUser={decoded.user}/>
+          <UserProfile user={user} data={data} page={page}/>
 
         </>
       );

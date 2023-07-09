@@ -27,7 +27,7 @@ const Navbar = ({user}) => {
       color="black"
       
       height="50px"
-      width={{base: "100%", md: "xl"}}
+      width={"100%"}
     >
         <Heading as="h1" size="sm">
           <Link href={'/'}>Home</Link>

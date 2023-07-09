@@ -70,7 +70,7 @@ const Thread = ({ title, user, avatar, createdAt, loggedUser, threadID }) => {
     return (
         <Link as={NextLink} href={`/threads/${threadID}/1`} >
         <Flex
-            w={{ md: "xl", base: "100%" }}
+            w={"100%" }
             margin="2px"
             bg="white"
             justifyContent="space-between"

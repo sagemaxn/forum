@@ -4,7 +4,7 @@ import theme from "../theme";
 import { AppProps } from "next/app";
 
 import { ApolloProvider } from "@apollo/client";
-import { useApollo } from "../../src/lib/apollo";
+import { useApollo } from "../lib/apollo";
 import Layout from "../components/Layout";
 import Navbar from "../components/Navbar";
 
