@@ -1,10 +1,10 @@
+// noinspection BadExpressionStatementJS
+
 import {Arg, Ctx, Mutation, Query, Resolver} from "type-graphql";
-import {compare, hash} from "bcryptjs";
+import {compare} from "bcryptjs";
 import {sign, verify} from "jsonwebtoken";
 
-import {LoginToken, User, UserInput, UserModel,} from "./models/User";
-
-import {PostModel} from "./models/Post";
+import {LoginToken, UserInput, UserModel,} from "./models";
 
 import {get} from "lodash";
 
@@ -67,18 +67,6 @@ export class AuthResolver {
         @Ctx() { res }
     ): Promise<LoginToken> {
 
-        res.cookie(
-            "hi",
-            sign(
-                {hi: 'hi'},
-                process.env.JWT_REFRESH,
-                {
-                    expiresIn: "5d",
-                }
-            ),
-            signOptions
-        );
-
         const user = await UserModel.find({ username: username });
         const passwordCorrect = await compare(password, user[0].password);
 
@@ -120,8 +108,6 @@ export class AuthResolver {
     logout(@Ctx() { res }): boolean {
         console.log(res.cookie.jid);
         res.cookie("jid", "bad token", { maxAge: 0 });
-        //res.cookie.jid.expiresIn = "Thu, 01 Jan 1970 00:00:00 GMT"
-
         return true;
     }
 }

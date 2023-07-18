@@ -55,7 +55,7 @@ const main = async () => {
 
   app.use(
     '/graphql',
-    cors<cors.CorsRequest>({ origin: process.env.NODE_ENV === 'production' ? ['https://sage-forum.herokuapp.com', 'https://studio.apollographql.com'] : 'http://localhost:3000',  credentials: true }),
+    cors<cors.CorsRequest>({ origin: process.env.NODE_ENV === 'production' ? ['https://forum.sagemaxn.dev'] : 'http://localhost:3000',  credentials: true }),
     json(),
     expressMiddleware(server, {
       context: async ({ req, res }) => ({ req, res }),

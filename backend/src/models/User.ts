@@ -1,7 +1,7 @@
 import {ObjectType, InputType, Field, ID, createUnionType} from "type-graphql";
 import {prop, getModelForClass, Ref, mongoose} from "@typegoose/typegoose";
-import { Post, PostModel, PostInput } from '.';
-import { Thread, ThreadModel, ThreadInput, Threads, ThreadWithPosts } from '.';
+import { Post } from '.';
+import { Thread } from '.';
 
 @ObjectType()
 export class User {

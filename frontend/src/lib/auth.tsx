@@ -1,47 +1,49 @@
-import { decode, verify } from "jsonwebtoken";
-import { AuthDocument } from "../generated/graphql";
-import { initializeApollo } from "./apollo";
+import { decode, verify } from 'jsonwebtoken';
+import { AuthDocument } from '../generated/graphql';
+import { initializeApollo } from './apollo';
 export default async function auth(ctx, pageProps) {
-  const apolloClient = initializeApollo();
-  const cookie = ctx.req.cookies.jid || "no refresh";
-  const auth = await apolloClient.mutate({
-    mutation: AuthDocument,
-    variables: { cookie },
-  });
+    const apolloClient = initializeApollo();
+    const cookie = ctx.req.cookies.jid || 'no refresh';
+    const auth = await apolloClient.mutate({
+        mutation: AuthDocument,
+        variables: { cookie },
+    });
 
-  const tok = ctx.req.cookies.jid || "no refresh";
-  //console.log(auth.data.checkAuth.token);
-
-  if (!decode(tok)) {
-    pageProps.props.logged = false;
-    if (ctx.res && ctx.req.url !== '/login') {
-      ctx.res.writeHead(302, { Location: '/login' });
-      ctx.res.end();
+    const tok = ctx.req.cookies.jid || 'no refresh';
+    if (!decode(tok)) {
+        pageProps.props.logged = false;
+        if (ctx.res && ctx.req.url !== '/login') {
+            ctx.res.writeHead(302, { Location: '/login' });
+            ctx.res.end();
+        }
+        return;
     }
-    return;
-  }
-
-  let verified: any = "";
-  if (tok) {
-    try {
-      verified = verify(tok, '123456');
-     // console.log(`verify: ${verified}`)
-    } catch (err) {
-      console.error(err);
+    interface JwtPayload {
+        userID: string;
+        user: string;
+        avatar: string;
     }
-  }
 
-  // If logged in and trying to access /login, redirect to home
-  if (decode(tok) && ctx.req.url === '/login') {
-    if (ctx.res) {
-      ctx.res.writeHead(302, { Location: '/' });
-      ctx.res.end();
+    let verified: JwtPayload = { avatar: 'f', user: '2', userID: '222' };
+    if (tok) {
+        try {
+            verified = verify(tok, process.env.NEXT_PUBLIC_JWT_REFRESH);
+        } catch (err) {
+            console.error(err);
+        }
+        console.log(`verify: ${JSON.stringify(verified)}`);
     }
-    return;
-  }
 
-  pageProps.props.logged = true;
-  pageProps.props.auth = auth;
-  pageProps.props.decoded = verified;
+    // If logged in and trying to access /login, redirect to home
+    if (decode(tok) && ctx.req.url === '/login') {
+        if (ctx.res) {
+            ctx.res.writeHead(302, { Location: '/' });
+            ctx.res.end();
+        }
+        return;
+    }
 
+    pageProps.props.logged = true;
+    pageProps.props.auth = auth;
+    pageProps.props.decoded = verified;
 }

@@ -1,4 +1,4 @@
-import { ObjectType, InputType, Field, Int, ID } from "type-graphql";
+import { ObjectType, InputType, Field, ID } from "type-graphql";
 import { prop, getModelForClass, mongoose, Ref } from "@typegoose/typegoose";
 import {Thread, User} from ".";
 

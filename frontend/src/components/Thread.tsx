@@ -1,31 +1,26 @@
 // components/Thread.tsx
-import {
-    Text,
-    Heading,
-    Flex,
-    Link,
-    Button,
-} from "@chakra-ui/react";
-import NextLink from 'next/link'
-import Image from 'next/image'
-import { useRef } from "react";
+import { Button, Flex, Heading, Link, Text } from '@chakra-ui/react';
+import NextLink from 'next/link';
+import Image from 'next/image';
+import { useRef } from 'react';
 import {
     AlertDialog,
     AlertDialogBody,
+    AlertDialogContent,
     AlertDialogFooter,
     AlertDialogHeader,
-    AlertDialogContent,
     AlertDialogOverlay,
     useDisclosure,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 
 //import { useDeleteThreadMutation } from "../generated/graphql";
 
 const Thread = ({ title, user, avatar, createdAt, loggedUser, threadID }) => {
-   // const [deleteThread] = useDeleteThreadMutation();
+    // const [deleteThread] = useDeleteThreadMutation();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const cancelRef = useRef();
     const dateP = new Date(createdAt).toLocaleString();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const ConfirmDelete = () => {
         return (
             <AlertDialog
@@ -42,22 +37,23 @@ const Thread = ({ title, user, avatar, createdAt, loggedUser, threadID }) => {
                         <AlertDialogBody>Are you sure?</AlertDialogBody>
 
                         <AlertDialogFooter>
-                            <Button ref={cancelRef} onClick={onClose}>
+                            <Button onClick={onClose} ref={cancelRef}>
                                 Cancel
                             </Button>
                             <Button
                                 colorScheme="red"
+                                ml={3}
                                 onClick={async () => {
                                     try {
-                                      //  await deleteThread({ variables: {threadID}});
+                                        //  await deleteThread({ variables: {threadID}});
                                     } catch (err) {
-                                        console.log("thread could not be deleted");
+                                        console.log(
+                                            'thread could not be deleted',
+                                        );
                                         console.error(err);
                                     }
-                                    onClose()
-
+                                    onClose();
                                 }}
-                                ml={3}
                             >
                                 Delete
                             </Button>
@@ -68,39 +64,43 @@ const Thread = ({ title, user, avatar, createdAt, loggedUser, threadID }) => {
         );
     };
     return (
-        <Link as={NextLink} href={`/threads/${threadID}/1`} >
-        <Flex
-            w={"100%" }
-            margin="2px"
-            bg="white"
-            justifyContent="space-between"
-        >
-
-            <Flex>
-                <Image
-                    objectFit="contain"
-                    src={`/${avatar}.png`}
-                    width="80px" height="80px"
-                    style={{
-                        padding:"10px",
-                    }}
-                />
-                <Flex direction="column">
-                    <Heading as="h1" size="sm">
-                            <Link href={`/user/${user}/1`}>
-                                {user}
-                            </Link>
-                    </Heading>
-                    <Text>{dateP}</Text>
-                   <Heading as="h2" size="md">{title}</Heading>
+        <Link as={NextLink} href={`/threads/${threadID}/1`}>
+            <Flex
+                bg="white"
+                justifyContent="space-between"
+                margin="2px"
+                w={'100%'}
+            >
+                <Flex>
+                    <Image
+                        alt={avatar}
+                        height="80px"
+                        objectFit="contain"
+                        src={`/${avatar}.png`}
+                        style={{
+                            padding: '10px',
+                        }}
+                        width="80px"
+                    />
+                    <Flex direction="column">
+                        <Heading as="h1" size="sm">
+                            <Link href={`/user/${user}/1`}>{user}</Link>
+                        </Heading>
+                        <Text>{dateP}</Text>
+                        <Heading as="h2" size="md">
+                            {title}
+                        </Heading>
+                    </Flex>
                 </Flex>
+                {loggedUser === user ? (
+                    <Button onClick={onOpen} padding="10px" variant="ghost">
+                        Delete
+                    </Button>
+                ) : null}
+                {/*<ConfirmDelete />*/}
             </Flex>
-            {loggedUser === user ? <Button onClick={onOpen} padding="10px" variant='ghost'>Delete</Button> : null}
-            {/*<ConfirmDelete />*/}
-
-        </Flex>
         </Link>
     );
 };
 
-export default Thread
+export default Thread;

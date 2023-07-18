@@ -1,49 +1,55 @@
 import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react";
-import Link from 'next/link'
-import {useRouter} from 'next/router'
-import { SettingsIcon } from "@chakra-ui/icons";
-import ChangeAvatar from "../components/ChangeAvatar";
-import { useLogoutMutation } from "../generated/graphql";
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    useDisclosure,
+} from '@chakra-ui/react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { SettingsIcon } from '@chakra-ui/icons';
+import ChangeAvatar from '../components/ChangeAvatar';
+import { useLogoutMutation } from '../generated/graphql';
 
 function MenuComp({ user }) {
-  const router = useRouter()
-  const { onOpen, isOpen, onClose } = useDisclosure();
-  const [logout, { data }] = useLogoutMutation();
+    console.log('Menu user:', user);
+    const router = useRouter();
+    const { onOpen, isOpen, onClose } = useDisclosure();
+    const [logout] = useLogoutMutation();
 
-  const logoutF = () => {
-    logout()
-    router.push('/login')
-  }
+    const handleLogout = async () => {
+        try {
+            await logout();
+            await router.push('/login');
+        } catch (error) {
+            console.error('Failed to log out:', error);
+        }
+    };
 
-  return (
-    <>
-      <Menu>
-        <MenuButton>
-          {user ? user : null}
-          <SettingsIcon />
-        </MenuButton>
-        <MenuList>
-          <Link href={`/user/${user}/1`}><MenuItem>Your Activity</MenuItem></Link>
-          <MenuItem onClick={onOpen}>Change Avatar</MenuItem>
-          <MenuItem
-            onClick={async () => {
-              logoutF()
-            }}
-          >
-            Logout
-          </MenuItem>
-        </MenuList>
-      </Menu>
-      <ChangeAvatar onClose={onClose} isOpen={isOpen} user={user}/>
-    </>
-  );
+    return (
+        <>
+            <Menu>
+                <MenuButton>
+                    {user ? user : null}
+                    <SettingsIcon />
+                </MenuButton>
+                <MenuList>
+                    <Link href={`/user/${user}/1`} passHref>
+                        <MenuItem as="a">Your Activity</MenuItem>
+                    </Link>
+                    <MenuItem onClick={onOpen}>Change Avatar</MenuItem>
+                    <MenuItem
+                        onClick={async () => {
+                            await handleLogout();
+                        }}
+                    >
+                        Logout
+                    </MenuItem>
+                </MenuList>
+            </Menu>
+            <ChangeAvatar isOpen={isOpen} onClose={onClose} user={user} />
+        </>
+    );
 }
 
 export default MenuComp;

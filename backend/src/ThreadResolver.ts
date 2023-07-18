@@ -3,7 +3,6 @@ import {Arg, Int, Mutation, Query, Resolver} from "type-graphql";
 import {Thread, ThreadInput, ThreadModel, Threads, ThreadWithPosts} from "./models";
 import {UserModel} from "./models";
 import {PostModel} from './models'
-import {mongoose} from "@typegoose/typegoose";
 
 @Resolver()
 export class ThreadResolver {

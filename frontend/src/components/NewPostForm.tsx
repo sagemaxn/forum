@@ -1,66 +1,61 @@
-import { Formik, Form } from "formik";
-import {
-  Button,
-  Flex,
-} from "@chakra-ui/react";
-import { useApolloClient} from "@apollo/client";
+import { Form, Formik } from 'formik';
+import { Button, Flex } from '@chakra-ui/react';
+import { useApolloClient } from '@apollo/client';
 
-import FormField from "../components/FormField";
-import { usePostMutation } from "../generated/graphql";
-import { CurrentUserAvatarDocument} from "../generated/graphql";
+import FormField from '../components/FormField';
+import { usePostMutation } from '../generated/graphql';
+import { CurrentUserAvatarDocument } from '../generated/graphql';
 
-function NewPostForm({user, thread_id}) {
-  const [post, { data }] = usePostMutation()
+function NewPostForm({ user, thread_id }) {
+    const [post, { data }] = usePostMutation();
     const apolloClient = useApolloClient();
-  return (
-    <Formik
-      initialValues={{ username: user, avatar: '' ,content: '', thread_id }}
-      onSubmit={async (values, actions) => {
-          const response = await apolloClient.query({
-              query: CurrentUserAvatarDocument,
-              variables: { username: user },
-          });
+    return (
+        <Formik
+            initialValues={{ username: user, content: '', thread_id }}
+            onSubmit={async (values, actions) => {
+                await apolloClient.query({
+                    query: CurrentUserAvatarDocument,
+                    variables: { username: user },
+                });
 
-          const avatar = response.data.currentUser.avatar;
-
-          await post({ variables: {...values, avatar} });
-          if(data){
-              console.log(`If data after post in NewPostForm.tsx: ${data}`)
-          }
-          actions.setSubmitting(false);
-      }}
-    >
-      {(props) => (<>
-
-          <Flex
-        w={"100%"}
-        boxShadow={'xl'}
-        p={6}
-        direction={'column'}
-        //border="solid 1px"
-        margin="2px"
-        backgroundColor="blue"
+                await post({ variables: { input: { ...values } } });
+                if (data) {
+                    console.log(
+                        `If data after post in NewPostForm.tsx: ${data}`,
+                    );
+                }
+                actions.setSubmitting(false);
+            }}
         >
+            {props => (
+                <>
+                    <Flex
+                        backgroundColor="blue"
+                        boxShadow={'xl'}
+                        direction={'column'}
+                        margin="2px"
+                        p={6}
+                        w={'100%'}
+                        //border="solid 1px"
+                    >
+                        <Form>
+                            <FormField name="content"></FormField>
 
-           <Form>
-          <FormField name="content"></FormField>
-
-          <Button
-            mt={4}
-            backgroundColor="mint"
-            w="100%"
-            isLoading={props.isSubmitting}
-            type="submit"
-          >
-            Post
-          </Button>
-          </Form>
-          </Flex>
-          </>
-
-      )}
-    </Formik>
-  );
+                            <Button
+                                backgroundColor="mint"
+                                isLoading={props.isSubmitting}
+                                mt={4}
+                                type="submit"
+                                w="100%"
+                            >
+                                Post
+                            </Button>
+                        </Form>
+                    </Flex>
+                </>
+            )}
+        </Formik>
+    );
 }
 
-export default NewPostForm
+export default NewPostForm;

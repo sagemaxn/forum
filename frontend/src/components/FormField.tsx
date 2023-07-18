@@ -1,45 +1,64 @@
-import { Field } from "formik";
-import { FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { Field } from 'formik';
+import { FormControl, FormLabel, Input } from '@chakra-ui/react';
 import TextareaAutosize from 'react-textarea-autosize';
 
 interface propTypes {
-    name: string,
-    toggle?: boolean,
-    children?: any
+    name: string;
+    toggle?: boolean;
 }
 
-function FormField({ name, toggle, children, ...rest }: propTypes) {
+function FormField({ name, toggle }: propTypes) {
     return (
         <Field name={name}>
-            {({ field, form }) => (
-                <FormControl>
-                    {InputField(name, field)}
-                </FormControl>
+            {({ field }) => (
+                <FormControl>{InputField(name, field)}</FormControl>
             )}
         </Field>
     );
 
     function InputField(name, field) {
-        if (name === ("content" || "firstPostContent")) {
+        if (name === ('content' || 'firstPostContent')) {
             return (
-                <TextareaAutosize {...field} id={name} placeholder="Make New Post" color="red" style={{width: "100%"}} autoFocus minRows='1' maxLength='200' required={true}></TextareaAutosize>
-            )
-        } else if (name === "title") {
+                <TextareaAutosize
+                    {...field}
+                    autoFocus
+                    color="red"
+                    id={name}
+                    maxLength="200"
+                    minRows="1"
+                    placeholder="Make New Post"
+                    required={true}
+                    style={{ width: '100%' }}
+                ></TextareaAutosize>
+            );
+        } else if (name === 'title') {
             return (
                 <>
-                    <Input {...field} id={name} placeholder="Thread Title" background="white" maxLength='50' required={true}/>
+                    <Input
+                        {...field}
+                        background={'white'}
+                        id={name}
+                        maxLength="50"
+                        placeholder="Thread Title"
+                        required={true}
+                    />
                 </>
-            )
-        } else {
-            return (
-                <>
-                    <FormLabel htmlFor={name} margin="1.5">
-                        {name}
-                    </FormLabel>
-                    <Input {...field} id={name} placeholder={name} type={toggle ? "password" : "input"} background="white"/>
-                </>
-            )
+            );
         }
+        return (
+            <>
+                <FormLabel htmlFor={name} margin="1.5">
+                    {name}
+                </FormLabel>
+                <Input
+                    {...field}
+                    background={'white'}
+                    id={name}
+                    placeholder={name}
+                    type={toggle ? 'password' : 'input'}
+                />
+            </>
+        );
     }
 }
 

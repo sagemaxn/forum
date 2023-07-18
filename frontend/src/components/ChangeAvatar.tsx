@@ -1,31 +1,29 @@
 import {
+    Box,
+    Button,
+    FormControl,
+    HStack,
     Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
     ModalBody,
     ModalCloseButton,
-    Button,
+    ModalContent,
+    ModalHeader,
+    ModalOverlay,
     useRadio,
     useRadioGroup,
-    Box,
-    HStack,
-    FormControl,
-    FormLabel,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 import Image from 'next/image';
-import { useState, useEffect } from "react";
-import { Formik, Form, Field, FieldProps } from "formik";
+import { useEffect, useState } from 'react';
+import { Field, FieldProps, Form, Formik } from 'formik';
 import { useApolloClient } from '@apollo/client';
 
 import {
-    useChangeAvatarMutation,
-    PostsDocument,
     CurrentUserAvatarDocument,
     ThreadsDocument,
-    ThreadWithPostsDocument
-} from "../generated/graphql";
-import { initializeApollo } from "../lib/apollo";
+    ThreadWithPostsDocument,
+    useChangeAvatarMutation,
+} from '../generated/graphql';
+
 function ChangeAvatar({ isOpen, onClose, user }) {
     const apolloClient = useApolloClient();
     const [val, setVal] = useState(null);
@@ -38,9 +36,10 @@ function ChangeAvatar({ isOpen, onClose, user }) {
             });
             setVal(data.currentUser.avatar);
         };
-
-        getCurrentAvatar();
-    }, []);
+        getCurrentAvatar().catch(error => {
+            console.error('Failed to get current avatar:', error);
+        });
+    }, [apolloClient, user]);
 
     function CustomRadio(props) {
         const { getInputProps, getCheckboxProps } = useRadio(props);
@@ -48,20 +47,37 @@ function ChangeAvatar({ isOpen, onClose, user }) {
         const checkbox = getCheckboxProps();
 
         return (
-            <Box as="label" htmlFor={input.id} {...checkbox} w="60px" overflow="hidden" margin="10px" style={val === props.value ? { outline: "black solid 3px" } : null}>
-                <Image src={`/${props.value}.png`} width="60px" height="60px" style={{ borderRadius: "100%" }} objectFit="contain" />
+            <Box
+                as="label"
+                htmlFor={input.id}
+                {...checkbox}
+                margin="10px"
+                overflow="hidden"
+                style={
+                    val === props.value ? { outline: 'black solid 3px' } : null
+                }
+                w="60px"
+            >
+                <Image
+                    alt={'value'}
+                    height="60px"
+                    objectFit="contain"
+                    src={`/${props.value}.png`}
+                    style={{ borderRadius: '100%' }}
+                    width="60px"
+                />
                 <input {...input} />
             </Box>
         );
     }
 
-    const handleChange = (value) => {
+    const handleChange = value => {
         setVal(value);
     };
 
     function Group() {
         const [changeAvatar] = useChangeAvatarMutation();
-        const avatars = ["default", "star", "heart", "cat", "dog"];
+        const avatars = ['default', 'star', 'heart', 'cat', 'dog'];
         const { getRootProps, getRadioProps } = useRadioGroup({
             onChange: handleChange,
             value: val,
@@ -73,7 +89,9 @@ function ChangeAvatar({ isOpen, onClose, user }) {
                 enableReinitialize
                 initialValues={{ avatar: val }}
                 onSubmit={async (values, actions) => {
-                    const response = await changeAvatar({ variables: { username: user, avatar: values.avatar } });
+                    const response = await changeAvatar({
+                        variables: { username: user, avatar: values.avatar },
+                    });
                     apolloClient.writeQuery({
                         query: CurrentUserAvatarDocument,
                         variables: { username: user },
@@ -84,25 +102,44 @@ function ChangeAvatar({ isOpen, onClose, user }) {
                             },
                         },
                     });
-                    actions.setFieldValue('avatar', response.data.changeAvatar.avatar);
+                    actions.setFieldValue(
+                        'avatar',
+                        response.data.changeAvatar.avatar,
+                    );
                     actions.setSubmitting(false);
                     onClose();
-                    await apolloClient.refetchQueries({ include: [ThreadWithPostsDocument, ThreadsDocument] });
+                    await apolloClient.refetchQueries({
+                        include: [ThreadWithPostsDocument, ThreadsDocument],
+                    });
                 }}
             >
-                {(props) => (
+                {props => (
                     <Form>
                         <HStack {...group}>
                             <Field name="avatar">
                                 {({ field }: FieldProps) => (
                                     <FormControl id="avatar">
-                                        {avatars.map((avatar) => (
-                                            <CustomRadio {...field} {...getRadioProps({ value: avatar })} key={avatar} id={avatar} />
+                                        {avatars.map(avatar => (
+                                            <CustomRadio
+                                                {...field}
+                                                {...getRadioProps({
+                                                    value: avatar,
+                                                })}
+                                                id={avatar}
+                                                key={avatar}
+                                            />
                                         ))}
                                     </FormControl>
                                 )}
                             </Field>
-                            <Button mt={4}  backgroundColor="green" isLoading={props.isSubmitting} type="submit">Save</Button>
+                            <Button
+                                backgroundColor="green"
+                                isLoading={props.isSubmitting}
+                                mt={4}
+                                type="submit"
+                            >
+                                Save
+                            </Button>
                         </HStack>
                     </Form>
                 )}

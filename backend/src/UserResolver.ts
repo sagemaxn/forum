@@ -5,7 +5,7 @@ import {User, UserInput, UserModel,} from "./models";
 import { UserActivity} from './models'
 
 import {PostModel} from "./models";
-import {ThreadModel, Threads} from "./models";
+import {ThreadModel} from "./models";
 
 @Resolver()
 export class UserResolver {
@@ -20,7 +20,7 @@ export class UserResolver {
       avatar:
           "default",
     });
-    user.save();
+    await user.save();
     // user.password = null
     return user;
   }

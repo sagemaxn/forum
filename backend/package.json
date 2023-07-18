@@ -4,7 +4,7 @@
   "description": "This is the backend for a simple forum app",
   "main": "server.ts",
   "engines": {
-    "node": "18.x"
+    "node": "17.x"
   },
   "scripts": {
     "start": "ts-node server.ts",
