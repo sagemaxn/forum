@@ -32,9 +32,11 @@ function LoginForm({ setForm }) {
     const [toggle, setToggle] = useState(true);
     const [login] = useLoginMutation({
         onError: error => {
+            console.error(error);
             setLoginError(error.message);
         },
         onCompleted: data => {
+            console.log(JSON.stringify(data));
             if (data.login.token !== 'no token') {
                 setLoginError(null);
                 router.push('/').catch(error => {

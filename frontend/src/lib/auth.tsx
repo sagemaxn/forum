@@ -4,12 +4,14 @@ import { initializeApollo } from './apollo';
 export default async function auth(ctx, pageProps) {
     const apolloClient = initializeApollo();
     const cookie = ctx.req.cookies.jid || 'no refresh';
+    // console.log(`cookies: ${JSON.stringify(ctx.req.cookies)}`);
     const auth = await apolloClient.mutate({
         mutation: AuthDocument,
         variables: { cookie },
     });
 
     const tok = ctx.req.cookies.jid || 'no refresh';
+    console.log(`tok: ${tok}`);
     if (!decode(tok)) {
         pageProps.props.logged = false;
         if (ctx.res && ctx.req.url !== '/login') {
@@ -24,13 +26,14 @@ export default async function auth(ctx, pageProps) {
         avatar: string;
     }
 
-    let verified: JwtPayload = { avatar: 'f', user: '2', userID: '222' };
-    if (tok) {
-        try {
-            verified = verify(tok, process.env.NEXT_PUBLIC_JWT_REFRESH);
-        } catch (err) {
-            console.error(err);
-        }
+    let verified: JwtPayload;
+
+    try {
+        verified = verify(tok, process.env.NEXT_PUBLIC_JWT_REFRESH);
+        console.log(`verify: ${JSON.stringify(verified)}`);
+    } catch (err) {
+        console.error(err);
+        verified = { avatar: 'f', user: 'mrsmith', userID: '222' };
         console.log(`verify: ${JSON.stringify(verified)}`);
     }
 

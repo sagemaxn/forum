@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+import { ApolloServerPluginLandingPageProductionDefault } from '@apollo/server/dist/esm/plugin/landingPage/default';
 import * as Express from "express";
 import * as cors from 'cors'
 import "reflect-metadata";
@@ -9,9 +10,7 @@ import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { json } from 'body-parser';
 import * as http from 'http'
-
-
-
+import * as process from 'process';
 
 import { buildSchema } from "type-graphql";
 import { UserResolver } from "./src/UserResolver";
@@ -63,5 +62,8 @@ const main = async () => {
   );
   await new Promise<void>((resolve) => httpServer.listen({ port: process.env.PORT || 4000 }, resolve));
   console.log(`🚀 Server ready at http://localhost:4000/graphql`);
+  console.log(process.env.NODE_ENV)
+  console.log(`secret: ${process.env.JWT_SECRET}`)
+  console.log(`refresh: ${process.env.JWT_REFRESH}`)
 }
 main();

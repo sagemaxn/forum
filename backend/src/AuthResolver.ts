@@ -1,5 +1,6 @@
 // noinspection BadExpressionStatementJS
 
+import * as process from 'process';
 import {Arg, Ctx, Mutation, Query, Resolver} from "type-graphql";
 import {compare} from "bcryptjs";
 import {sign, verify} from "jsonwebtoken";
@@ -9,13 +10,15 @@ import {LoginToken, UserInput, UserModel,} from "./models";
 import {get} from "lodash";
 
 const signOptions = () => {
-    process.env.NODE_ENV === 'production' ? {
-            secure: true,
-            sameSite: "none"
-        }
-        :
-        null
+    return process.env.NODE_ENV === 'production' ? {
+        secure: true,
+        sameSite: "none"
+    } : {
+        secure: false,
+        sameSite: "lax"
+    };
 }
+
 @Resolver()
 export class AuthResolver {
     @Mutation(() => LoginToken)
@@ -24,12 +27,13 @@ export class AuthResolver {
 
         if (cookie && cookie !== "no refresh") {
             try {
-                const payload = verify(cookie, '123456');
+                const payload = verify(cookie, process.env.JWT_SECRET);
+                console.log('Payload:', JSON.stringify(payload));
 
                 let userID = JSON.stringify(payload).split(",")[0].slice(11, -1);
                 res.cookie(
                     "jid",
-                    sign({ userID }, '123456', {
+                    sign({ userID }, process.env.JWT_SECRET, {
                         expiresIn: "5d",
                     }),
                     signOptions
@@ -53,7 +57,7 @@ export class AuthResolver {
     async cookie(@Ctx() { res, req }): Promise<LoginToken> {
         res.cookie(
             "yum",
-            sign({ payload: "this is a coookie" }, '123456', {
+            sign({ payload: "this is a coookie" }, process.env.JWT_SECRET, {
                 expiresIn: "5d",
             }),
             signOptions
@@ -69,6 +73,8 @@ export class AuthResolver {
 
         const user = await UserModel.find({ username: username });
         const passwordCorrect = await compare(password, user[0].password);
+        console.log('User:', user);
+        console.log('Is password correct?:', passwordCorrect);
 
         if (user && passwordCorrect) {
             const payload = res.cookie(
@@ -86,7 +92,7 @@ export class AuthResolver {
                 ),
                 signOptions
             );
-            console.log(`payload: ${payload}`)
+            console.log(`payload: ${JSON.stringify(payload)}`)
             const token = sign(
                 {
                     userID: user[0]._id,
