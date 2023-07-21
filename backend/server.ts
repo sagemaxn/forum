@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-import { ApolloServerPluginLandingPageProductionDefault } from '@apollo/server/dist/esm/plugin/landingPage/default';
 import * as Express from "express";
 import * as cors from 'cors'
 import "reflect-metadata";

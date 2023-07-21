@@ -92,7 +92,7 @@ export class AuthResolver {
                 ),
                 signOptions
             );
-            console.log(`payload: ${JSON.stringify(payload)}`)
+            console.log(`payload: ${payload}`)
             const token = sign(
                 {
                     userID: user[0]._id,
