@@ -1,7 +1,18 @@
-import { Box, Button, Flex, Heading } from '@chakra-ui/react';
-import { ErrorMessage, Form, Formik } from 'formik';
+import {
+    Box,
+    Button,
+    Flex,
+    Heading,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalHeader,
+    ModalOverlay,
+    useDisclosure,
+} from '@chakra-ui/react';
+import { Form, Formik } from 'formik';
 import { useState } from 'react';
-import { HiEye, HiEyeOff } from 'react-icons/hi';
 import * as Yup from 'yup';
 import FormField from '../components/FormField';
 import { useRegMutation } from '../generated/graphql';
@@ -15,42 +26,57 @@ const SignupSchema = Yup.object().shape({
         .min(3, 'Password must be at least 3 characters')
         .max(20, 'Password must be at most 20 characters')
         .required('Password is required'),
-    confirmPassword: Yup.string().required(),
-    //must match
-    //.oneOf([Yup.ref('password'), null], 'Passwords must match'),
+    confirmPassword: Yup.string()
+        .oneOf([Yup.ref('password'), null], 'Passwords must match')
+        .required('Confirm Password is required'),
 });
 
 function RegisterForm({ setForm }) {
-    const [toggle, setToggle] = useState(true);
+    const [passwordVisible, setPasswordVisible] = useState(false);
     const [register] = useRegMutation();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
     return (
         <Formik
-            initialValues={{ username: '', password: '' }}
+            initialValues={{ username: '', password: '', confirmPassword: '' }}
             onSubmit={async (values, actions) => {
-                //check requirement
-                //make register check if username already exists
-                await register({ variables: values });
-
+                const response = await register({
+                    variables: values,
+                    onError: error => {
+                        actions.setFieldError('username', error.message);
+                    },
+                });
+                if (response && response.data) {
+                    onOpen();
+                }
                 actions.setSubmitting(false);
             }}
             validationSchema={SignupSchema}
         >
             {props => (
-                <Box background={'white'} borderRadius="5%" padding="5" w="md">
+                <Box
+                    background={'white'}
+                    borderRadius="5%"
+                    padding="5"
+                    w="100%"
+                >
                     <Heading margin="4" textAlign="center">
                         Sign Up
                     </Heading>
                     <Form>
                         <FormField name="username"></FormField>
-                        <ErrorMessage component="div" name="username" />
-                        <FormField name="password" toggle={toggle}></FormField>
-                        <ErrorMessage component="div" name="password" />
 
                         <FormField
-                            name="passwordConfirm"
-                            toggle={toggle}
+                            name="password"
+                            passwordVisible={passwordVisible}
+                            setPasswordVisible={setPasswordVisible}
                         ></FormField>
-                        <ErrorMessage component="div" name="passwordConfirm" />
+
+                        <FormField
+                            name="confirmPassword"
+                            passwordVisible={passwordVisible}
+                        ></FormField>
+
                         <Flex justifyContent="space-between">
                             <Button
                                 background={'blue'}
@@ -62,9 +88,6 @@ function RegisterForm({ setForm }) {
                             >
                                 Sign up
                             </Button>
-                            <Button mt={4} onClick={() => setToggle(!toggle)}>
-                                {toggle ? <HiEyeOff /> : <HiEye />}
-                            </Button>
                         </Flex>
                         <Button
                             background={'mint'}
@@ -75,6 +98,17 @@ function RegisterForm({ setForm }) {
                             Login
                         </Button>
                     </Form>
+
+                    <Modal isOpen={isOpen} onClose={onClose}>
+                        <ModalOverlay />
+                        <ModalContent>
+                            <ModalHeader>Account created</ModalHeader>
+                            <ModalCloseButton />
+                            <ModalBody>
+                                Your account has been successfully created!
+                            </ModalBody>
+                        </ModalContent>
+                    </Modal>
                 </Box>
             )}
         </Formik>

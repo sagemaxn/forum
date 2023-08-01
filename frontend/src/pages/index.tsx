@@ -8,33 +8,29 @@ import NewThreadForm from '../components/NewThreadForm';
 import { ThreadsDocument } from '../generated/graphql';
 import { Loading } from '../components/Loading';
 import { ThreadsList } from '../components/ThreadsList';
-
-const Threads = ({ decoded }) => {
-    const page = '1';
+const Index = ({ decoded }) => {
     const offset = 0;
-
+    const page = 1;
     const { data, loading } = useQuery(ThreadsDocument, {
         variables: {
             offset: offset,
             limit: 5,
         },
     });
+
     if (loading) {
         return <Loading />;
     }
-    return <ThreadsList data={data} page={page} user={decoded.user} />;
-};
 
-const Index = ({ decoded }) => {
-    console.log('Index decoded.user:', decoded.user);
     return (
         <>
             <Navbar user={decoded.user} />
             <Heading>Most Recent Threads</Heading>{' '}
             <NewThreadForm user={decoded.user} />
-            <Threads decoded={decoded} />
+            <ThreadsList data={data} page={page} user={decoded.user} />
         </>
     );
 };
+
 export const getServerSideProps = compose(auth);
 export default Index;

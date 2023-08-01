@@ -17,7 +17,7 @@ const Login = ({ decoded }) => {
     return (
         <>
             <Heading>Members Only</Heading>
-            <Text>Please login or sing up to continue</Text>
+            <Text>Please login or sign up to continue</Text>
             {Forms()}
         </>
     );

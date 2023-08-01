@@ -30,7 +30,7 @@ export class UserResolver {
     @Arg("username") username: string
   ) {
     try {
-      let user = await UserModel.findOneAndUpdate({ username }, { avatar });
+      let user = await UserModel.findOneAndUpdate({ username }, { avatar }, { new: true });
       let posts = await PostModel.updateMany({ username }, { avatar });
       let threads = await ThreadModel.updateMany({ username }, {avatar})
       return user;

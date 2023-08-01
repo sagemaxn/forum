@@ -5,6 +5,8 @@ import merge from 'deepmerge';
 import isEqual from 'lodash/isEqual';
 import { NextPageContext } from 'next';
 
+import { makeVar } from '@apollo/client';
+
 export const APOLLO_STATE_PROP_NAME = '__APOLLO_STATE__';
 
 let apolloClient;
@@ -28,15 +30,7 @@ function createApolloClient(ctx: NextPageContext) {
                         : undefined) || '',
             },
         }),
-        cache: new InMemoryCache({
-            typePolicies: {
-                Query: {
-                    fields: {
-                        allPosts: concatPagination(),
-                    },
-                },
-            },
-        }),
+        cache: new InMemoryCache(),
     });
 }
 //headers?
@@ -75,6 +69,7 @@ export function initializeApollo(initialState = null) {
     return _apolloClient;
 }
 
+export const avatarVar = makeVar(null);
 export function addApolloState(client, pageProps) {
     if (pageProps?.props) {
         pageProps.props[APOLLO_STATE_PROP_NAME] = client.cache.extract();

@@ -1,23 +1,40 @@
 import { Field } from 'formik';
-import { FormControl, FormLabel, Input } from '@chakra-ui/react';
+import {
+    Box,
+    FormControl,
+    FormErrorMessage,
+    Input,
+    InputGroup,
+    InputRightElement,
+} from '@chakra-ui/react';
+import { HiEye, HiEyeOff } from 'react-icons/hi';
 import TextareaAutosize from 'react-textarea-autosize';
 
 interface propTypes {
     name: string;
-    toggle?: boolean;
+    passwordVisible?: boolean;
+    setPasswordVisible?: (visible: boolean) => void;
 }
 
-function FormField({ name, toggle }: propTypes) {
+function FormField({ name, passwordVisible, setPasswordVisible }: propTypes) {
     return (
         <Field name={name}>
-            {({ field }) => (
-                <FormControl>{InputField(name, field)}</FormControl>
+            {({ field, form }) => (
+                <FormControl
+                    isInvalid={form.errors[name] && form.touched[name]}
+                >
+                    {InputField(name, field)}
+                    <FormErrorMessage>{form.errors[name]}</FormErrorMessage>
+                </FormControl>
             )}
         </Field>
     );
 
     function InputField(name, field) {
-        if (name === ('content' || 'firstPostContent')) {
+        const placeholderName =
+            name === 'confirmPassword' ? 'Confirm Password' : name;
+
+        if (name === 'content' || name === 'firstPostContent') {
             return (
                 <TextareaAutosize
                     {...field}
@@ -33,31 +50,53 @@ function FormField({ name, toggle }: propTypes) {
             );
         } else if (name === 'title') {
             return (
-                <>
-                    <Input
-                        {...field}
-                        background={'white'}
-                        id={name}
-                        maxLength="50"
-                        placeholder="Thread Title"
-                        required={true}
-                    />
-                </>
-            );
-        }
-        return (
-            <>
-                <FormLabel htmlFor={name} margin="1.5">
-                    {name}
-                </FormLabel>
                 <Input
                     {...field}
                     background={'white'}
                     id={name}
-                    placeholder={name}
-                    type={toggle ? 'password' : 'input'}
+                    maxLength="50"
+                    placeholder="Thread Title"
+                    required={true}
                 />
-            </>
+            );
+        } else if (name === 'password') {
+            return (
+                <InputGroup size="md">
+                    <Input
+                        {...field}
+                        background={'white'}
+                        id={name}
+                        placeholder={placeholderName}
+                        type={passwordVisible ? 'text' : 'password'}
+                    />
+                    <InputRightElement width="4.5rem">
+                        <Box
+                            onClick={() => setPasswordVisible(!passwordVisible)}
+                        >
+                            {passwordVisible ? <HiEye /> : <HiEyeOff />}
+                        </Box>
+                    </InputRightElement>
+                </InputGroup>
+            );
+        } else if (name === 'confirmPassword') {
+            return (
+                <Input
+                    {...field}
+                    background={'white'}
+                    id={name}
+                    placeholder={placeholderName}
+                    type={passwordVisible ? 'text' : 'password'}
+                />
+            );
+        }
+        return (
+            <Input
+                {...field}
+                background={'white'}
+                id={name}
+                placeholder={placeholderName}
+                type={'input'}
+            />
         );
     }
 }

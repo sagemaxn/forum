@@ -30,11 +30,8 @@ export default async function auth(ctx, pageProps) {
 
     try {
         verified = verify(tok, process.env.NEXT_PUBLIC_JWT_REFRESH);
-        console.log(`verify: ${JSON.stringify(verified)}`);
     } catch (err) {
         console.error(err);
-        verified = { avatar: 'f', user: 'mrsmith', userID: '222' };
-        console.log(`verify: ${JSON.stringify(verified)}`);
     }
 
     // If logged in and trying to access /login, redirect to home

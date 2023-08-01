@@ -10,7 +10,6 @@ import {
     Flex,
     Heading,
 } from '@chakra-ui/react';
-import { HiEye, HiEyeOff } from 'react-icons/hi';
 
 import FormField from '../components/FormField';
 import { useLoginMutation } from '../generated/graphql';
@@ -29,7 +28,7 @@ function AlertMessage() {
 function LoginForm({ setForm }) {
     const router = useRouter();
     const [loginError, setLoginError] = useState(null);
-    const [toggle, setToggle] = useState(true);
+    const [passwordVisible, setPasswordVisible] = useState(false);
     const [login] = useLoginMutation({
         onError: error => {
             console.error(error);
@@ -56,14 +55,23 @@ function LoginForm({ setForm }) {
             }}
         >
             {props => (
-                <Box background={'white'} borderRadius="5%" padding="5" w="md">
+                <Box
+                    background={'white'}
+                    borderRadius="5%"
+                    padding="5"
+                    w="100%"
+                >
                     <Heading margin="4" textAlign="center">
                         Login
                     </Heading>
                     {loginError && <AlertMessage />}
                     <Form>
                         <FormField name="username"></FormField>
-                        <FormField name="password" toggle={toggle}></FormField>
+                        <FormField
+                            name="password"
+                            passwordVisible={passwordVisible}
+                            setPasswordVisible={setPasswordVisible}
+                        ></FormField>
                         <Flex>
                             <Button
                                 background={'blue'}
@@ -74,9 +82,6 @@ function LoginForm({ setForm }) {
                                 w="100%"
                             >
                                 Login
-                            </Button>
-                            <Button mt={4} onClick={() => setToggle(!toggle)}>
-                                {toggle ? <HiEyeOff /> : <HiEye />}
                             </Button>
                         </Flex>
                         <Button

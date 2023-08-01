@@ -50,6 +50,10 @@ mutation DeletePost($postID: String!) {
   deletePost(postID: $postID)
 }
 
+mutation DeleteThread($threadID: String!) {
+  deleteThread(threadID: $threadID)
+}
+
 mutation Reg($username: String!, $password: String!) {
   createUser(input: { username: $username, password: $password }) {
     username
@@ -130,6 +134,7 @@ query ThreadWithPosts($threadWithPostsId: String!) {
         content
         createdAt
         _id
+        isFirstPost
 
       }
     }

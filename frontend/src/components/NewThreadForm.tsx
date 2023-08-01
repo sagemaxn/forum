@@ -3,8 +3,14 @@ import { Button, Flex } from '@chakra-ui/react';
 import FormField from '../components/FormField';
 import { useCreateThreadMutation } from '../generated/graphql';
 
-function NewThreadForm({ user }) {
-    const [createThread, { data }] = useCreateThreadMutation();
+function NewThreadForm({ user, refetch }) {
+    const [createThread, { data }] = useCreateThreadMutation({
+        onCompleted: data => {
+            if (data) {
+                refetch();
+            }
+        },
+    });
 
     return (
         <Formik

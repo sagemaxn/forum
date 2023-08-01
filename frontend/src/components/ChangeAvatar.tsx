@@ -12,35 +12,28 @@ import {
     useRadio,
     useRadioGroup,
 } from '@chakra-ui/react';
+import { avatarVar } from '../lib/apollo';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { Field, FieldProps, Form, Formik } from 'formik';
-import { useApolloClient } from '@apollo/client';
-
 import {
-    CurrentUserAvatarDocument,
-    ThreadsDocument,
-    ThreadWithPostsDocument,
     useChangeAvatarMutation,
+    useCurrentUserAvatarQuery,
 } from '../generated/graphql';
-
 function ChangeAvatar({ isOpen, onClose, user }) {
-    const apolloClient = useApolloClient();
     const [val, setVal] = useState(null);
-
+    const { data, loading, error } = useCurrentUserAvatarQuery({
+        variables: { username: user },
+    });
     useEffect(() => {
-        const getCurrentAvatar = async () => {
-            const { data } = await apolloClient.query({
-                query: CurrentUserAvatarDocument,
-                variables: { username: user },
-            });
+        if (!loading && data) {
+            avatarVar(data.currentUser.avatar);
             setVal(data.currentUser.avatar);
-        };
-        getCurrentAvatar().catch(error => {
-            console.error('Failed to get current avatar:', error);
-        });
-    }, [apolloClient, user]);
-
+        }
+        if (error) {
+            console.error(error);
+        }
+    }, [data, loading, error]);
     function CustomRadio(props) {
         const { getInputProps, getCheckboxProps } = useRadio(props);
         const input = getInputProps();
@@ -63,7 +56,6 @@ function ChangeAvatar({ isOpen, onClose, user }) {
                     height="60px"
                     objectFit="contain"
                     src={`/${props.value}.png`}
-                    style={{ borderRadius: '100%' }}
                     width="60px"
                 />
                 <input {...input} />
@@ -76,7 +68,21 @@ function ChangeAvatar({ isOpen, onClose, user }) {
     };
 
     function Group() {
-        const [changeAvatar] = useChangeAvatarMutation();
+        const [changeAvatar] = useChangeAvatarMutation({
+            update(cache, { data: { changeAvatar } }) {
+                cache.modify({
+                    fields: {
+                        currentUser(existingUser = {}) {
+                            return {
+                                ...existingUser,
+                                avatar: changeAvatar.avatar,
+                            };
+                        },
+                    },
+                });
+            },
+        });
+
         const avatars = ['default', 'star', 'heart', 'cat', 'dog'];
         const { getRootProps, getRadioProps } = useRadioGroup({
             onChange: handleChange,
@@ -92,25 +98,9 @@ function ChangeAvatar({ isOpen, onClose, user }) {
                     const response = await changeAvatar({
                         variables: { username: user, avatar: values.avatar },
                     });
-                    apolloClient.writeQuery({
-                        query: CurrentUserAvatarDocument,
-                        variables: { username: user },
-                        data: {
-                            currentUser: {
-                                __typename: 'User',
-                                avatar: response.data.changeAvatar.avatar,
-                            },
-                        },
-                    });
-                    actions.setFieldValue(
-                        'avatar',
-                        response.data.changeAvatar.avatar,
-                    );
+                    avatarVar(val);
                     actions.setSubmitting(false);
                     onClose();
-                    await apolloClient.refetchQueries({
-                        include: [ThreadWithPostsDocument, ThreadsDocument],
-                    });
                 }}
             >
                 {props => (

@@ -288,6 +288,16 @@ export type DeletePostMutation = (
   & Pick<Mutation, 'deletePost'>
 );
 
+export type DeleteThreadMutationVariables = Exact<{
+  threadID: Scalars['String'];
+}>;
+
+
+export type DeleteThreadMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteThread'>
+);
+
 export type RegMutationVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
@@ -421,7 +431,7 @@ export type ThreadWithPostsQuery = (
         & Pick<User, 'avatar' | 'username' | '_id'>
       ), posts?: Maybe<Array<(
         { __typename?: 'Post' }
-        & Pick<Post, 'content' | 'createdAt' | '_id'>
+        & Pick<Post, 'content' | 'createdAt' | '_id' | 'isFirstPost'>
         & { user: (
           { __typename?: 'User' }
           & Pick<User, 'username' | 'avatar'>
@@ -663,6 +673,37 @@ export function useDeletePostMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeletePostMutationHookResult = ReturnType<typeof useDeletePostMutation>;
 export type DeletePostMutationResult = Apollo.MutationResult<DeletePostMutation>;
 export type DeletePostMutationOptions = Apollo.BaseMutationOptions<DeletePostMutation, DeletePostMutationVariables>;
+export const DeleteThreadDocument = gql`
+    mutation DeleteThread($threadID: String!) {
+  deleteThread(threadID: $threadID)
+}
+    `;
+export type DeleteThreadMutationFn = Apollo.MutationFunction<DeleteThreadMutation, DeleteThreadMutationVariables>;
+
+/**
+ * __useDeleteThreadMutation__
+ *
+ * To run a mutation, you first call `useDeleteThreadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteThreadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteThreadMutation, { data, loading, error }] = useDeleteThreadMutation({
+ *   variables: {
+ *      threadID: // value for 'threadID'
+ *   },
+ * });
+ */
+export function useDeleteThreadMutation(baseOptions?: Apollo.MutationHookOptions<DeleteThreadMutation, DeleteThreadMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteThreadMutation, DeleteThreadMutationVariables>(DeleteThreadDocument, options);
+      }
+export type DeleteThreadMutationHookResult = ReturnType<typeof useDeleteThreadMutation>;
+export type DeleteThreadMutationResult = Apollo.MutationResult<DeleteThreadMutation>;
+export type DeleteThreadMutationOptions = Apollo.BaseMutationOptions<DeleteThreadMutation, DeleteThreadMutationVariables>;
 export const RegDocument = gql`
     mutation Reg($username: String!, $password: String!) {
   createUser(input: {username: $username, password: $password}) {
@@ -966,6 +1007,7 @@ export const ThreadWithPostsDocument = gql`
         content
         createdAt
         _id
+        isFirstPost
       }
     }
     total
