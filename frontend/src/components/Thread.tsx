@@ -17,7 +17,15 @@ import { avatarVar } from '../lib/apollo';
 
 import { useDeleteThreadMutation } from '../generated/graphql';
 
-const Thread = ({ title, user, avatar, createdAt, loggedUser, threadID }) => {
+const Thread = ({
+    title,
+    user,
+    avatar,
+    createdAt,
+    loggedUser,
+    threadID,
+    refetch,
+}) => {
     const [deleteThread] = useDeleteThreadMutation();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const cancelRef = useRef();
@@ -54,6 +62,7 @@ const Thread = ({ title, user, avatar, createdAt, loggedUser, threadID }) => {
                                         await deleteThread({
                                             variables: { threadID },
                                         });
+                                        refetch();
                                     } catch (err) {
                                         console.log(
                                             'thread could not be deleted',
@@ -72,7 +81,13 @@ const Thread = ({ title, user, avatar, createdAt, loggedUser, threadID }) => {
         );
     };
     return (
-        <Flex bg="white" justifyContent="space-between" margin="2px" w={'100%'}>
+        <Flex
+            bg="white"
+            boxShadow={'md'}
+            justifyContent="space-between"
+            margin="2px"
+            w={'100%'}
+        >
             <Flex>
                 <Image
                     alt={currentAvatar}

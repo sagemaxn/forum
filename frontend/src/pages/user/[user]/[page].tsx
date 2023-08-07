@@ -4,7 +4,7 @@ import Error from 'next/error';
 import { useUserActivityQuery } from '../../../generated/graphql';
 import auth from '../../../lib/auth';
 import { compose } from '../../../lib/compose';
-import Navbar from '../../../components/Navbar';
+import Layout from '../../../components/Layout';
 import UserProfile from '../../../components/UserProfile';
 import { Loading } from '../../../components/Loading';
 
@@ -29,17 +29,15 @@ const User = ({ decoded }) => {
 
     if (loading) {
         return (
-            <>
-                <Navbar user={decoded.user} />
+            <Layout user={decoded.user}>
                 <Loading></Loading>
-            </>
+            </Layout>
         );
     }
 
     if (error || offset === undefined) {
         return (
             <>
-                <Navbar user={decoded.user} />
                 <Error
                     statusCode={500}
                     title={error ? error.message : 'Invalid page'}
@@ -49,10 +47,9 @@ const User = ({ decoded }) => {
     }
 
     return (
-        <>
-            <Navbar user={decoded.user} />
+        <Layout user={decoded.user}>
             <UserProfile data={data} page={page as string} user={user} />
-        </>
+        </Layout>
     );
 };
 

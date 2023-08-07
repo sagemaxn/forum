@@ -4,13 +4,7 @@ import FormField from '../components/FormField';
 import { useCreateThreadMutation } from '../generated/graphql';
 
 function NewThreadForm({ user, refetch }) {
-    const [createThread, { data }] = useCreateThreadMutation({
-        onCompleted: data => {
-            if (data) {
-                refetch();
-            }
-        },
-    });
+    const [createThread, { data }] = useCreateThreadMutation();
 
     return (
         <Formik
@@ -21,11 +15,11 @@ function NewThreadForm({ user, refetch }) {
                 firstPostContent: '',
             }}
             onSubmit={async (values, actions) => {
-                await createThread({ variables: { input: values } });
-                if (data) {
-                    console.log(
-                        `If data after thread in NewThreadForm.tsx: ${data}`,
-                    );
+                try {
+                    await createThread({ variables: { input: values } });
+                    refetch();
+                } catch (err) {
+                    console.error(err);
                 }
                 actions.setSubmitting(false);
             }}
@@ -33,8 +27,8 @@ function NewThreadForm({ user, refetch }) {
             {props => (
                 <>
                     <Flex
-                        backgroundColor="blue"
-                        boxShadow={'xl'}
+                        bg={'white'}
+                        boxShadow={'md'}
                         direction={'column'}
                         margin="2px"
                         p={6}
@@ -45,11 +39,12 @@ function NewThreadForm({ user, refetch }) {
                             <FormField name="firstPostContent"></FormField>
 
                             <Button
-                                backgroundColor="mint"
+                                backgroundColor="green"
                                 isLoading={props.isSubmitting}
                                 mt={4}
+                                mx="auto" // Center the button if not full width
                                 type="submit"
-                                w="100%"
+                                width={['100%', 'auto']} // Button full width on mobile, auto on larger screens
                             >
                                 Create Thread
                             </Button>

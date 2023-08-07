@@ -116,8 +116,8 @@ query Threads($offset: Int!, $limit: Int!) {
   }
 }
 
-query ThreadWithPosts($threadWithPostsId: String!) {
-  threadWithPosts(id: $threadWithPostsId) {
+query ThreadWithPosts($threadWithPostsId: String!, $offset: Int!, $limit: Int!) {
+  threadWithPosts(id: $threadWithPostsId, offset: $offset, limit: $limit) {
     data {
       title
       user {

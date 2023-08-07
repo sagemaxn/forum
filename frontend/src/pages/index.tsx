@@ -1,7 +1,7 @@
 import { Heading } from '@chakra-ui/react';
+import Layout from '../components/Layout';
 import auth from '../lib/auth';
 import { compose } from '../lib/compose';
-import Navbar from '../components/Navbar';
 import { useQuery } from '@apollo/client';
 
 import NewThreadForm from '../components/NewThreadForm';
@@ -11,7 +11,7 @@ import { ThreadsList } from '../components/ThreadsList';
 const Index = ({ decoded }) => {
     const offset = 0;
     const page = 1;
-    const { data, loading } = useQuery(ThreadsDocument, {
+    const { data, loading, refetch } = useQuery(ThreadsDocument, {
         variables: {
             offset: offset,
             limit: 5,
@@ -19,16 +19,24 @@ const Index = ({ decoded }) => {
     });
 
     if (loading) {
-        return <Loading />;
+        return (
+            <Layout user={decoded.user}>
+                <Loading />{' '}
+            </Layout>
+        );
     }
 
     return (
-        <>
-            <Navbar user={decoded.user} />
-            <Heading>Most Recent Threads</Heading>{' '}
-            <NewThreadForm user={decoded.user} />
-            <ThreadsList data={data} page={page} user={decoded.user} />
-        </>
+        <Layout user={decoded.user}>
+            <Heading>Most Recent Threads</Heading>
+            <NewThreadForm refetch={refetch} user={decoded.user} />
+            <ThreadsList
+                data={data}
+                page={page}
+                refetch={refetch}
+                user={decoded.user}
+            />
+        </Layout>
     );
 };
 

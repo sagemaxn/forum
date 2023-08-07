@@ -25,7 +25,7 @@ function AlertMessage() {
     );
 }
 
-function LoginForm({ setForm }) {
+function LoginForm() {
     const router = useRouter();
     const [loginError, setLoginError] = useState(null);
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -35,7 +35,6 @@ function LoginForm({ setForm }) {
             setLoginError(error.message);
         },
         onCompleted: data => {
-            console.log(JSON.stringify(data));
             if (data.login.token !== 'no token') {
                 setLoginError(null);
                 router.push('/').catch(error => {
@@ -55,12 +54,7 @@ function LoginForm({ setForm }) {
             }}
         >
             {props => (
-                <Box
-                    background={'white'}
-                    borderRadius="5%"
-                    padding="5"
-                    w="100%"
-                >
+                <Box borderRadius="sm" p={6} w="100%">
                     <Heading margin="4" textAlign="center">
                         Login
                     </Heading>
@@ -74,8 +68,7 @@ function LoginForm({ setForm }) {
                         ></FormField>
                         <Flex>
                             <Button
-                                background={'blue'}
-                                color="white"
+                                background={'green'}
                                 isLoading={props.isSubmitting}
                                 mt={4}
                                 type="submit"
@@ -84,14 +77,6 @@ function LoginForm({ setForm }) {
                                 Login
                             </Button>
                         </Flex>
-                        <Button
-                            background={'mint'}
-                            mt={4}
-                            onClick={() => setForm('register')}
-                            w="100%"
-                        >
-                            Sign Up
-                        </Button>
                     </Form>
                 </Box>
             )}

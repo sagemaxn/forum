@@ -35,7 +35,7 @@ export class PostResolver {
 
   @Mutation(() => Boolean)
   async deletePost(@Arg("postID") postID: string) {
-    const deleted = await PostModel.deleteOne({_id: postID});
+    await PostModel.deleteOne({_id: postID});
     return true;
   }
 

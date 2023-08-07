@@ -15,13 +15,14 @@ const theme = extendTheme({
         blue: '#67a1a5',
         green: '#5CDB95',
         purple: '#948CC5',
+        formBg: '#F5F5F5', // add this line
     },
     fonts,
     breakpoints,
     styles: {
         global: () => ({
             body: {
-                bg: 'green',
+                bg: 'gray.200',
             },
         }),
     },
@@ -34,11 +35,6 @@ const theme = extendTheme({
                     size: 'md',
                     variant: 'solid',
                 },
-            },
-            defaultProps: {
-                size: 'md', // default is md
-                variant: 'solid', // default is solid
-                colorScheme: 'gray', // default is gray
             },
         },
     },

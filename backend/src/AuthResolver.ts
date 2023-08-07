@@ -23,13 +23,9 @@ const signOptions = () => {
 export class AuthResolver {
     @Mutation(() => LoginToken)
     checkAuth(@Ctx() { req, res }, @Arg("cookie") cookie: string): LoginToken {
-        console.log('jid: ' + req.cookies.jid);
-
         if (cookie && cookie !== "no refresh") {
             try {
                 const payload = verify(cookie, process.env.JWT_SECRET);
-                console.log('Payload:', JSON.stringify(payload));
-
                 let userID = JSON.stringify(payload).split(",")[0].slice(11, -1);
                 res.cookie(
                     "jid",
@@ -43,7 +39,6 @@ export class AuthResolver {
                 const token = sign({ userID, user, avatar }, process.env.JWT_SECRET, {
                     expiresIn: "60m",
                 })
-                console.log(`token: ${token}`)
                 return {
                     token
                 };
@@ -73,9 +68,6 @@ export class AuthResolver {
 
         const user = await UserModel.find({ username: username });
         const passwordCorrect = await compare(password, user[0].password);
-        console.log('User:', user);
-        console.log('Is password correct?:', passwordCorrect);
-
         if (user && passwordCorrect) {
             const payload = res.cookie(
                 "jid",
@@ -92,7 +84,6 @@ export class AuthResolver {
                 ),
                 signOptions
             );
-            console.log(`payload: ${payload}`)
             const token = sign(
                 {
                     userID: user[0]._id,
@@ -102,7 +93,6 @@ export class AuthResolver {
                 process.env.JWT_SECRET,
                 { expiresIn: "60m" }
             )
-            console.log(`(login) token: ${token}`)
             return {
                 token: token
             };

@@ -31,7 +31,7 @@ const SignupSchema = Yup.object().shape({
         .required('Confirm Password is required'),
 });
 
-function RegisterForm({ setForm }) {
+function RegisterForm() {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [register] = useRegMutation();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -54,12 +54,7 @@ function RegisterForm({ setForm }) {
             validationSchema={SignupSchema}
         >
             {props => (
-                <Box
-                    background={'white'}
-                    borderRadius="5%"
-                    padding="5"
-                    w="100%"
-                >
+                <Box borderRadius="sm" p={6} w="100%">
                     <Heading margin="4" textAlign="center">
                         Sign Up
                     </Heading>
@@ -79,24 +74,15 @@ function RegisterForm({ setForm }) {
 
                         <Flex justifyContent="space-between">
                             <Button
-                                background={'blue'}
-                                color="white"
+                                background={'green'}
                                 isLoading={props.isSubmitting}
                                 mt={4}
                                 type="submit"
                                 w="100%"
                             >
-                                Sign up
+                                Sign Up
                             </Button>
                         </Flex>
-                        <Button
-                            background={'mint'}
-                            mt={4}
-                            onClick={() => setForm('login')}
-                            w="100%"
-                        >
-                            Login
-                        </Button>
                     </Form>
 
                     <Modal isOpen={isOpen} onClose={onClose}>

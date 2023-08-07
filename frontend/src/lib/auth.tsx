@@ -4,7 +4,6 @@ import { initializeApollo } from './apollo';
 export default async function auth(ctx, pageProps) {
     const apolloClient = initializeApollo();
     const cookie = ctx.req.cookies.jid || 'no refresh';
-    // console.log(`cookies: ${JSON.stringify(ctx.req.cookies)}`);
     const auth = await apolloClient.mutate({
         mutation: AuthDocument,
         variables: { cookie },
@@ -14,12 +13,13 @@ export default async function auth(ctx, pageProps) {
     console.log(`tok: ${tok}`);
     if (!decode(tok)) {
         pageProps.props.logged = false;
-        if (ctx.res && ctx.req.url !== '/login') {
+        if (ctx.res && ctx.req.url !== '/login' && ctx.req.url !== '/signup') {
             ctx.res.writeHead(302, { Location: '/login' });
             ctx.res.end();
         }
         return;
     }
+
     interface JwtPayload {
         userID: string;
         user: string;

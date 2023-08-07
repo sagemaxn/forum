@@ -19,11 +19,6 @@ function NewPostForm({ user, thread_id }) {
                 });
 
                 await post({ variables: { input: { ...values } } });
-                if (data) {
-                    console.log(
-                        `If data after post in NewPostForm.tsx: ${data}`,
-                    );
-                }
                 actions.setSubmitting(false);
             }}
         >

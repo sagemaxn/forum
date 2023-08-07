@@ -61,8 +61,5 @@ const main = async () => {
   );
   await new Promise<void>((resolve) => httpServer.listen({ port: process.env.PORT || 4000 }, resolve));
   console.log(`🚀 Server ready at http://localhost:4000/graphql`);
-  console.log(process.env.NODE_ENV)
-  console.log(`secret: ${process.env.JWT_SECRET}`)
-  console.log(`refresh: ${process.env.JWT_REFRESH}`)
 }
 main();

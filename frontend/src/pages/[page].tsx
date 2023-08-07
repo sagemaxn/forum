@@ -1,6 +1,7 @@
 import auth from '../lib/auth';
 import { compose } from '../lib/compose';
 import Navbar from '../components/Navbar';
+import Layout from '../components/Layout';
 
 import { useRouter } from 'next/router';
 import Error from 'next/error';
@@ -17,7 +18,7 @@ const Threads = ({ decoded }) => {
     const offset =
         page && parseInt(page, 10) ? parseInt(page, 10) * 5 - 5 : undefined;
 
-    const { data, loading, error } = useQuery(ThreadsDocument, {
+    const { data, loading, error, refetch } = useQuery(ThreadsDocument, {
         skip: offset === undefined,
         variables: {
             offset: offset,
@@ -26,7 +27,11 @@ const Threads = ({ decoded }) => {
     });
 
     if (loading) {
-        return <Loading />;
+        return (
+            <Layout user={decoded.user}>
+                <Loading />;
+            </Layout>
+        );
     }
 
     if (error || offset === undefined) {
@@ -38,13 +43,21 @@ const Threads = ({ decoded }) => {
         );
     }
 
-    return <ThreadsList data={data} page={page} user={decoded.user} />;
+    return (
+        <Layout user={decoded.user}>
+            <ThreadsList
+                data={data}
+                page={page}
+                refetch={refetch}
+                user={decoded.user}
+            />
+        </Layout>
+    );
 };
 
 const Index = ({ decoded }) => {
     return (
         <>
-            <Navbar user={decoded.user} />
             <Threads decoded={decoded} />
         </>
     );

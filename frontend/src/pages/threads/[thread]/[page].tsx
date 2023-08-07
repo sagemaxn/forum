@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import NewPostForm from '../../../components/NewPostForm';
 import Navbar from '../../../components/Navbar';
 import { PostsList } from '../../../components/PostsList';
+import Layout from '../../../components/Layout';
 import { ThreadWithPostsDocument } from '../../../generated/graphql';
 import Error from 'next/error';
 import { Loading } from '../../../components/Loading';
@@ -15,14 +16,13 @@ const Page = ({ decoded }) => {
     const { thread: threadQuery, page: pageQuery } = router.query;
     const thread = typeof threadQuery === 'string' ? threadQuery : undefined;
     const page = typeof pageQuery === 'string' ? pageQuery : undefined;
-
     const offset =
         page && parseInt(page, 10) ? parseInt(page, 10) * 5 - 5 : undefined;
 
     const { data, loading, error, refetch } = useQuery(
         ThreadWithPostsDocument,
         {
-            skip: offset === undefined,
+            //skip: offset === undefined,
             variables: {
                 offset: offset,
                 limit: 5,
@@ -32,7 +32,11 @@ const Page = ({ decoded }) => {
     );
 
     if (loading) {
-        return <Loading />;
+        return (
+            <Layout user={decoded.user}>
+                <Loading />
+            </Layout>
+        );
     }
 
     if (error || offset === undefined) {
@@ -45,8 +49,7 @@ const Page = ({ decoded }) => {
     }
 
     return (
-        <>
-            <Navbar user={decoded.user} />
+        <Layout user={decoded.user}>
             <Heading>{data.threadWithPosts.data.title}</Heading>
             <NewPostForm
                 refetch={refetch}
@@ -60,7 +63,7 @@ const Page = ({ decoded }) => {
                 threadID={thread}
                 user={decoded.user}
             />
-        </>
+        </Layout>
     );
 };
 

@@ -4,13 +4,11 @@ import { Text } from '@chakra-ui/react';
 
 export const PostsList = ({ data, user, page, threadID, refetch }) => {
     if (data) {
-        console.log(`data :${JSON.stringify(data)}`);
         console.log(`total posts: ${data.threadWithPosts.total}`);
         return (
             <>
                 {' '}
                 {data.threadWithPosts.data.posts.map(post => {
-                    console.log(post);
                     return (
                         <Post
                             avatar={post.user.avatar}

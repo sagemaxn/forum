@@ -2,7 +2,7 @@ import Thread from './Thread';
 import Link from 'next/link';
 import { Text } from '@chakra-ui/react';
 
-export const ThreadsList = ({ data, user, page }) => {
+export const ThreadsList = ({ data, user, page, refetch }) => {
     if (data) {
         return (
             <>
@@ -13,6 +13,7 @@ export const ThreadsList = ({ data, user, page }) => {
                         createdAt={thread.createdAt}
                         key={thread._id}
                         loggedUser={user}
+                        refetch={refetch}
                         threadID={thread._id}
                         title={thread.title}
                         user={thread.user.username}

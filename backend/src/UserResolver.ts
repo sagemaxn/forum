@@ -41,7 +41,6 @@ export class UserResolver {
   @Query(() => [User])
   async users() {
     const users = await UserModel.find();
-    console.log(users);
     return users;
   }
   @Query(() => User, { nullable: true })
@@ -101,9 +100,6 @@ export class UserResolver {
     const activities = (posts as Array<any>).concat(threads as Array<any>);
 
     activities.sort((a, b) => b.createdAt - a.createdAt)
-    console.log(activities)
-
-
     return { total, data: activities.slice(offset, offset + limit) };
   }
 }

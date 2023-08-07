@@ -1,7 +1,7 @@
-import { Center, Heading, Link, Text, VStack } from '@chakra-ui/react';
-import LoginForm from '../components/LoginForm';
+import { Box, Center, Heading, Link, Text, VStack } from '@chakra-ui/react';
+import RegisterForm from '../components/RegisterForm';
 
-const Login = () => {
+const SignUp = () => {
     return (
         <Center height="100vh" p={4}>
             <VStack
@@ -13,12 +13,12 @@ const Login = () => {
                 spacing={6}
                 w="full"
             >
-                <Heading color={'purple'}>The Forums</Heading>
+                <Heading>The Forums</Heading>
                 <Text fontSize="lg">Please login or sign up to continue</Text>
-                <LoginForm />
-                <Text fontSize={'lg'}>
-                    To sign up click{' '}
-                    <Link color="blue" fontWeight="semibold" href="/signup">
+                <RegisterForm />
+                <Text fontSize="lg">
+                    To login click{' '}
+                    <Link color="blue" fontWeight="semibold" href="/login">
                         here
                     </Link>
                 </Text>
@@ -27,4 +27,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default SignUp;

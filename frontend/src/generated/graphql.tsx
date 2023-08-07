@@ -126,8 +126,8 @@ export type QueryPostsArgs = {
 
 export type QueryThreadWithPostsArgs = {
   id: Scalars['String'];
-  limit?: Scalars['Int'];
-  offset?: Scalars['Int'];
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
 };
 
 
@@ -415,6 +415,8 @@ export type ThreadsQuery = (
 
 export type ThreadWithPostsQueryVariables = Exact<{
   threadWithPostsId: Scalars['String'];
+  offset: Scalars['Int'];
+  limit: Scalars['Int'];
 }>;
 
 
@@ -989,8 +991,8 @@ export type ThreadsQueryHookResult = ReturnType<typeof useThreadsQuery>;
 export type ThreadsLazyQueryHookResult = ReturnType<typeof useThreadsLazyQuery>;
 export type ThreadsQueryResult = Apollo.QueryResult<ThreadsQuery, ThreadsQueryVariables>;
 export const ThreadWithPostsDocument = gql`
-    query ThreadWithPosts($threadWithPostsId: String!) {
-  threadWithPosts(id: $threadWithPostsId) {
+    query ThreadWithPosts($threadWithPostsId: String!, $offset: Int!, $limit: Int!) {
+  threadWithPosts(id: $threadWithPostsId, offset: $offset, limit: $limit) {
     data {
       title
       user {
@@ -1028,6 +1030,8 @@ export const ThreadWithPostsDocument = gql`
  * const { data, loading, error } = useThreadWithPostsQuery({
  *   variables: {
  *      threadWithPostsId: // value for 'threadWithPostsId'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
  *   },
  * });
  */

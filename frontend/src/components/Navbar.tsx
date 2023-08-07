@@ -8,7 +8,7 @@ import Menu from './Menu';
 
 const Navbar = ({ user, avatar }) => {
     const router = useRouter();
-    if (router.pathname === '/login') {
+    if (router.pathname === '/login' || router.pathname === '/signup') {
         return null;
     }
 
@@ -17,12 +17,12 @@ const Navbar = ({ user, avatar }) => {
             <Flex
                 align="center"
                 as="nav"
+                bg={'green'}
                 color="black"
                 direction="row"
                 height="50px"
                 justify="space-between"
-                padding="3px"
-                width={'100%'}
+                padding="3px 16px"
                 wrap="wrap"
             >
                 <Heading as="h1" size="sm">

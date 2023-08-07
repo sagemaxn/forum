@@ -101,8 +101,8 @@ export class ThreadResolver {
     @Query(() => ThreadWithPosts)
     async threadWithPosts(
         @Arg("id") id: string,
-        @Arg("limit", () => Int, { defaultValue: 5 }) limit: number,
-        @Arg("offset", () => Int, { defaultValue: 0 }) offset: number
+        @Arg("limit", () => Int) limit: number,
+        @Arg("offset", () => Int) offset: number
     ) {
         const thread = await ThreadModel.findById(id)
             .populate({
@@ -112,7 +112,6 @@ export class ThreadResolver {
                     select: 'avatar username'
                 },
                 options: {
-                    sort: { createdAt: -1 },
                     skip: offset,
                     limit: limit
                 }
@@ -122,9 +121,7 @@ export class ThreadResolver {
                 select: 'username avatar'
             });
 
-        const total = await ThreadModel.countDocuments()
-
-        console.log(JSON.stringify({ thread, total }));
+        const total = await PostModel.countDocuments({ thread: id });
 
         return { data: thread, total };
     }
