@@ -26,6 +26,15 @@ const User = ({ decoded }) => {
             limit: 5,
         },
     });
+    const totalPages = Math.ceil(data?.userActivity?.total / 5);
+    if (parseInt(page) > totalPages) {
+        return (
+            <Error
+                statusCode={404}
+                title="Oops! The page you are looking for can't be found"
+            />
+        );
+    }
 
     if (loading) {
         return (

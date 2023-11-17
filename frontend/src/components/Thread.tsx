@@ -1,4 +1,3 @@
-// components/Thread.tsx
 import { Button, Flex, Heading, Link, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import Image from 'next/image';
@@ -106,10 +105,16 @@ const Thread = ({
                         </Link>
                     </Heading>
                     <Text>{datePosted}</Text>
-                    <Heading as="h2" size="md">
-                        <Link as={NextLink} href={`/threads/${threadID}/1`}>
-                            {title}
-                        </Link>
+                    <Heading as="h2" mb={2} mt={2} size="md">
+                        <NextLink href={`/threads/${threadID}/1`} passHref>
+                            <Link
+                                _hover={{
+                                    textDecoration: 'underline',
+                                }}
+                            >
+                                {title}
+                            </Link>
+                        </NextLink>
                     </Heading>
                 </Flex>
             </Flex>

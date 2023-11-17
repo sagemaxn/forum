@@ -95,7 +95,7 @@ function ChangeAvatar({ isOpen, onClose, user }) {
                 enableReinitialize
                 initialValues={{ avatar: val }}
                 onSubmit={async (values, actions) => {
-                    const response = await changeAvatar({
+                    await changeAvatar({
                         variables: { username: user, avatar: values.avatar },
                     });
                     avatarVar(val);

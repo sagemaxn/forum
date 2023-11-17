@@ -19,20 +19,30 @@ const signOptions = () => {
     };
 }
 
+let cookieDomain;
+if (process.env.NODE_ENV === 'production') {
+    cookieDomain = '.sagemaxn.dev';
+} else {
+    cookieDomain = 'localhost';
+}
+
 @Resolver()
 export class AuthResolver {
     @Mutation(() => LoginToken)
     checkAuth(@Ctx() { req, res }, @Arg("cookie") cookie: string): LoginToken {
+        const fiveDays = 480384000;
+
         if (cookie && cookie !== "no refresh") {
             try {
                 const payload = verify(cookie, process.env.JWT_SECRET);
+
                 let userID = JSON.stringify(payload).split(",")[0].slice(11, -1);
                 res.cookie(
                     "jid",
                     sign({ userID }, process.env.JWT_SECRET, {
                         expiresIn: "5d",
                     }),
-                    signOptions
+                    { secure: true, sameSite: "none", maxAge: fiveDays,  domain: cookieDomain, },
                 );
                 const user = JSON.stringify(payload).split(",")[1].slice(8, -1);
                 const avatar = JSON.stringify(payload).split(",")[2].slice(10, -1);
@@ -48,17 +58,6 @@ export class AuthResolver {
             }
         } else return { token: "no" };
     }
-    @Query(() => LoginToken)
-    async cookie(@Ctx() { res, req }): Promise<LoginToken> {
-        res.cookie(
-            "yum",
-            sign({ payload: "this is a coookie" }, process.env.JWT_SECRET, {
-                expiresIn: "5d",
-            }),
-            signOptions
-        );
-        return { token: JSON.stringify(get(req, "cookies.jid") || "no") };
-    }
 
     @Mutation(() => LoginToken)
     async login(
@@ -68,6 +67,10 @@ export class AuthResolver {
 
         const user = await UserModel.find({ username: username });
         const passwordCorrect = await compare(password, user[0].password);
+        console.log('User:', user);
+        console.log('Is password correct?:', passwordCorrect);
+        const fiveDays = 480384000;
+
         if (user && passwordCorrect) {
             const payload = res.cookie(
                 "jid",
@@ -82,8 +85,10 @@ export class AuthResolver {
                         expiresIn: "5d",
                     }
                 ),
-                signOptions
+
+                { secure: true, sameSite: "none", maxAge: fiveDays,  domain: cookieDomain },
             );
+            console.log(`payload: ${payload}`)
             const token = sign(
                 {
                     userID: user[0]._id,
@@ -93,6 +98,7 @@ export class AuthResolver {
                 process.env.JWT_SECRET,
                 { expiresIn: "60m" }
             )
+            console.log(`(login) token: ${token}`)
             return {
                 token: token
             };

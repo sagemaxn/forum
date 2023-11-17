@@ -13,7 +13,7 @@ const Login = () => {
                 spacing={6}
                 w="full"
             >
-                <Heading color={'purple'}>The Forums</Heading>
+                <Heading>The Forums</Heading>
                 <Text fontSize="lg">Please login or sign up to continue</Text>
                 <LoginForm />
                 <Text fontSize={'lg'}>

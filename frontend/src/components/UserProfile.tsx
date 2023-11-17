@@ -1,5 +1,6 @@
-import { Flex, Heading, Link, Text, VStack } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import { Box, Flex, Heading, IconButton, Text, VStack } from '@chakra-ui/react';
+import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
+import Link from 'next/link';
 import UserActivity from './UserActivity';
 import React from 'react';
 
@@ -36,23 +37,38 @@ const UserProfile = ({ user, data, page }) => {
                     })}
                 </VStack>
                 <Flex justify="space-between" mt={4}>
-                    {parseInt(page) - 1 > 0 && (
+                    {parseInt(page) - 1 > 0 ? (
                         <Link
-                            as={NextLink}
                             href={`/user/${user}/${parseInt(page) - 1}`}
+                            passHref
                         >
-                            Prev Page
-                        </Link>
-                    )}
-                    {parseInt(page) * 5 < data.userActivity.total ? (
-                        <Link
-                            as={NextLink}
-                            href={`/user/${user}/${parseInt(page) + 1}`}
-                        >
-                            Next Page
+                            <span>
+                                <IconButton
+                                    aria-label="Previous page"
+                                    icon={<ArrowBackIcon />}
+                                />
+                            </span>
                         </Link>
                     ) : (
-                        <Text>End of results</Text>
+                        // Render an empty box to keep space
+                        <Box h="40x" w="40px" />
+                    )}
+                    <Text>Page {page}</Text>
+                    {parseInt(page) * 5 < data.userActivity.total ? (
+                        <Link
+                            href={`/user/${user}/${parseInt(page) + 1}`}
+                            passHref
+                        >
+                            <span>
+                                <IconButton
+                                    aria-label="Next page"
+                                    icon={<ArrowForwardIcon />}
+                                />
+                            </span>
+                        </Link>
+                    ) : (
+                        // Render an empty box to keep space
+                        <Box h="40px" w="40px" />
                     )}
                 </Flex>
             </>

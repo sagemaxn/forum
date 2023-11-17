@@ -4,7 +4,7 @@ import FormField from '../components/FormField';
 import { useCreateThreadMutation } from '../generated/graphql';
 
 function NewThreadForm({ user, refetch }) {
-    const [createThread, { data }] = useCreateThreadMutation();
+    const [createThread] = useCreateThreadMutation();
 
     return (
         <Formik
@@ -18,6 +18,7 @@ function NewThreadForm({ user, refetch }) {
                 try {
                     await createThread({ variables: { input: values } });
                     refetch();
+                    actions.resetForm();
                 } catch (err) {
                     console.error(err);
                 }

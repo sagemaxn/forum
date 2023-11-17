@@ -1,4 +1,4 @@
-import { Box, Center, Heading, Link, Text, VStack } from '@chakra-ui/react';
+import { Center, Heading, Link, Text, VStack } from '@chakra-ui/react';
 import RegisterForm from '../components/RegisterForm';
 
 const SignUp = () => {

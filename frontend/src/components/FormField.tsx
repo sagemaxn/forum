@@ -32,7 +32,7 @@ function FormField({ name, passwordVisible, setPasswordVisible }: propTypes) {
 
     function InputField(name, field) {
         const placeholderName =
-            name === 'confirmPassword' ? 'Confirm Password' : name;
+            name === 'confirmPassword' ? 'confirm password' : name;
 
         if (name === 'content' || name === 'firstPostContent') {
             return (

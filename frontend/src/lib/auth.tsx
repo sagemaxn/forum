@@ -10,7 +10,6 @@ export default async function auth(ctx, pageProps) {
     });
 
     const tok = ctx.req.cookies.jid || 'no refresh';
-    console.log(`tok: ${tok}`);
     if (!decode(tok)) {
         pageProps.props.logged = false;
         if (ctx.res && ctx.req.url !== '/login' && ctx.req.url !== '/signup') {

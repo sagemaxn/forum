@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 
 import Menu from './Menu';
 
-const Navbar = ({ user, avatar }) => {
+const Navbar = ({ user }) => {
     const router = useRouter();
     if (router.pathname === '/login' || router.pathname === '/signup') {
         return null;
@@ -28,7 +28,7 @@ const Navbar = ({ user, avatar }) => {
                 <Heading as="h1" size="sm">
                     <Link href={'/'}>Home</Link>
                 </Heading>
-                <Menu avatar={avatar} user={user} />
+                <Menu user={user} />
             </Flex>
         </>
     );

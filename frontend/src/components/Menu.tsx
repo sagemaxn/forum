@@ -11,7 +11,7 @@ import { SettingsIcon } from '@chakra-ui/icons';
 import ChangeAvatar from '../components/ChangeAvatar';
 import { useLogoutMutation } from '../generated/graphql';
 
-function MenuComp({ user, avatar }) {
+function MenuComp({ user }) {
     const router = useRouter();
     const { onOpen, isOpen, onClose } = useDisclosure();
     const [logout] = useLogoutMutation();
@@ -46,12 +46,7 @@ function MenuComp({ user, avatar }) {
                     </MenuItem>
                 </MenuList>
             </Menu>
-            <ChangeAvatar
-                avatar={avatar}
-                isOpen={isOpen}
-                onClose={onClose}
-                user={user}
-            />
+            <ChangeAvatar isOpen={isOpen} onClose={onClose} user={user} />
         </>
     );
 }

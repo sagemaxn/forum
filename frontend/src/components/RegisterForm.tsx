@@ -48,6 +48,7 @@ function RegisterForm() {
                 });
                 if (response && response.data) {
                     onOpen();
+                    actions.resetForm();
                 }
                 actions.setSubmitting(false);
             }}

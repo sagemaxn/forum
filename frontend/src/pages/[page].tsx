@@ -1,6 +1,5 @@
 import auth from '../lib/auth';
 import { compose } from '../lib/compose';
-import Navbar from '../components/Navbar';
 import Layout from '../components/Layout';
 
 import { useRouter } from 'next/router';
@@ -25,6 +24,15 @@ const Threads = ({ decoded }) => {
             limit: 5,
         },
     });
+    const totalPages = Math.ceil(data?.threads?.total / 5);
+    if (parseInt(page) > totalPages) {
+        return (
+            <Error
+                statusCode={404}
+                title="Oops! The page you are looking for can't be found"
+            />
+        );
+    }
 
     if (loading) {
         return (

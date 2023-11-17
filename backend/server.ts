@@ -22,20 +22,20 @@ require("dotenv").config();
 const MONGODB_URI = process.env.MONGODB_URI;
 
 mongoose
-  .connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("connected to MongoDB");
-  })
-  .catch((error) => {
-    console.log("error connection to MongoDB:", error.message);
-  });
+    .connect(MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+    .then(() => {
+      console.log("connected to MongoDB");
+    })
+    .catch((error) => {
+      console.log("error connection to MongoDB:", error.message);
+    });
 
-  interface MyContext {
-    token?: String;
-  }
+interface MyContext {
+  token?: String;
+}
 const main = async () => {
   const app = Express()
   const schema = await buildSchema({
@@ -52,14 +52,14 @@ const main = async () => {
   app.use(cookieParser());
 
   app.use(
-    '/graphql',
-    cors<cors.CorsRequest>({ origin: process.env.NODE_ENV === 'production' ? ['https://forum.sagemaxn.dev'] : 'http://localhost:3000',  credentials: true }),
-    json(),
-    expressMiddleware(server, {
-      context: async ({ req, res }) => ({ req, res }),
-    }),
+      '/graphql',
+      cors<cors.CorsRequest>({ origin: process.env.NODE_ENV === 'production' ? ['https://forum.sagemaxn.dev'] : 'http://localhost:3000',  credentials: true }),
+      json(),
+      expressMiddleware(server, {
+        context: async ({ req, res }) => ({ req, res }),
+      }),
   );
   await new Promise<void>((resolve) => httpServer.listen({ port: process.env.PORT || 4000 }, resolve));
-  console.log(`🚀 Server ready at http://localhost:4000/graphql`);
+  console.log(`Server ready at http://localhost:4000/graphql`);
 }
 main();

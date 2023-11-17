@@ -1,43 +1,40 @@
 import { Form, Formik } from 'formik';
 import { Button, Flex } from '@chakra-ui/react';
-import { useApolloClient } from '@apollo/client';
 
 import FormField from '../components/FormField';
 import { usePostMutation } from '../generated/graphql';
-import { CurrentUserAvatarDocument } from '../generated/graphql';
 
-function NewPostForm({ user, thread_id }) {
-    const [post, { data }] = usePostMutation();
-    const apolloClient = useApolloClient();
+function NewPostForm({ user, thread_id, refetch }) {
+    const [post] = usePostMutation();
     return (
         <Formik
             initialValues={{ username: user, content: '', thread_id }}
             onSubmit={async (values, actions) => {
-                await apolloClient.query({
-                    query: CurrentUserAvatarDocument,
-                    variables: { username: user },
-                });
-
-                await post({ variables: { input: { ...values } } });
+                try {
+                    await post({ variables: { input: { ...values } } });
+                    refetch();
+                    actions.resetForm();
+                } catch (err) {
+                    console.error(err);
+                }
                 actions.setSubmitting(false);
             }}
         >
             {props => (
                 <>
                     <Flex
-                        backgroundColor="blue"
-                        boxShadow={'xl'}
+                        bg={'white'}
+                        boxShadow={'md'}
                         direction={'column'}
                         margin="2px"
                         p={6}
                         w={'100%'}
-                        //border="solid 1px"
                     >
                         <Form>
                             <FormField name="content"></FormField>
 
                             <Button
-                                backgroundColor="mint"
+                                backgroundColor="green"
                                 isLoading={props.isSubmitting}
                                 mt={4}
                                 type="submit"

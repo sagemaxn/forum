@@ -15,7 +15,7 @@ const theme = extendTheme({
         blue: '#67a1a5',
         green: '#5CDB95',
         purple: '#948CC5',
-        formBg: '#F5F5F5', // add this line
+        formBg: '#F5F5F5',
     },
     fonts,
     breakpoints,

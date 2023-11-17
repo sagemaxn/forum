@@ -47,7 +47,10 @@ export class ThreadResolver {
 
     @Mutation(() => Boolean)
     async deleteThread(@Arg("threadID") threadID: string) {
-        const deleted = await ThreadModel.deleteOne({ _id: threadID });
+        const deletedThread = await ThreadModel.deleteOne({ _id: threadID });
+        if(deletedThread.deletedCount && deletedThread.deletedCount > 0) {
+            await PostModel.deleteMany({ thread: threadID });
+        }
         return true;
     }
 
@@ -93,7 +96,7 @@ export class ThreadResolver {
                 select: 'avatar'
             });
 
-        const total = await ThreadModel.countDocuments()
+        const total = await ThreadModel.countDocuments({user: user._id})
 
         return { total, data: threads };
     }
@@ -101,8 +104,8 @@ export class ThreadResolver {
     @Query(() => ThreadWithPosts)
     async threadWithPosts(
         @Arg("id") id: string,
-        @Arg("limit", () => Int) limit: number,
-        @Arg("offset", () => Int) offset: number
+        @Arg("limit", () => Int, { defaultValue: 5 }) limit: number,
+        @Arg("offset", () => Int, { defaultValue: 0 }) offset: number
     ) {
         const thread = await ThreadModel.findById(id)
             .populate({
@@ -121,7 +124,7 @@ export class ThreadResolver {
                 select: 'username avatar'
             });
 
-        const total = await PostModel.countDocuments({ thread: id });
+        const total = await PostModel.countDocuments({ thread: id })
 
         return { data: thread, total };
     }

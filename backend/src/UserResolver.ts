@@ -1,11 +1,7 @@
-import {Arg, Int, Mutation, Query, Resolver} from "type-graphql";
-import { hash} from "bcryptjs";
+import { hash } from 'bcryptjs';
+import { Arg, Int, Mutation, Query, Resolver } from 'type-graphql';
 
-import {User, UserInput, UserModel,} from "./models";
-import { UserActivity} from './models'
-
-import {PostModel} from "./models";
-import {ThreadModel} from "./models";
+import { PostModel, ThreadModel, User, UserActivity, UserInput, UserModel } from './models';
 
 @Resolver()
 export class UserResolver {
@@ -13,21 +9,23 @@ export class UserResolver {
   async createUser(
       @Arg("input") { username, password }: UserInput
   ): Promise<User> {
+    const existingUser = await UserModel.findOne({username: username});
+    if(existingUser){
+      throw new Error('Username already taken');
+    }
     password = await hash(password, 12);
     const user = await UserModel.create({
       username,
       password,
-      avatar:
-          "default",
+      avatar: "default",
     });
     await user.save();
-    // user.password = null
     return user;
   }
   @Mutation(() => User)
   async changeAvatar(
-    @Arg("avatar") avatar: string,
-    @Arg("username") username: string
+      @Arg("avatar") avatar: string,
+      @Arg("username") username: string
   ) {
     try {
       let user = await UserModel.findOneAndUpdate({ username }, { avatar }, { new: true });
@@ -40,8 +38,7 @@ export class UserResolver {
   }
   @Query(() => [User])
   async users() {
-    const users = await UserModel.find();
-    return users;
+    return UserModel.find();
   }
   @Query(() => User, { nullable: true })
   async currentUser(@Arg('username') username: string): Promise<User | null>{
@@ -75,8 +72,8 @@ export class UserResolver {
           select: 'username avatar',
         })
         .populate({
-        path: 'thread', options: {limit: 1}
-    })
+          path: 'thread', options: {limit: 1}
+        })
 
     let filteredCount = 0;
 
@@ -89,9 +86,9 @@ export class UserResolver {
       }
       return true;
     });
-    //I've heard .countDocuments() is faster than .length(), which is why I'm trying this instead. Although it is slightly more complex than only doing .length() on the filtered result
-    const threadsTotal = await ThreadModel.countDocuments()
-    const postsTotal = await PostModel.countDocuments()
+    const threadsTotal = await ThreadModel.countDocuments({user: user._id})
+    const postsTotal = await PostModel.countDocuments({user: user._id})
+
 
     const correctedPostsTotal = postsTotal - filteredCount;
 
@@ -100,6 +97,9 @@ export class UserResolver {
     const activities = (posts as Array<any>).concat(threads as Array<any>);
 
     activities.sort((a, b) => b.createdAt - a.createdAt)
+    console.log(activities)
+
+
     return { total, data: activities.slice(offset, offset + limit) };
   }
 }

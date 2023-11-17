@@ -2,7 +2,6 @@ import { useQuery } from '@apollo/client';
 import { Heading } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import NewPostForm from '../../../components/NewPostForm';
-import Navbar from '../../../components/Navbar';
 import { PostsList } from '../../../components/PostsList';
 import Layout from '../../../components/Layout';
 import { ThreadWithPostsDocument } from '../../../generated/graphql';
@@ -30,7 +29,15 @@ const Page = ({ decoded }) => {
             },
         },
     );
-
+    const totalPages = Math.ceil(data?.threadWithPosts?.total / 5);
+    if (parseInt(page) > totalPages) {
+        return (
+            <Error
+                statusCode={404}
+                title="Oops! The page you are looking for can't be found"
+            ></Error>
+        );
+    }
     if (loading) {
         return (
             <Layout user={decoded.user}>
